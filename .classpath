@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="Automated_Negotiation_System-BrokerGUI/src"/>
+	<classpathentry kind="lib" path="Automated_Negotiation_System-BrokerGUI/lib/jade.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
