@@ -3,6 +3,7 @@ package agents;
 import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -14,6 +15,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import model.Car;
 import model.CarList;
 
 public class BrokerAgent extends Agent {
@@ -82,6 +84,66 @@ public class BrokerAgent extends Agent {
 					e.printStackTrace();
 				}
 			} else {
+				block();
+			}
+		}
+	}
+	
+	private class DealWithRequestFromBuyers extends CyclicBehaviour {
+
+		@Override
+		public void action() {
+			MessageTemplate mt2= MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade"),
+									MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+			ACLMessage msg2 = myAgent.receive(mt2);
+			if (msg2 != null) {
+				// Message received. Process it
+				String desiredCarJson = msg2.getContent();
+				try {
+					Car desiredCar = o.readValue(desiredCarJson, Car.class);
+					System.out.println("Receive a request from Buyer:\n" + desiredCar);
+					CarList listOfPossibleCar = new CarList();
+					for(Car c : catalog) {
+						if (c.equals(desiredCar) && c.getPrice() <= desiredCar.getPrice()) {
+							listOfPossibleCar.add(c);
+						}
+					}
+					
+					if (listOfPossibleCar.size()>0) {
+						// Send back a list of cars to the Buyer if possible			
+						String jsonInString;
+						try {
+							jsonInString = o.writeValueAsString(listOfPossibleCar);
+							ACLMessage reply = msg2.createReply();
+							reply.setPerformative(ACLMessage.INFORM);
+							reply.setReplyWith("performative");
+							reply.setContent(jsonInString);
+							reply.setConversationId("car-offer");
+							myAgent.send(reply);
+						} catch (JsonProcessingException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					} else {
+						ACLMessage reply = msg2.createReply();
+						reply.setPerformative(ACLMessage.REFUSE);
+						reply.setReplyWith("performative");
+						reply.setContent("There are no possible car to offer! Sorry! ");
+						reply.setConversationId("car-offer");
+						myAgent.send(reply);
+					}						
+				} catch (JsonParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JsonMappingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}			
+			}
+			else {
 				block();
 			}
 		}
