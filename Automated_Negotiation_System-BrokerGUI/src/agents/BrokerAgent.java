@@ -9,11 +9,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.domain.AMSService;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
+import jade.domain.FIPAAgentManagement.AMSAgentDescription;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -46,6 +50,7 @@ public class BrokerAgent extends Agent {
 		// Adding behaviors to the broker agent
 		addBehaviour(new ReceiveListOfCarsFromDealer());
 		addBehaviour(new DealWithRequestFromBuyers());
+		addBehaviour(new RequestFromBuyersToConnectToDealer());
 	}
 
 	/**
@@ -67,7 +72,7 @@ public class BrokerAgent extends Agent {
 		@Override
 		public void action() {
 			//MessageTemplate for the Conversation between dealer and broker (the dealer sends a list of Car to the broker)
-			MessageTemplate mt1 = MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade"),
+			MessageTemplate mt1 = MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade-dealer-broker"),
 					MessageTemplate.MatchPerformative(ACLMessage.INFORM));
 			ACLMessage msg1 = myAgent.receive(mt1);
 
@@ -78,7 +83,7 @@ public class BrokerAgent extends Agent {
 					//convert the list of cars in Json-form to the Object CarList
 					CarList list = o.readValue(carlist, CarList.class);
 					catalog.addAll(list);
-					System.out.println("Broker cataloge: \n" + catalog);
+					System.out.println("Broker cataloge: \n" + catalog + "\n");
 				} catch (JsonParseException e) {
 					e.printStackTrace();
 				} catch (JsonMappingException e) {
@@ -98,7 +103,7 @@ public class BrokerAgent extends Agent {
 
 		@Override
 		public void action() {
-			MessageTemplate mt2 = MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade"),
+			MessageTemplate mt2 = MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade-broker-buyer"),
 					MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
 			ACLMessage msg2 = myAgent.receive(mt2);
 			
@@ -107,7 +112,7 @@ public class BrokerAgent extends Agent {
 				String desiredCarJson = msg2.getContent();
 				try {
 					Car desiredCar = o.readValue(desiredCarJson, Car.class);
-					System.out.println("Receive a request from Buyer:\n" + desiredCar);
+					System.out.println("Receive a request from Buyer:\n" + desiredCar + "\n");
 
 					CarList listOfPossibleCar = new CarList();
 					listOfPossibleCar.addAll(getListOfPossibleCars(desiredCar));
@@ -143,6 +148,54 @@ public class BrokerAgent extends Agent {
 				block();
 			}
 		}
+	}
+	
+	private class RequestFromBuyersToConnectToDealer extends CyclicBehaviour {
+
+		@Override
+		public void action() {
+			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade-broker-buyer"),
+					MessageTemplate.MatchPerformative(ACLMessage.INFORM));
+			ACLMessage msg = myAgent.receive(mt);
+			if (msg != null) {
+				System.out.println("Receive a choosen car from buyer " + msg.getSender().getName());
+				String choosenCarJson = msg.getContent();
+				try {
+					CarList choosenCar = o.readValue(choosenCarJson, CarList.class);
+					System.out.println(choosenCar + "\n");
+					ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
+					mess.addReceiver(findDealerWithName(choosenCar.get(0).getAgent()));
+					mess.setContent(choosenCarJson);
+					mess.setConversationId("car-trade-broker-seller");
+					mess.setReplyWith(msg.getSender().getName()); // name of the buyer.
+					myAgent.send(mess);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				block();
+			}
+		}
+		
+	}
+	
+	private AID findDealerWithName(String dealerName) {
+		AMSAgentDescription[] agents = null;
+		SearchConstraints c = new SearchConstraints();
+		c.setMaxResults(new Long(-1));
+		try {
+			agents = AMSService.search(this, new AMSAgentDescription(), c);
+			for (int i = 0; i < agents.length; i++) {
+				AID agentID = agents[i].getName();
+				if (agentID.getName().equals(dealerName)) {
+					return agentID;
+				}
+			}
+		} catch (FIPAException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	private List<Car> getListOfPossibleCars(Car desiredCar){

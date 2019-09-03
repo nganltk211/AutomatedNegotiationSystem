@@ -1,6 +1,9 @@
 package agents;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -23,15 +26,12 @@ import model.Car;
 import model.CarList;
 
 public class BuyerAgent extends Agent {
-	/**
-	 * 
-	 */
-	private ObjectMapper o = new ObjectMapper();
+
 	private static final long serialVersionUID = -8414132078026686821L;
 	private AID brokerAgent;
 	private Car desiredCar;
 	private CarList offerCarlist;
-	private AID choosenDealer;
+	private ObjectMapper o = new ObjectMapper();
 
 	protected void setup() {
 		// Printout a welcome message
@@ -79,8 +79,6 @@ public class BuyerAgent extends Agent {
 
 	// To request the broker to send a list of possible cars
 	private class RequestInfoOfDesiredCar extends OneShotBehaviour {
-		
-		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void action() {
@@ -92,7 +90,7 @@ public class BuyerAgent extends Agent {
 			try {
 				jsonInString = o.writeValueAsString(desiredCar);
 				mess.setContent(jsonInString);
-				mess.setConversationId("car-trade");
+				mess.setConversationId("car-trade-broker-buyer");
 				myAgent.send(mess);
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
@@ -101,8 +99,6 @@ public class BuyerAgent extends Agent {
 	}
 
 	private class OfferFromBroker extends CyclicBehaviour {
-
-		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void action() {
@@ -113,31 +109,11 @@ public class BuyerAgent extends Agent {
 				String content = msg.getContent();
 				switch (msg.getPerformative()) {
 				case ACLMessage.INFORM:
-					System.out.println("There are following possible offer for you:");
-
+					System.out.println("There are following possible offers for you:");
 					try {
 						offerCarlist = o.readValue(content, CarList.class);
 						System.out.println(offerCarlist);
-						addBehaviour(new OneShotBehaviour() {
-							@Override
-							public void action() {
-								AMSAgentDescription[] agents = null;
-								SearchConstraints c = new SearchConstraints();
-								c.setMaxResults(new Long(-1));
-								try {
-									agents = AMSService.search(this.myAgent, new AMSAgentDescription(), c);
-									for (int i = 0; i < agents.length; i++) {
-										AID agentID = agents[i].getName();
-										if (agentID.getName().equals(offerCarlist.get(0).getAgent())) {
-											choosenDealer = agentID;
-										}
-									}
-								} catch (FIPAException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-							}
-						});
+						addBehaviour(new SendBackTheChoosenCarsToTheBroker());
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -149,6 +125,48 @@ public class BuyerAgent extends Agent {
 			} else {
 				block();
 			}
+		}
+	}
+	
+	private class SendBackTheChoosenCarsToTheBroker extends OneShotBehaviour {
+
+		@Override
+		public void action() {
+			CarList listOfChoosenCars = new CarList();
+			int choosenCar;
+			do {
+				System.out.println("Please choose one offer!");
+				choosenCar = readInt();
+			}
+			while (choosenCar > offerCarlist.size() || choosenCar < 1);
+			
+			listOfChoosenCars.add(offerCarlist.get(choosenCar - 1));	
+			System.out.println("Trying to send a choosen car to the broker\n");
+			ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
+			mess.addReceiver(brokerAgent);
+			String jsonInString;
+			try {
+				jsonInString = o.writeValueAsString(listOfChoosenCars);
+				mess.setContent(jsonInString);
+				mess.setConversationId("car-trade-broker-buyer");
+				myAgent.send(mess);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+		}		
+	}
+	
+	private int readInt() {
+		try{
+		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+		String eingabe = "";
+		Integer string_to_int;
+		eingabe = input.readLine();
+		string_to_int = new Integer(eingabe);
+		return string_to_int.intValue();
+		} catch (Exception e){
+			System.err.println("Please give the right choice of car!");
+			return -2;			
 		}
 	}
 }

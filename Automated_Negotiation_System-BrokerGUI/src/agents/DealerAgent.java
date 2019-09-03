@@ -1,15 +1,22 @@
 package agents;
 
+import java.io.IOException;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.domain.AMSService;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
+import jade.domain.FIPAAgentManagement.AMSAgentDescription;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import model.Car;
 import model.CarList;
 
@@ -42,6 +49,7 @@ public class DealerAgent extends Agent {
 				}
 			}
 		});
+		addBehaviour(new StartTheNegotiationWithBuyer());
 	}
 
 	// Put agent clean-up operations here
@@ -65,13 +73,55 @@ public class DealerAgent extends Agent {
 			try {
 				jsonInString = o.writeValueAsString(list);
 				mess.setContent(jsonInString);
-				mess.setConversationId("car-trade");
+				mess.setConversationId("car-trade-dealer-broker");
 				myAgent.send(mess);
 			} catch (JsonProcessingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}			
 		}
+	}
+	
+	private class StartTheNegotiationWithBuyer extends CyclicBehaviour {
+
+		@Override
+		public void action() {
+			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade-broker-seller"),
+					MessageTemplate.MatchPerformative(ACLMessage.INFORM));
+			ACLMessage msg = myAgent.receive(mt);
+			if (msg != null) {
+				System.out.println("Receive an offer from the broker");
+				String content = msg.getContent();
+				String buyer = msg.getReplyWith();
+				try {
+					CarList choosenCars = o.readValue(content, CarList.class);
+					System.out.println(choosenCars + "\n");
+					System.out.println("Trying to create a negotiation with the buyer: " + buyer);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+	}
+	
+	private AID findBuyerWithName(String buyerName) {
+		AMSAgentDescription[] agents = null;
+		SearchConstraints c = new SearchConstraints();
+		c.setMaxResults(new Long(-1));
+		try {
+			agents = AMSService.search(this, new AMSAgentDescription(), c);
+			for (int i = 0; i < agents.length; i++) {
+				AID agentID = agents[i].getName();
+				if (agentID.getName().equals(buyerName)) {
+					return agentID;
+				}
+			}
+		} catch (FIPAException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public CarList listOfCarToSend() {
