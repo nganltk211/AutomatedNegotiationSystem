@@ -38,13 +38,15 @@ public class BuyerAgent extends Agent {
 		System.out.println("Hallo! Buyer-agent " + getAID().getName() + " is ready.");
 
 		Object[] args = getArguments();
-		String model = (String) args[0];
-		String manufacture = (String) args[1];
-		double maxPrice = Double.parseDouble((String) args[2]);
+		String manufacture = (String) args[0];
+		String model = (String) args[1];
+		String bodyType = (String) args[2];
+		double maxPrice = Double.parseDouble((String) args[3]);
 		desiredCar = new Car(1);
 		desiredCar.setModel(model);
 		desiredCar.setManufacture(manufacture);
 		desiredCar.setPrice(maxPrice);
+		desiredCar.setBodyType(bodyType);
 		desiredCar.setAgent(this.getName());
 
 		DFAgentDescription template = new DFAgentDescription();
@@ -52,6 +54,7 @@ public class BuyerAgent extends Agent {
 
 		// using to find the AID of the broker agent
 		addBehaviour(new OneShotBehaviour() {
+			
 			@Override
 			public void action() {
 				sd.setType("car-broker");
@@ -76,6 +79,9 @@ public class BuyerAgent extends Agent {
 
 	// To request the broker to send a list of possible cars
 	private class RequestInfoOfDesiredCar extends OneShotBehaviour {
+		
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void action() {
 			System.out.println("Trying to send a car to the broker");
@@ -95,6 +101,9 @@ public class BuyerAgent extends Agent {
 	}
 
 	private class OfferFromBroker extends CyclicBehaviour {
+
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public void action() {
 			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-offer"),
@@ -105,6 +114,7 @@ public class BuyerAgent extends Agent {
 				switch (msg.getPerformative()) {
 				case ACLMessage.INFORM:
 					System.out.println("There are following possible offer for you:");
+
 					try {
 						offerCarlist = o.readValue(content, CarList.class);
 						System.out.println(offerCarlist);
@@ -128,15 +138,9 @@ public class BuyerAgent extends Agent {
 								}
 							}
 						});
-					} catch (JsonParseException e) {
+					} catch (IOException e1) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (JsonMappingException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						e1.printStackTrace();
 					}
 					break;
 				case ACLMessage.REFUSE:

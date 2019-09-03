@@ -1,7 +1,5 @@
 package agents;
 
-import java.util.ArrayList;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jade.core.AID;
@@ -13,6 +11,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import model.Car;
+import model.CarList;
 
 public class DealerAgent extends Agent {
 
@@ -58,20 +57,10 @@ public class DealerAgent extends Agent {
 			System.out.println("Trying to send a list of cars to Broker");
 			ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
 			mess.addReceiver(brokerAgent);
-			ArrayList<Car> list = new ArrayList<Car>();
-			Car car1 = new Car(1);
-			car1.setAgent(myAgent.getName());
-			car1.setModel("A2");
-			car1.setManufacture("Audi");
-			car1.setPrice(4000);
-			Car car2 = new Car(2);
-			car2.setModel("A3");
-			car2.setAgent(myAgent.getName());
-			car2.setManufacture("Honda");
-			car2.setPrice(2000);
-			list.add(car1);
-			list.add(car2);
-			
+			CarList list = listOfCarToSend();
+			for (Car c : list) {
+				c.setAgent(myAgent.getName());
+			}		
 			String jsonInString;
 			try {
 				jsonInString = o.writeValueAsString(list);
@@ -84,4 +73,32 @@ public class DealerAgent extends Agent {
 			}			
 		}
 	}
+	
+	public CarList listOfCarToSend() {
+		CarList list = new CarList();
+		Car car1 = new Car(1);
+		car1.setModel("A2");
+		car1.setManufacture("Audi");
+		car1.setPrice(4000);
+		car1.setBodyType("SUV");
+		
+		Car car2 = new Car(2);
+		car2.setModel("A3");
+		car2.setManufacture("Honda");
+		car2.setPrice(2000);
+		car2.setBodyType("SUV");
+		
+		Car car3 = new Car(3);
+		car3.setModel("A4");
+		car3.setManufacture("Honda");
+		car3.setPrice(2000);
+		car3.setBodyType("Sedan");
+		
+		list.add(car1);
+		list.add(car2);
+		list.add(car3);
+		
+		return list;
+	}
+	
 }

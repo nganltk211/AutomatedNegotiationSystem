@@ -1,6 +1,8 @@
 package agents;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,9 +42,10 @@ public class BrokerAgent extends Agent {
 		} catch (FIPAException fe) {
 			System.err.println("Problem by registering the car-broker service in the yellow pages");
 		}
-
+		
 		// Adding behaviors to the broker agent
 		addBehaviour(new ReceiveListOfCarsFromDealer());
+		addBehaviour(new DealWithRequestFromBuyers());
 	}
 
 	/**
@@ -91,26 +94,26 @@ public class BrokerAgent extends Agent {
 	
 	private class DealWithRequestFromBuyers extends CyclicBehaviour {
 
+		private static final long serialVersionUID = -8496805180917867030L;
+
 		@Override
 		public void action() {
-			MessageTemplate mt2= MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade"),
-									MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+			MessageTemplate mt2 = MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade"),
+					MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
 			ACLMessage msg2 = myAgent.receive(mt2);
+			
 			if (msg2 != null) {
 				// Message received. Process it
 				String desiredCarJson = msg2.getContent();
 				try {
 					Car desiredCar = o.readValue(desiredCarJson, Car.class);
 					System.out.println("Receive a request from Buyer:\n" + desiredCar);
+
 					CarList listOfPossibleCar = new CarList();
-					for(Car c : catalog) {
-						if (c.equals(desiredCar) && c.getPrice() <= desiredCar.getPrice()) {
-							listOfPossibleCar.add(c);
-						}
-					}
-					
-					if (listOfPossibleCar.size()>0) {
-						// Send back a list of cars to the Buyer if possible			
+					listOfPossibleCar.addAll(getListOfPossibleCars(desiredCar));
+
+					if (listOfPossibleCar.size() > 0) {
+						// Send back a list of cars to the Buyer if possible
 						String jsonInString;
 						try {
 							jsonInString = o.writeValueAsString(listOfPossibleCar);
@@ -131,21 +134,44 @@ public class BrokerAgent extends Agent {
 						reply.setContent("There are no possible car to offer! Sorry! ");
 						reply.setConversationId("car-offer");
 						myAgent.send(reply);
-					}						
-				} catch (JsonParseException e) {
+					}
+				} catch (IOException e1) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}			
-			}
-			else {
+					e1.printStackTrace();
+				}
+			} else {
 				block();
 			}
 		}
+	}
+	
+	private List<Car> getListOfPossibleCars(Car desiredCar){
+		List<Car> filterList = new CarList();
+		filterList.addAll(catalog);
+		if (!desiredCar.getManufacture().trim().equals("")) {			
+			filterList.retainAll(catalog.stream().filter(car -> car.getManufacture().equals(desiredCar.getManufacture())).collect(Collectors.toList()));
+		}
+		if (!desiredCar.getModel().trim().equals("")) {
+			filterList.retainAll(catalog.stream().filter(car -> car.getModel().equals(desiredCar.getModel())).collect(Collectors.toList()));
+		}
+		if (!desiredCar.getTransmission().trim().equals("")) {
+			filterList.retainAll(catalog.stream().filter(car -> car.getTransmission().equals(desiredCar.getTransmission())).collect(Collectors.toList()));
+		}
+		if (!desiredCar.getBodyType().trim().equals("")) {
+			filterList.retainAll(catalog.stream().filter(car -> car.getBodyType().equals(desiredCar.getBodyType())).collect(Collectors.toList()));
+		}
+		if (!desiredCar.getFuelType().trim().equals("")) {
+			filterList.retainAll(catalog.stream().filter(car -> car.getFuelType().equals(desiredCar.getFuelType())).collect(Collectors.toList()));
+		}
+		if (!desiredCar.getColor().trim().equals("")) {
+			filterList.retainAll(catalog.stream().filter(car -> car.getColor().equals(desiredCar.getColor())).collect(Collectors.toList()));
+		}
+		
+		for (Car c : filterList) {
+			if (c.getPrice() > desiredCar.getPrice()) {
+				filterList.remove(c);
+			}
+		}
+		return filterList;
 	}
 }
