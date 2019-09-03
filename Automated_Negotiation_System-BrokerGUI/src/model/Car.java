@@ -11,14 +11,25 @@ public class Car {
 	private String bodyType;
 	private String color;
 	private int warranty;
+	private String agent = "";
 	
 	public Car(int carId) {
 		super();
 		this.carId = carId;
 	}
 	
+	public Car() {}
+	
 	public int getCarId() {
 		return carId;
+	}
+	
+	public String getAgent() {
+		return agent;
+	}
+
+	public void setAgent(String agent) {
+		this.agent = agent;
 	}
 
 	public void setCarId(int carId) {
