@@ -83,7 +83,7 @@ public class BrokerAgent extends Agent {
 					//convert the list of cars in Json-form to the Object CarList
 					CarList list = o.readValue(carlist, CarList.class);
 					catalog.addAll(list);
-					System.out.println("Broker cataloge: \n" + catalog + "\n");
+					System.out.println("Broker: Broker cataloge: \n" + catalog + "\n");
 				} catch (JsonParseException e) {
 					e.printStackTrace();
 				} catch (JsonMappingException e) {
@@ -112,7 +112,7 @@ public class BrokerAgent extends Agent {
 				String desiredCarJson = msg2.getContent();
 				try {
 					Car desiredCar = o.readValue(desiredCarJson, Car.class);
-					System.out.println("Receive a request from Buyer:\n" + desiredCar + "\n");
+					System.out.println("Broker: Receive a request from Buyer:\n" + desiredCar + "\n");
 
 					CarList listOfPossibleCar = new CarList();
 					listOfPossibleCar.addAll(getListOfPossibleCars(desiredCar));
@@ -158,13 +158,13 @@ public class BrokerAgent extends Agent {
 					MessageTemplate.MatchPerformative(ACLMessage.INFORM));
 			ACLMessage msg = myAgent.receive(mt);
 			if (msg != null) {
-				System.out.println("Receive a choosen car from buyer " + msg.getSender().getName());
+				System.out.println("Broker: Receive a choosen car from buyer " + msg.getSender().getName());
 				String choosenCarJson = msg.getContent();
 				try {
 					CarList choosenCar = o.readValue(choosenCarJson, CarList.class);
 					System.out.println(choosenCar + "\n");
 					ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
-					mess.addReceiver(findDealerWithName(choosenCar.get(0).getAgent()));
+					mess.addReceiver(AgentSupport.findAgentWithName(myAgent, choosenCar.get(0).getAgent()));
 					mess.setContent(choosenCarJson);
 					mess.setConversationId("car-trade-broker-seller");
 					mess.setReplyWith(msg.getSender().getName()); // name of the buyer.
@@ -178,24 +178,6 @@ public class BrokerAgent extends Agent {
 			}
 		}
 		
-	}
-	
-	private AID findDealerWithName(String dealerName) {
-		AMSAgentDescription[] agents = null;
-		SearchConstraints c = new SearchConstraints();
-		c.setMaxResults(new Long(-1));
-		try {
-			agents = AMSService.search(this, new AMSAgentDescription(), c);
-			for (int i = 0; i < agents.length; i++) {
-				AID agentID = agents[i].getName();
-				if (agentID.getName().equals(dealerName)) {
-					return agentID;
-				}
-			}
-		} catch (FIPAException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 	
 	private List<Car> getListOfPossibleCars(Car desiredCar){

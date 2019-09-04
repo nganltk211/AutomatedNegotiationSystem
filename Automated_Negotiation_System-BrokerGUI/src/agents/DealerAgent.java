@@ -62,7 +62,7 @@ public class DealerAgent extends Agent {
 	private class SendListOfCar extends OneShotBehaviour {
 		@Override
 		public void action() {
-			System.out.println("Trying to send a list of cars to Broker");
+			System.out.println("Dealer : Trying to send a list of cars to Broker\n");
 			ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
 			mess.addReceiver(brokerAgent);
 			CarList list = listOfCarToSend();
@@ -90,13 +90,13 @@ public class DealerAgent extends Agent {
 					MessageTemplate.MatchPerformative(ACLMessage.INFORM));
 			ACLMessage msg = myAgent.receive(mt);
 			if (msg != null) {
-				System.out.println("Receive an offer from the broker");
+				System.out.println("Dealer: Receive an offer from the broker");
 				String content = msg.getContent();
 				String buyer = msg.getReplyWith();
 				try {
 					CarList choosenCars = o.readValue(content, CarList.class);
 					System.out.println(choosenCars + "\n");
-					System.out.println("Trying to create a negotiation with the buyer: " + buyer);
+					System.out.println("Dealer: Trying to create a negotiation with the buyer: " + buyer);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -104,24 +104,6 @@ public class DealerAgent extends Agent {
 			}
 		}
 		
-	}
-	
-	private AID findBuyerWithName(String buyerName) {
-		AMSAgentDescription[] agents = null;
-		SearchConstraints c = new SearchConstraints();
-		c.setMaxResults(new Long(-1));
-		try {
-			agents = AMSService.search(this, new AMSAgentDescription(), c);
-			for (int i = 0; i < agents.length; i++) {
-				AID agentID = agents[i].getName();
-				if (agentID.getName().equals(buyerName)) {
-					return agentID;
-				}
-			}
-		} catch (FIPAException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 	
 	public CarList listOfCarToSend() {

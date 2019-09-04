@@ -82,7 +82,7 @@ public class BuyerAgent extends Agent {
 
 		@Override
 		public void action() {
-			System.out.println("Trying to send a car to the broker");
+			System.out.println("Buyer: Trying to send a car to the broker:\n");
 			ACLMessage mess = new ACLMessage(ACLMessage.REQUEST);
 			mess.addReceiver(brokerAgent);
 
@@ -109,7 +109,7 @@ public class BuyerAgent extends Agent {
 				String content = msg.getContent();
 				switch (msg.getPerformative()) {
 				case ACLMessage.INFORM:
-					System.out.println("There are following possible offers for you:");
+					System.out.println("Buyer: There are following possible offers for you:");
 					try {
 						offerCarlist = o.readValue(content, CarList.class);
 						System.out.println(offerCarlist);
