@@ -13,7 +13,7 @@ public class BuyerGui extends Stage{
 
 	public BuyerGui(){
 		Parent window = null;
-		loader = new FXMLLoader(Main.class.getResource("BuyerGUI.fxml"));
+		loader = new FXMLLoader(getClass().getResource("BuyerGUI.fxml"));
 		try {
 			window = loader.load();
 		} catch (IOException e) {

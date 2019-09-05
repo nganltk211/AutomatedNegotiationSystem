@@ -39,18 +39,7 @@ public class BuyerGUIController implements Initializable{
 	@FXML
 	private Button search_id;
 	
-	ObservableList<String> BodyList = FXCollections.observableArrayList("SUV", "Sedan","HatchBack");
-	ObservableList<String> ManufactureList = FXCollections.observableArrayList("Audi","Toyota","Honda","BMW","Nissan","Holden");
-	ObservableList<String> TransmissionList = FXCollections.observableArrayList("AMT", "Auto","Manual");
-	ObservableList<String> ColorList = FXCollections.observableArrayList("Red", "Blue","White","Black","Yellow","Silver","Grey");
 	
-	//ModelList
-	ObservableList<String> ModelAudiList = FXCollections.observableArrayList("A1","A2","A3","A4","A5","A6","A7","A8");
-	ObservableList<String> ModelToyotaList = FXCollections.observableArrayList("Camry","Corrola","Aurian","Echo","Crown","Mark");
-	ObservableList<String> ModelHondaList = FXCollections.observableArrayList("Accord","Civic","Legend","Odysey","Insight");
-	ObservableList<String> ModelBmwList = FXCollections.observableArrayList("Seires 1","Series 2","Series 3","Series 4");
-	ObservableList<String> ModelNissanList = FXCollections.observableArrayList("Cima","180xs","200xs","720");
-	ObservableList<String> ModelHoldenList = FXCollections.observableArrayList("Appolo","Astra","Brock");
 	
 
 
@@ -61,14 +50,32 @@ public class BuyerGUIController implements Initializable{
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		body_id.setItems(BodyList);
-		manufacture_id.setItems(ManufactureList);
+		setDataComboBox();	
+	}
+	
+	public void setDataComboBox()
+	{
+		
+		ObservableList<String> bodyList = FXCollections.observableArrayList("SUV", "Sedan","HatchBack");
+		ObservableList<String> manufactureList = FXCollections.observableArrayList("Audi","Toyota","Honda","BMW","Nissan","Holden");
+		ObservableList<String> transmissionList = FXCollections.observableArrayList("AMT", "Auto","Manual");
+		ObservableList<String> colorList = FXCollections.observableArrayList("Red", "Blue","White","Black","Yellow","Silver","Grey");
+		
+		//ModelList
+		ObservableList<String> modelAudiList = FXCollections.observableArrayList("A1","A2","A3","A4","A5","A6","A7","A8");
+		ObservableList<String> modelToyotaList = FXCollections.observableArrayList("Camry","Corrola","Aurian","Echo","Crown","Mark");
+		ObservableList<String> modelHondaList = FXCollections.observableArrayList("Accord","Civic","Legend","Odysey","Insight");
+		ObservableList<String> modelBmwList = FXCollections.observableArrayList("Seires 1","Series 2","Series 3","Series 4");
+		ObservableList<String> modelNissanList = FXCollections.observableArrayList("Cima","180xs","200xs","720");
+		ObservableList<String> modelHoldenList = FXCollections.observableArrayList("Appolo","Astra","Brock");
+		body_id.setItems(bodyList);
+		manufacture_id.setItems(manufactureList);
 		//model_id.setItems();
 		
-		Transmission_id.setItems(TransmissionList);
-		color_id.setItems(ColorList);
-		
-		
+		Transmission_id.setItems(transmissionList);
+		color_id.setItems(colorList);
 		
 	}
+	
+	
 }
