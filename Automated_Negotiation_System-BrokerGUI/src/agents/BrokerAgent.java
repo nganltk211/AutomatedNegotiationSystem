@@ -46,6 +46,7 @@ public class BrokerAgent extends Agent {
 		// Adding behaviors to the broker agent
 		addBehaviour(new ReceiveListOfCarsFromDealer());
 		addBehaviour(new DealWithRequestFromBuyers());
+		addBehaviour(new RequestFromBuyersToConnectToDealer());
 	}
 
 	/**
@@ -67,7 +68,7 @@ public class BrokerAgent extends Agent {
 		@Override
 		public void action() {
 			//MessageTemplate for the Conversation between dealer and broker (the dealer sends a list of Car to the broker)
-			MessageTemplate mt1 = MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade"),
+			MessageTemplate mt1 = MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade-dealer-broker"),
 					MessageTemplate.MatchPerformative(ACLMessage.INFORM));
 			ACLMessage msg1 = myAgent.receive(mt1);
 
@@ -78,7 +79,7 @@ public class BrokerAgent extends Agent {
 					//convert the list of cars in Json-form to the Object CarList
 					CarList list = o.readValue(carlist, CarList.class);
 					catalog.addAll(list);
-					System.out.println("Broker cataloge: \n" + catalog);
+					System.out.println("Broker: Broker cataloge: \n" + catalog + "\n");
 				} catch (JsonParseException e) {
 					e.printStackTrace();
 				} catch (JsonMappingException e) {
@@ -98,7 +99,7 @@ public class BrokerAgent extends Agent {
 
 		@Override
 		public void action() {
-			MessageTemplate mt2 = MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade"),
+			MessageTemplate mt2 = MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade-broker-buyer"),
 					MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
 			ACLMessage msg2 = myAgent.receive(mt2);
 			
@@ -107,7 +108,7 @@ public class BrokerAgent extends Agent {
 				String desiredCarJson = msg2.getContent();
 				try {
 					Car desiredCar = o.readValue(desiredCarJson, Car.class);
-					System.out.println("Receive a request from Buyer:\n" + desiredCar);
+					System.out.println("Broker: Receive a request from Buyer:\n" + desiredCar + "\n");
 
 					CarList listOfPossibleCar = new CarList();
 					listOfPossibleCar.addAll(getListOfPossibleCars(desiredCar));
@@ -131,7 +132,7 @@ public class BrokerAgent extends Agent {
 						ACLMessage reply = msg2.createReply();
 						reply.setPerformative(ACLMessage.REFUSE);
 						reply.setReplyWith("performative");
-						reply.setContent("There are no possible car to offer! Sorry! ");
+						reply.setContent("\nThere are no possible car to offer! Sorry! ");
 						reply.setConversationId("car-offer");
 						myAgent.send(reply);
 					}
@@ -143,6 +144,38 @@ public class BrokerAgent extends Agent {
 				block();
 			}
 		}
+	}
+	
+	private class RequestFromBuyersToConnectToDealer extends CyclicBehaviour {
+
+		private static final long serialVersionUID = -1706099062248742245L;
+
+		@Override
+		public void action() {
+			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade-broker-buyer"),
+					MessageTemplate.MatchPerformative(ACLMessage.INFORM));
+			ACLMessage msg = myAgent.receive(mt);
+			if (msg != null) {
+				System.out.println("Broker: Receive a choosen car from buyer " + msg.getSender().getName());
+				String choosenCarJson = msg.getContent();
+				try {
+					CarList choosenCar = o.readValue(choosenCarJson, CarList.class);
+					System.out.println(choosenCar + "\n");
+					ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
+					mess.addReceiver(AgentSupport.findAgentWithName(myAgent, choosenCar.get(0).getAgent()));
+					mess.setContent(choosenCarJson);
+					mess.setConversationId("car-trade-broker-seller");
+					mess.setReplyWith(msg.getSender().getName()); // name of the buyer.
+					myAgent.send(mess);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				block();
+			}
+		}
+		
 	}
 	
 	private List<Car> getListOfPossibleCars(Car desiredCar){

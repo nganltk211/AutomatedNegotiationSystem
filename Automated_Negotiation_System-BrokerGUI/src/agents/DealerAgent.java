@@ -1,15 +1,22 @@
 package agents;
 
+import java.io.IOException;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.domain.AMSService;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
+import jade.domain.FIPAAgentManagement.AMSAgentDescription;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import model.Car;
 import model.CarList;
 
@@ -42,19 +49,25 @@ public class DealerAgent extends Agent {
 				}
 			}
 		});
+		addBehaviour(new StartTheNegotiationWithBuyer());
 	}
 
-	// Put agent clean-up operations here
+	/**
+	 * Method for the Agent clean-up
+	 */
 	protected void takeDown() {
 		// Printout a dismissal message
 		System.out.println("Dealer-agent " + getAID().getName() + " terminating.");
 	}
 
-	// To send a list of cars to broker
+	/**
+	 * Class for behavior of the dealer agent. 
+	 * The dealer is able to send a list of cars to broker.
+	 */
 	private class SendListOfCar extends OneShotBehaviour {
 		@Override
 		public void action() {
-			System.out.println("Trying to send a list of cars to Broker");
+			System.out.println("Dealer : Trying to send a list of cars to Broker\n");
 			ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
 			mess.addReceiver(brokerAgent);
 			CarList list = listOfCarToSend();
@@ -65,13 +78,37 @@ public class DealerAgent extends Agent {
 			try {
 				jsonInString = o.writeValueAsString(list);
 				mess.setContent(jsonInString);
-				mess.setConversationId("car-trade");
+				mess.setConversationId("car-trade-dealer-broker");
 				myAgent.send(mess);
 			} catch (JsonProcessingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}			
 		}
+	}
+	
+	private class StartTheNegotiationWithBuyer extends CyclicBehaviour {
+
+		@Override
+		public void action() {
+			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade-broker-seller"),
+					MessageTemplate.MatchPerformative(ACLMessage.INFORM));
+			ACLMessage msg = myAgent.receive(mt);
+			if (msg != null) {
+				System.out.println("Dealer: Receive an offer from the broker");
+				String content = msg.getContent();
+				String buyer = msg.getReplyWith();
+				try {
+					CarList choosenCars = o.readValue(content, CarList.class);
+					System.out.println(choosenCars + "\n");
+					System.out.println("Dealer: Trying to create a negotiation with the buyer: " + buyer);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
 	}
 	
 	public CarList listOfCarToSend() {
