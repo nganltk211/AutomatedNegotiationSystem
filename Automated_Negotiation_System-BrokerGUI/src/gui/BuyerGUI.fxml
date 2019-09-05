@@ -12,11 +12,11 @@
   <content>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="398.0" prefWidth="600.0">
          <children>
-            <ComboBox fx:id="body_id" layoutX="370.0" layoutY="187.0" prefWidth="150.0" promptText="body_id" />
-            <ComboBox fx:id="manufacture_id" layoutX="98.0" layoutY="133.0" prefWidth="150.0" promptText="manufacture_id" />
-            <ComboBox fx:id="model_id" layoutX="370.0" layoutY="133.0" prefWidth="150.0" promptText="model_id" />
-            <ComboBox fx:id="Transmission_id" layoutX="98.0" layoutY="187.0" prefWidth="150.0" promptText="transmission_id" />
-            <ComboBox fx:id="color_id" layoutX="98.0" layoutY="238.0" prefWidth="150.0" promptText="color_id" />
+            <ComboBox fx:id="body_id" layoutX="370.0" layoutY="187.0" prefWidth="150.0" />
+            <ComboBox fx:id="manufacture_id" layoutX="98.0" layoutY="133.0" onAction="#ComboChanged" prefWidth="150.0" />
+            <ComboBox fx:id="model_id" layoutX="370.0" layoutY="133.0" prefWidth="150.0" />
+            <ComboBox fx:id="Transmission_id" layoutX="98.0" layoutY="187.0" prefWidth="150.0" />
+            <ComboBox fx:id="color_id" layoutX="98.0" layoutY="238.0" prefWidth="150.0" />
             <Text layoutX="165.0" layoutY="68.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Get Your Dream">
                <font>
                   <Font size="38.0" />
@@ -52,9 +52,9 @@
                   <Font name="System Bold Italic" size="12.0" />
                </font>
             </Text>
-            <TextArea fx:id="min_id" layoutX="355.0" layoutY="232.0" prefHeight="0.0" prefWidth="72.0" promptText="Min(min_id)" />
-            <TextArea fx:id="max_id" layoutX="463.0" layoutY="231.0" prefHeight="0.0" prefWidth="72.0" promptText="Max(max_id)" />
-            <Button fx:id="search_id" layoutX="213.0" layoutY="293.0" mnemonicParsing="false" prefHeight="53.0" prefWidth="151.0" text="Search">
+            <TextArea fx:id="min_id" layoutX="355.0" layoutY="232.0" prefHeight="0.0" prefWidth="72.0" />
+            <TextArea fx:id="max_id" layoutX="463.0" layoutY="231.0" prefHeight="0.0" prefWidth="72.0" />
+            <Button fx:id="search_id" layoutX="213.0" layoutY="293.0" mnemonicParsing="false" onAction="#buttonSearchClick" prefHeight="53.0" prefWidth="151.0" text="Search">
                <font>
                   <Font name="System Italic" size="12.0" />
                </font>

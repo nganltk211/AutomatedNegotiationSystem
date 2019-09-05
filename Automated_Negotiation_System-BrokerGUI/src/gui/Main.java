@@ -2,7 +2,6 @@ package gui;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import model.Car;
 
 
 	public class Main extends Application{
