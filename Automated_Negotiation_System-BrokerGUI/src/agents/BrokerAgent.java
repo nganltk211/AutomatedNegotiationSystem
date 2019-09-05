@@ -9,15 +9,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
-import jade.domain.AMSService;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
-import jade.domain.FIPAAgentManagement.AMSAgentDescription;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -136,7 +132,7 @@ public class BrokerAgent extends Agent {
 						ACLMessage reply = msg2.createReply();
 						reply.setPerformative(ACLMessage.REFUSE);
 						reply.setReplyWith("performative");
-						reply.setContent("There are no possible car to offer! Sorry! ");
+						reply.setContent("\nThere are no possible car to offer! Sorry! ");
 						reply.setConversationId("car-offer");
 						myAgent.send(reply);
 					}
@@ -151,6 +147,8 @@ public class BrokerAgent extends Agent {
 	}
 	
 	private class RequestFromBuyersToConnectToDealer extends CyclicBehaviour {
+
+		private static final long serialVersionUID = -1706099062248742245L;
 
 		@Override
 		public void action() {

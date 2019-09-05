@@ -52,13 +52,18 @@ public class DealerAgent extends Agent {
 		addBehaviour(new StartTheNegotiationWithBuyer());
 	}
 
-	// Put agent clean-up operations here
+	/**
+	 * Method for the Agent clean-up
+	 */
 	protected void takeDown() {
 		// Printout a dismissal message
 		System.out.println("Dealer-agent " + getAID().getName() + " terminating.");
 	}
 
-	// To send a list of cars to broker
+	/**
+	 * Class for behavior of the dealer agent. 
+	 * The dealer is able to send a list of cars to broker.
+	 */
 	private class SendListOfCar extends OneShotBehaviour {
 		@Override
 		public void action() {
