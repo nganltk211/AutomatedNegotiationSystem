@@ -89,6 +89,9 @@ public class BuyerGUIController implements Initializable{
 		ObservableList<String> transmissionList = FXCollections.observableArrayList("AMT", "Auto","Manual");
 		ObservableList<String> colorList = FXCollections.observableArrayList("Red", "Blue","White","Black","Yellow","Silver","Grey");
 		
+		ObservableList<String> modelAllList = FXCollections.observableArrayList("A1","A2","A3","A4","A5","A6","A7","A8","Camry","Corrola","Aurian","Echo","Crown","Mark"
+				,"Accord","Civic","Legend","Odysey","Insight","Seires 1","Series 2","Series 3","Series 4","Cima","180xs","200xs","720","Appolo","Astra","Brock");
+		
 		//ModelList
 		body_id.setItems(bodyList);
 		manufacture_id.setItems(manufactureList);
@@ -96,12 +99,13 @@ public class BuyerGUIController implements Initializable{
 		
 		Transmission_id.setItems(transmissionList);
 		color_id.setItems(colorList);
+		model_id.setItems(modelAllList);
+		model_id.setPromptText("Appolo");
 		
-		
-		manufacture_id.setPromptText("Audi");
-		body_id.setPromptText("SUV");
-		Transmission_id.setPromptText("AMT");
-		color_id.setPromptText("Red");
+		manufacture_id.setPromptText("No Select");
+		body_id.setPromptText("No Select");
+		Transmission_id.setPromptText("No Select");
+		color_id.setPromptText("No Select");
 		
 	}
 	public void setModelComboBox()
@@ -112,10 +116,7 @@ public class BuyerGUIController implements Initializable{
 		ObservableList<String> modelBmwList = FXCollections.observableArrayList("Seires 1","Series 2","Series 3","Series 4");
 		ObservableList<String> modelNissanList = FXCollections.observableArrayList("Cima","180xs","200xs","720");
 		ObservableList<String> modelHoldenList = FXCollections.observableArrayList("Appolo","Astra","Brock");
-		
-		ObservableList<String> modelAllList = FXCollections.observableArrayList("A1","A2","A3","A4","A5","A6","A7","A8","Camry","Corrola","Aurian","Echo","Crown","Mark"
-				,"Accord","Civic","Legend","Odysey","Insight","Seires 1","Series 2","Series 3","Series 4","Cima","180xs","200xs","720","Appolo","Astra","Brock");
-		
+	
 		
 		if(manufacture_id.getValue() == "Audi")
 		{
@@ -140,9 +141,6 @@ public class BuyerGUIController implements Initializable{
 		{
 			model_id.setItems(modelNissanList);
 			model_id.setPromptText("Cima");
-		}else if(manufacture_id.getValue() == null){
-			model_id.setItems(modelAllList);
-			model_id.setPromptText("Appolo");
 		}
 		
 	}
@@ -150,11 +148,6 @@ public class BuyerGUIController implements Initializable{
 
 
 
-	@Override
-	public void start(Stage arg0) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	
 }
