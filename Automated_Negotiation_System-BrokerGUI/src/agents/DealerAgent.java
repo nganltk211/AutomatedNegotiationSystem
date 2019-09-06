@@ -4,6 +4,10 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import gui.BuyerApplication;
+import gui.BuyerGui;
+import gui.DealerGUI;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -17,6 +21,8 @@ import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import javafx.application.Application;
+import javafx.application.Platform;
 import model.Car;
 import model.CarList;
 
@@ -29,6 +35,13 @@ public class DealerAgent extends Agent {
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hallo! Dealer-agent " + getAID().getName() + " is ready.");
+
+		// starts the GUI 
+		new Thread(() -> {
+			Platform.runLater(() -> {
+				DealerGUI guiDealer = new DealerGUI();
+			}); 
+		}).start();
 
 		DFAgentDescription template = new DFAgentDescription();
 		ServiceDescription sd = new ServiceDescription();
@@ -65,6 +78,7 @@ public class DealerAgent extends Agent {
 	 * The dealer is able to send a list of cars to broker.
 	 */
 	private class SendListOfCar extends OneShotBehaviour {
+		
 		@Override
 		public void action() {
 			System.out.println("Dealer : Trying to send a list of cars to Broker\n");

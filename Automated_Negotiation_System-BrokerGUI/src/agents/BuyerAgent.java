@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gui.BuyerGui;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -22,6 +23,7 @@ import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import javafx.application.Platform;
 import model.Car;
 import model.CarList;
 
@@ -36,6 +38,13 @@ public class BuyerAgent extends Agent {
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hallo! Buyer-agent " + getAID().getName() + " is ready.");
+
+		// starts the GUI
+		new Thread(() -> {
+			Platform.runLater(() -> {
+				BuyerGui guiBuyer = new BuyerGui();
+			});
+		}).start();
 
 		Object[] args = getArguments();
 		String manufacture = (String) args[0];
@@ -54,7 +63,7 @@ public class BuyerAgent extends Agent {
 
 		// using to find the AID of the broker agent
 		addBehaviour(new OneShotBehaviour() {
-			
+
 			@Override
 			public void action() {
 				sd.setType("car-broker");
@@ -127,7 +136,7 @@ public class BuyerAgent extends Agent {
 			}
 		}
 	}
-	
+
 	private class SendBackTheChoosenCarsToTheBroker extends OneShotBehaviour {
 
 		@Override
@@ -137,10 +146,9 @@ public class BuyerAgent extends Agent {
 			do {
 				System.out.println("Please choose one offer!");
 				choosenCar = readInt();
-			}
-			while (choosenCar > offerCarlist.size() || choosenCar < 1);
-			
-			listOfChoosenCars.add(offerCarlist.get(choosenCar - 1));	
+			} while (choosenCar > offerCarlist.size() || choosenCar < 1);
+
+			listOfChoosenCars.add(offerCarlist.get(choosenCar - 1));
 			System.out.println("Trying to send a choosen car to the broker\n");
 			ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
 			mess.addReceiver(brokerAgent);
@@ -153,20 +161,20 @@ public class BuyerAgent extends Agent {
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
 			}
-		}		
+		}
 	}
-	
+
 	private int readInt() {
-		try{
-		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-		String eingabe = "";
-		Integer string_to_int;
-		eingabe = input.readLine();
-		string_to_int = new Integer(eingabe);
-		return string_to_int.intValue();
-		} catch (Exception e){
+		try {
+			BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+			String eingabe = "";
+			Integer string_to_int;
+			eingabe = input.readLine();
+			string_to_int = new Integer(eingabe);
+			return string_to_int.intValue();
+		} catch (Exception e) {
 			System.err.println("Please give the right choice of car!");
-			return -2;			
+			return -2;
 		}
 	}
 }
