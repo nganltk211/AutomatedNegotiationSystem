@@ -21,11 +21,7 @@ public class BrokerController{
 	private Button buyer;
 	@FXML
 	private Button dealer;
-
 	
-	
-	
-		    
 	private int counterBuyer;
 	private int counterDealer;
 	private static ContainerController mainCtrl;
@@ -66,13 +62,6 @@ public class BrokerController{
 	@FXML
 	public void buttonDealerClick(ActionEvent event) {
 
-		Stage stage = new SellerGUI();
-        //stage.setScene(new Scene(root));  
-        stage.show();
-        Stage stage2 = (Stage) dealer.getScene().getWindow();
-        // do what you have to do
-        stage2.close();
-
 		// Create and start an agent of class DealerAgent
 		System.out.println("Starting up a DealerAgent...");
 		AgentController agentCtrl;
@@ -89,14 +78,7 @@ public class BrokerController{
 
 	@FXML
 	public void buttonBuyerClick(ActionEvent event) {
-
-		Stage stage = new BuyerGui();
-        //stage.setScene(new Scene(root));  
-        stage.show();
-        Stage stage2 = (Stage) buyer.getScene().getWindow();
-        // do what you have to do
-        stage2.close();
-
+		// Create and start an agent of class BuyerAgent
 		System.out.println("Starting up a BuyerAgent...");
 		AgentController agentCtrl;
 		try {

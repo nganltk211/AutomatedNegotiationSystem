@@ -8,11 +8,13 @@ public class Car {
 	private String transmission = "";
 	private String fuelType = "";
 	private int km;
-	private double price;
+	private double maxPrice;
 	private String bodyType = "";
 	private String color = "";
 	private int warranty;
 	private String agent = "";
+	private double minPrice;
+	private String moreDetails;
 
 	public Car(int carId) {
 		super();
@@ -78,12 +80,20 @@ public class Car {
 		this.km = km;
 	}
 
-	public double getPrice() {
-		return price;
+	public double getMaxPrice() {
+		return maxPrice;
 	}
 
-	public void setPrice(double price) {
-		this.price = price;
+	public void setMaxPrice(double maxPrice) {
+		this.maxPrice = maxPrice;
+	}
+
+	public double getMinPrice() {
+		return minPrice;
+	}
+
+	public void setMinPrice(double minPrice) {
+		this.minPrice = minPrice;
 	}
 
 	public String getBodyType() {
@@ -113,8 +123,15 @@ public class Car {
 	@Override
 	public String toString() {
 		return "Car [carId=" + carId + ", manufacture=" + manufacture + ", model=" + model + ", transmission="
-				+ transmission + ", fuelType=" + fuelType + ", km=" + km + ", price=" + price + ", bodyType=" + bodyType
-				+ ", color=" + color + ", warranty=" + warranty + ", agent=" + agent + "]";
+				+ transmission + ", fuelType=" + fuelType + ", km=" + km + ", minPrice="
+						+ minPrice + ", maxPrice=" + maxPrice + ", bodyType="
+				+ bodyType + ", color=" + color + ", warranty=" + warranty + ", agent=" + agent + "]" ;
+	}
+	
+	public String getMoreDetails() {
+		moreDetails = "Transmission: " + transmission + "\nFuel type: " + fuelType + "\nBody type: " + bodyType 
+					+ "\nColor: " + color + "\nWarranty: " + warranty;
+		return moreDetails;
 	}
 	
 }

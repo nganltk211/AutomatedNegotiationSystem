@@ -9,18 +9,19 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import model.Car;
+import model.CarList;
 
 public class ListBuyer_GUI extends Stage {
 
 	private FXMLLoader loader;
 
-	public ListBuyer_GUI(Car[] carList){
+	public ListBuyer_GUI(CarList offerCarlist){
 		ScrollPane sp = new ScrollPane();
 		VBox root = new VBox();
 		root.setSpacing(10);
 		root.setPadding(new Insets(10));
 		GridPane window = null;
-		for (Car car : carList) {
+		for (Car car : offerCarlist) {
 			loader = new FXMLLoader(getClass().getResource("CarInformation.fxml"));
 			try {
 				window = loader.load();

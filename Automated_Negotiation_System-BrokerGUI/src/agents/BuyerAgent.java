@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gui.BuyerGui;
+import gui.ListBuyer_GUI;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -42,21 +43,9 @@ public class BuyerAgent extends Agent {
 		// starts the GUI
 		new Thread(() -> {
 			Platform.runLater(() -> {
-				BuyerGui guiBuyer = new BuyerGui();
+				BuyerGui guiBuyer = new BuyerGui(this);
 			});
 		}).start();
-
-		Object[] args = getArguments();
-		String manufacture = (String) args[0];
-		String model = (String) args[1];
-		String bodyType = (String) args[2];
-		double maxPrice = Double.parseDouble((String) args[3]);
-		desiredCar = new Car(1);
-		desiredCar.setModel(model);
-		desiredCar.setManufacture(manufacture);
-		desiredCar.setPrice(maxPrice);
-		desiredCar.setBodyType(bodyType);
-		desiredCar.setAgent(this.getName());
 
 		DFAgentDescription template = new DFAgentDescription();
 		ServiceDescription sd = new ServiceDescription();
@@ -71,7 +60,6 @@ public class BuyerAgent extends Agent {
 				try {
 					DFAgentDescription[] result = DFService.search(myAgent, template);
 					brokerAgent = result[0].getName();
-					addBehaviour(new RequestInfoOfDesiredCar());
 				} catch (FIPAException fe) {
 					fe.printStackTrace();
 				}
@@ -84,27 +72,6 @@ public class BuyerAgent extends Agent {
 	protected void takeDown() {
 		// Printout a dismissal message
 		System.out.println("Buyer-agent " + getAID().getName() + " terminating.");
-	}
-
-	// To request the broker to send a list of possible cars
-	private class RequestInfoOfDesiredCar extends OneShotBehaviour {
-
-		@Override
-		public void action() {
-			System.out.println("Buyer: Trying to send a car to the broker:\n");
-			ACLMessage mess = new ACLMessage(ACLMessage.REQUEST);
-			mess.addReceiver(brokerAgent);
-
-			String jsonInString;
-			try {
-				jsonInString = o.writeValueAsString(desiredCar);
-				mess.setContent(jsonInString);
-				mess.setConversationId("car-trade-broker-buyer");
-				myAgent.send(mess);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	private class OfferFromBroker extends CyclicBehaviour {
@@ -122,6 +89,11 @@ public class BuyerAgent extends Agent {
 					try {
 						offerCarlist = o.readValue(content, CarList.class);
 						System.out.println(offerCarlist);
+						new Thread(() -> {
+							Platform.runLater(() -> {
+								ListBuyer_GUI listCarGUI = new ListBuyer_GUI(offerCarlist);
+							});
+						}).start();
 						addBehaviour(new SendBackTheChoosenCarsToTheBroker());
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
@@ -176,5 +148,28 @@ public class BuyerAgent extends Agent {
 			System.err.println("Please give the right choice of car!");
 			return -2;
 		}
+	}
+	
+	public void requestInfoOfDesiredCar(Car desiredCar) {
+		// To request the broker to send a list of possible cars
+		addBehaviour(new OneShotBehaviour() {
+			@Override
+			public void action() {
+				System.out.println("Buyer: Trying to send a car to the broker:\n");
+				ACLMessage mess = new ACLMessage(ACLMessage.REQUEST);
+				mess.addReceiver(brokerAgent);
+
+				String jsonInString;
+				try {
+					jsonInString = o.writeValueAsString(desiredCar);
+					mess.setContent(jsonInString);
+					mess.setConversationId("car-trade-broker-buyer");
+					myAgent.send(mess);
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}		
+			}
+			
+		});
 	}
 }

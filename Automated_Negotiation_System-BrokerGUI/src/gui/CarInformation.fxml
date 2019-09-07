@@ -19,9 +19,9 @@
             <Font name="System Bold" size="13.0" fx:id="x1" />
           </font>
         </Label>
-        <Label id="manufactureId" fx:id="manufacture" text="Audi" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <Label id="manufactureId" fx:id="manufacture" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="0" />
         <Label font="$x1" text="Model:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-        <Label id="modelId" fx:id="model" text="A3" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <Label id="modelId" fx:id="model" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="1" />
         <Label text="Engine" GridPane.columnIndex="0" GridPane.rowIndex="2">
           <font>
             <Font name="System Bold Italic" size="16.0" fx:id="x2" />
@@ -31,16 +31,16 @@
           </textFill>
         </Label>
         <Label font="$x1" text="Transmission:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-        <Label text="Automatic" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <Label fx:id="transmission" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="3" />
         <Label font="$x1" text="Fuel Type:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-        <Label text="Diesel" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <Label fx:id="fuelType" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="4" />
         <Label font="$x1" text="Mileage (km):" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-        <Label text="200" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+        <Label fx:id="km" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="5" />
         <Label font="$x2" text="Style" textFill="$x5" GridPane.columnIndex="0" GridPane.rowIndex="6" />
         <Label font="$x1" text="Body type:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
-        <Label text="SUV" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+        <Label fx:id="bodytype" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="7" />
         <Label font="$x1" text="Colour:" GridPane.columnIndex="0" GridPane.rowIndex="8" />
-        <Label text="White" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+        <Label fx:id="color" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="8" />
       </children>
       <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="148.0" minWidth="10.0" prefWidth="141.0" />
@@ -65,13 +65,13 @@
             <Font name="System Bold Italic" size="20.0" fx:id="x3" />
           </font>
         </Label>
-        <Label text="20000" GridPane.columnIndex="1" GridPane.rowIndex="0">
+        <Label fx:id="price" text="" GridPane.columnIndex="1" GridPane.rowIndex="0">
           <font>
             <Font size="20.0" fx:id="x4" />
           </font>
         </Label>
         <Label font="$x3" text="Warranty (Month):" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-        <Label font="$x4" text="24" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <Label fx:id="warranty" font="$x4" text="No details" GridPane.columnIndex="1" GridPane.rowIndex="1" />
         <Button fx:id="btn_negotiate" mnemonicParsing="false" onAction="#negotiate" prefHeight="22.0" prefWidth="122.0" text="Negotiate" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
       </children>
       <columnConstraints>

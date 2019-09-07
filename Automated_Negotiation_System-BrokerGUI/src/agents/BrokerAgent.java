@@ -181,30 +181,32 @@ public class BrokerAgent extends Agent {
 	private List<Car> getListOfPossibleCars(Car desiredCar){
 		List<Car> filterList = new CarList();
 		filterList.addAll(catalog);
-		if (!desiredCar.getManufacture().trim().equals("")) {			
+		if (desiredCar.getManufacture() != null) {			
 			filterList.retainAll(catalog.stream().filter(car -> car.getManufacture().equals(desiredCar.getManufacture())).collect(Collectors.toList()));
 		}
-		if (!desiredCar.getModel().trim().equals("")) {
+		if (desiredCar.getModel() != null) {
 			filterList.retainAll(catalog.stream().filter(car -> car.getModel().equals(desiredCar.getModel())).collect(Collectors.toList()));
 		}
-		if (!desiredCar.getTransmission().trim().equals("")) {
+		if (desiredCar.getTransmission() != null) {
 			filterList.retainAll(catalog.stream().filter(car -> car.getTransmission().equals(desiredCar.getTransmission())).collect(Collectors.toList()));
 		}
-		if (!desiredCar.getBodyType().trim().equals("")) {
+		if (desiredCar.getBodyType() != null) {
 			filterList.retainAll(catalog.stream().filter(car -> car.getBodyType().equals(desiredCar.getBodyType())).collect(Collectors.toList()));
 		}
-		if (!desiredCar.getFuelType().trim().equals("")) {
+		if (desiredCar.getFuelType() != null) {
 			filterList.retainAll(catalog.stream().filter(car -> car.getFuelType().equals(desiredCar.getFuelType())).collect(Collectors.toList()));
 		}
-		if (!desiredCar.getColor().trim().equals("")) {
+		if (desiredCar.getColor() != null) {
 			filterList.retainAll(catalog.stream().filter(car -> car.getColor().equals(desiredCar.getColor())).collect(Collectors.toList()));
 		}
 		
+		List<Car> endList = new CarList();
 		for (Car c : filterList) {
-			if (c.getPrice() > desiredCar.getPrice()) {
-				filterList.remove(c);
+			if (c.getMinPrice() < desiredCar.getMaxPrice()) {
+				endList.add(c);
 			}
 		}
-		return filterList;
+		
+		return endList;
 	}
 }

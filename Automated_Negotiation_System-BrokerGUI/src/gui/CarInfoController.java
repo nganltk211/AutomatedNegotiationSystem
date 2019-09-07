@@ -16,6 +16,21 @@ public class CarInfoController {
 	@FXML
 	private Label model;
 	@FXML
+	private Label transmission;
+	@FXML
+	private Label fuelType;
+	@FXML
+	private Label km;
+	@FXML
+	private Label bodytype;
+	@FXML
+	private Label color;
+	@FXML
+	private Label price;
+	@FXML
+	private Label warranty;
+	
+	@FXML
 	private Button btn_negotiate;
 	@FXML
 	private ImageView imageView;
@@ -35,7 +50,14 @@ public class CarInfoController {
 		File file = new File("./image/test.jpg");
         Image image = new Image(file.toURI().toString());
         imageView.setImage(image);
-		//manufacture.setText(car.getManufacture());
-		//model.setText(car.getModel());
+		manufacture.setText(car.getManufacture());
+		model.setText(car.getModel());
+		transmission.setText(car.getTransmission());
+		fuelType.setText(car.getFuelType());
+		km.setText(String.valueOf(car.getKm()));
+		bodytype.setText(car.getBodyType());
+		color.setText(car.getColor());
+		warranty.setText(String.valueOf(car.getWarranty()));
+		price.setText(String.valueOf(car.getMaxPrice()));
 	}
 }
