@@ -1,32 +1,25 @@
 package gui;
-
 import java.io.IOException;
-import java.net.URL;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 
-public class BuyerGui extends Stage{
-
+public class SellerGUI extends Stage {
 	private FXMLLoader loader;
 
-	public BuyerGui(){
+	public SellerGUI(){
 		Parent window = null;
-		loader = new FXMLLoader(getClass().getResource("BuyerGUI.fxml"));
-		String css = BuyerGui.class.getResource("GUI.css").toExternalForm();
+		loader = new FXMLLoader(getClass().getResource("Seller.fxml"));
 		try {
 			window = loader.load();
 		} catch (IOException e) {
 			System.err.println("Error by loading fxml-File");
 		}
-		this.setTitle("Buyer Agent");
+		this.setTitle("Seller Agent");
 		Scene scene = new Scene(window);
 		this.setScene(scene);
 		this.show();
 	}
-
-	
 }

@@ -1,14 +1,11 @@
 package gui;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import model.Car;
 
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
 import java.io.IOException;
@@ -23,7 +20,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.ComboBox;
 
 import javafx.scene.control.TextArea;
-import model.Car;
 
 
 public class BuyerGUIController implements Initializable{
