@@ -35,7 +35,7 @@ public class BuyerGUIController implements Initializable {
 	private ComboBox<String> color_id;
 	@FXML
 	private ComboBox<String> fueltype_id;
-	
+
 	@FXML
 	private Text Trans;
 	@FXML
@@ -58,7 +58,7 @@ public class BuyerGUIController implements Initializable {
 	// Event Listener on Button[#search_id].onAction
 	@FXML
 	public void buttonSearchClick(ActionEvent event) throws IOException {
-		Car searchCar = new Car(0);	
+		Car searchCar = new Car(0);
 		searchCar.setManufacture(manufacture_id.getValue());
 		searchCar.setModel(model_id.getValue());
 		searchCar.setTransmission(transmission_id.getValue());
@@ -66,9 +66,9 @@ public class BuyerGUIController implements Initializable {
 		searchCar.setColor(color_id.getValue());
 		searchCar.setFuelType(fueltype_id.getValue());
 		searchCar.setMaxPrice(Double.parseDouble(max_id.getText()));
-		searchCar.setMinPrice(Double.parseDouble(min_id.getText()));	
+		searchCar.setMinPrice(Double.parseDouble(min_id.getText()));
 		buyerAgent.requestInfoOfDesiredCar(searchCar);
-		((Node)(event.getSource())).getScene().getWindow().hide(); 
+		((Node) (event.getSource())).getScene().getWindow().hide();
 	}
 
 	public void ComboChanged(ActionEvent event) {
@@ -82,7 +82,7 @@ public class BuyerGUIController implements Initializable {
 		ObservableList<String> transmissionList = FXCollections.observableArrayList("AMT", "Auto", "Manual");
 		ObservableList<String> colorList = FXCollections.observableArrayList("Red", "Blue", "White", "Black", "Yellow",
 				"Silver", "Grey");
-		ObservableList<String> fuelList = FXCollections.observableArrayList("Diesel", "Gas","Petrol");
+		ObservableList<String> fuelList = FXCollections.observableArrayList("Diesel", "Gas", "Petrol");
 		ObservableList<String> modelAllList = FXCollections.observableArrayList("A1", "A2", "A3", "A4", "A5", "A6",
 				"A7", "A8", "Camry", "Corrola", "Aurian", "Echo", "Crown", "Mark", "Accord", "Civic", "Legend",
 				"Odysey", "Insight", "Seires 1", "Series 2", "Series 3", "Series 4", "Cima", "180xs", "200xs", "720",
@@ -95,7 +95,7 @@ public class BuyerGUIController implements Initializable {
 		fueltype_id.setItems(fuelList);
 		color_id.setItems(colorList);
 		model_id.setItems(modelAllList);
-		
+
 		model_id.setPromptText("Appolo");
 		manufacture_id.setPromptText("No Select");
 		body_id.setPromptText("No Select");
