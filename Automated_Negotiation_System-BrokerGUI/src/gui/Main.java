@@ -3,7 +3,6 @@ package gui;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-
 	public class Main extends Application{
 
 		public static void main(String[] args) throws InterruptedException {				
@@ -19,6 +18,7 @@ import javafx.stage.Stage;
 			listCars[1].setManufacture("Test2");
 			listCars[2] = new Car(3);
 			primaryStage = new ListBuyer_GUI(listCars);*/
+
 			primaryStage = new Broker_GUI();
 		}
 	}
