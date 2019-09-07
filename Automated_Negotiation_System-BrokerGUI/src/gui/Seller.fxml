@@ -7,11 +7,10 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.Bloom?>
-<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<Pane id="seller_form" blendMode="DARKEN" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="442.0" prefWidth="562.0" style="-fx-background-color: Aqua; -fx-background-radius: 50; -fx-background-size: 2;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.SellerController">
+<Pane id="seller_form" blendMode="DARKEN" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="442.0" prefWidth="562.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.SellerController">
    <children>
       <Label layoutX="37.0" layoutY="68.0" prefHeight="25.0" text="Manufacture">
          <effect>
@@ -29,10 +28,7 @@
       <Label layoutX="41.0" layoutY="284.0" prefHeight="25.0" text="Warranty Period" />
       <Label layoutX="40.0" layoutY="315.0" prefHeight="25.0" text="Price AUD" />
       <Label layoutX="40.0" layoutY="342.0" prefHeight="25.0" text="Car Rating" />
-      <ComboBox id="Manufacture" fx:id="manufacture_id" layoutX="144.0" layoutY="63.0" nodeOrientation="LEFT_TO_RIGHT" onAction="#onManufactiureChanged" opacity="0.89" prefHeight="35.0" prefWidth="150.0" style="-fx-background-radius: 100; -fx-background-color: white; -fx-border-radius: 100; -fx-blend-mode: transparent; -fx-border-width: 2; -fx-background-position: 100; -fx-border-width: 1000; -fx-max-height: 100;">
-         <effect>
-            <DropShadow />
-         </effect>
+      <ComboBox id="Manufacture" fx:id="manufacture_id" layoutX="144.0" layoutY="63.0" nodeOrientation="LEFT_TO_RIGHT" onAction="#onManufactiureChanged" opacity="0.89" prefHeight="35.0" prefWidth="150.0">
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
