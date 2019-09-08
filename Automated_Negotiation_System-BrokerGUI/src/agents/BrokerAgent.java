@@ -202,7 +202,7 @@ public class BrokerAgent extends Agent {
 		
 		List<Car> endList = new CarList();
 		for (Car c : filterList) {
-			if (c.getMinPrice() < desiredCar.getMaxPrice()) {
+			if (c.getPrice() <= desiredCar.getPrice()) {
 				endList.add(c);
 			}
 		}

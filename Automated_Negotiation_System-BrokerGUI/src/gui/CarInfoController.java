@@ -5,6 +5,7 @@ import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -29,20 +30,15 @@ public class CarInfoController {
 	private Label price;
 	@FXML
 	private Label warranty;
-	
 	@FXML
-	private Button btn_negotiate;
+	private CheckBox checkbox;
 	@FXML
 	private ImageView imageView;
+	
 	private Car car;
 	
 	public CarInfoController() {
 		super();
-	}
-	
-	@FXML
-	public void negotiate(ActionEvent event) {
-		System.out.println(car.getManufacture());
 	}
 	
 	public void setCar(Car car) {
@@ -58,6 +54,14 @@ public class CarInfoController {
 		bodytype.setText(car.getBodyType());
 		color.setText(car.getColor());
 		warranty.setText(String.valueOf(car.getWarranty()));
-		price.setText(String.valueOf(car.getMaxPrice()));
+		price.setText(String.valueOf(car.getPrice()));
+	}
+	
+	public Car getCar() {
+		return car;
+	}
+	
+	public boolean getValueChoosenCB() {
+		return checkbox.isSelected();
 	}
 }

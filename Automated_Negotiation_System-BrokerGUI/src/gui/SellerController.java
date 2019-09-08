@@ -42,8 +42,6 @@ public class SellerController implements Initializable {
 	@FXML
 	private TextField km_id;
 	@FXML
-	private TextField priceMaxId;
-	@FXML
 	private Button done_id;
 	@FXML
 	private Button cancel_id;
@@ -59,9 +57,7 @@ public class SellerController implements Initializable {
 	@FXML
 	private TableColumn<Car, String> model_column;
 	@FXML
-	private TableColumn<Car, Double> maxprice_column;
-	@FXML
-	private TableColumn<Car, Double> minprice_column;
+	private TableColumn<Car, Double> price_column;
 	@FXML
 	private TableColumn<Car, String> details_column;
 	@FXML
@@ -164,8 +160,7 @@ public class SellerController implements Initializable {
 		if (warrantyid.getValue() != null) {
 			newCar.setWarranty(Integer.parseInt(warrantyid.getValue()));
 		}
-		newCar.setMaxPrice(Double.parseDouble(priceMaxId.getText()));
-		newCar.setMinPrice(Double.parseDouble(priceMin.getText()));
+		newCar.setPrice(Double.parseDouble(priceMin.getText()));
 		listOfCars.add(newCar);
 		ObservableList<Car> obList = FXCollections.observableArrayList(listOfCars);
 		tableViewID.setItems(obList);
@@ -185,8 +180,7 @@ public class SellerController implements Initializable {
 		nr_column.setCellValueFactory(new PropertyValueFactory<Car, Integer>("carId"));
 		manu_column.setCellValueFactory(new PropertyValueFactory<Car, String>("manufacture"));
 		model_column.setCellValueFactory(new PropertyValueFactory<Car, String>("model"));
-		maxprice_column.setCellValueFactory(new PropertyValueFactory<Car, Double>("maxPrice"));
-		minprice_column.setCellValueFactory(new PropertyValueFactory<Car, Double>("minPrice"));
+		price_column.setCellValueFactory(new PropertyValueFactory<Car, Double>("price"));
 		details_column.setCellValueFactory(new PropertyValueFactory<Car, String>("moreDetails"));
 	}
 

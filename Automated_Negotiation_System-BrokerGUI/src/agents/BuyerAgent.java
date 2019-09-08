@@ -91,12 +91,10 @@ public class BuyerAgent extends Agent {
 						System.out.println(offerCarlist);
 						new Thread(() -> {
 							Platform.runLater(() -> {
-								ListBuyer_GUI listCarGUI = new ListBuyer_GUI(offerCarlist);
+								ListBuyer_GUI listCarGUI = new ListBuyer_GUI(offerCarlist,myAgent);
 							});
 						}).start();
-						addBehaviour(new SendBackTheChoosenCarsToTheBroker());
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 					break;
@@ -109,31 +107,34 @@ public class BuyerAgent extends Agent {
 		}
 	}
 
-	private class SendBackTheChoosenCarsToTheBroker extends OneShotBehaviour {
+	public void sendBackTheChoosenCarsToTheBroker(CarList listOfChoosenCars) {
+		addBehaviour(new OneShotBehaviour() {
 
-		@Override
-		public void action() {
-			CarList listOfChoosenCars = new CarList();
-			int choosenCar;
-			do {
-				System.out.println("Please choose one offer!");
-				choosenCar = readInt();
-			} while (choosenCar > offerCarlist.size() || choosenCar < 1);
-
-			listOfChoosenCars.add(offerCarlist.get(choosenCar - 1));
-			System.out.println("Trying to send a choosen car to the broker\n");
-			ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
-			mess.addReceiver(brokerAgent);
-			String jsonInString;
-			try {
-				jsonInString = o.writeValueAsString(listOfChoosenCars);
-				mess.setContent(jsonInString);
-				mess.setConversationId("car-trade-broker-buyer");
-				myAgent.send(mess);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
+			@Override
+			public void action() {
+//				CarList listOfChoosenCars = new CarList();
+//				int choosenCar;
+//				do {
+//					System.out.println("Please choose one offer!");
+//					choosenCar = readInt();
+//				} while (choosenCar > list.size() || choosenCar < 1);
+//
+//				listOfChoosenCars.add(offerCarlist.get(choosenCar - 1));
+				System.out.println("Trying to send a choosen car to the broker\n");
+				ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
+				mess.addReceiver(brokerAgent);
+				String jsonInString;
+				try {
+					jsonInString = o.writeValueAsString(listOfChoosenCars);
+					mess.setContent(jsonInString);
+					mess.setConversationId("car-trade-broker-buyer");
+					myAgent.send(mess);
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}
 			}
-		}
+			
+		});
 	}
 
 	private int readInt() {

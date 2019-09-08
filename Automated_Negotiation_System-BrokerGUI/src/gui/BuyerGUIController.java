@@ -6,7 +6,6 @@ import model.Car;
 
 import javafx.scene.Node;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import javafx.scene.control.Button;
 
 import java.io.IOException;
@@ -20,7 +19,7 @@ import javafx.event.ActionEvent;
 
 import javafx.scene.control.ComboBox;
 
-import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 
 public class BuyerGUIController implements Initializable {
 	@FXML
@@ -39,9 +38,7 @@ public class BuyerGUIController implements Initializable {
 	@FXML
 	private Text Trans;
 	@FXML
-	private TextArea min_id;
-	@FXML
-	private TextArea max_id;
+	private TextField max_id;
 	@FXML
 	private Button search_id;
 
@@ -65,8 +62,7 @@ public class BuyerGUIController implements Initializable {
 		searchCar.setBodyType(body_id.getValue());
 		searchCar.setColor(color_id.getValue());
 		searchCar.setFuelType(fueltype_id.getValue());
-		searchCar.setMaxPrice(Double.parseDouble(max_id.getText()));
-		searchCar.setMinPrice(Double.parseDouble(min_id.getText()));
+		searchCar.setPrice(Double.parseDouble(max_id.getText()));
 		buyerAgent.requestInfoOfDesiredCar(searchCar);
 		((Node) (event.getSource())).getScene().getWindow().hide();
 	}
