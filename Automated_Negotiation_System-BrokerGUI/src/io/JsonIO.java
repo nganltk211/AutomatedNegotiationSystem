@@ -171,7 +171,7 @@ public class JsonIO {
 		String json = null;
 		
 		//Check is the file empty or not if not read json to car class
-		if (!line.equals("0")){
+		if (line != null){
 			list = jsonToClass(line);
 			listCount = list.size();
 		}//If it is empty change CarId and add it to Car List 
@@ -186,7 +186,7 @@ public class JsonIO {
 		//Close File reader
 		closeFileReader();
 		//If the file is not empty add new cars to Car List
-		if (!line.equals("0")) {
+		if (line != null) {
 			tempList = jsonToClass(carList);
 			
 			int i = listCount;
