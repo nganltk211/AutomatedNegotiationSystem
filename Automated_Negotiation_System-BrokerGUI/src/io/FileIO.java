@@ -144,7 +144,12 @@ public class FileIO {
 		
 		//Open file reader and read current length of the file
 		openFileReader();
-		int listCount = Integer.parseInt(readLine());
+		
+		int listCount = 0;
+		line = readLine();
+		if(line != null) {
+			listCount = Integer.parseInt(line);
+		}
 		String newListCount = Integer.toString(listCount + length);
 		
 		//Read out all current lines in file
