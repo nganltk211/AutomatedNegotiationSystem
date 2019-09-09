@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.JsonIO;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.DFService;
@@ -25,7 +26,8 @@ public class BrokerAgent extends Agent {
 	private static final long serialVersionUID = -1539612606764155406L;
 	private ObjectMapper o = new ObjectMapper();
 	private CarList catalog = new CarList();
-
+	private JsonIO JsonDB = new JsonIO("./DataBase/JsonDB.csv");
+	
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hallo! Broker-agent " + getAID().getName() + " is ready.");
@@ -75,6 +77,8 @@ public class BrokerAgent extends Agent {
 			if (msg1 != null) {
 				// Message received. Process it
 				String carlist = msg1.getContent();
+				JsonDB.writeToFile(carlist);
+				/*
 				try {
 					//convert the list of cars in Json-form to the Object CarList
 					CarList list = o.readValue(carlist, CarList.class);
@@ -86,7 +90,7 @@ public class BrokerAgent extends Agent {
 					e.printStackTrace();
 				} catch (IOException e) {
 					e.printStackTrace();
-				}
+				}*/
 			} else {
 				block();
 			}
@@ -104,6 +108,9 @@ public class BrokerAgent extends Agent {
 			ACLMessage msg2 = myAgent.receive(mt2);
 			
 			if (msg2 != null) {
+				//Load catalog
+				CarList list = JsonDB.readFile();
+				catalog = list;
 				// Message received. Process it
 				String desiredCarJson = msg2.getContent();
 				try {
