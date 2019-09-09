@@ -12,24 +12,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import model.Car;
 import model.CarList;
 
 /**
  * The class to support the file reading.
  */
-public class FileIO {
+public class JsonIO {
 
 	protected BufferedReader csvReader= null;
 	protected FileWriter csvWriter = null;
 	private String path;
+	private ObjectMapper oJsonMapper = new ObjectMapper();
 	/**
 	 * Method to open a text file.
 	 * @param path : File path.
 	 * @return true, if successful.
 	 */
 	
-	public FileIO(String setpath){
+	public JsonIO(String setpath){
 		path = setpath;
 	}
 	
@@ -89,6 +95,7 @@ public class FileIO {
 	 * @return context of the line.
 	 */
 	
+	
 	private String readLine() {
 		String line = null;
 		
@@ -101,29 +108,6 @@ public class FileIO {
 		return line;
 	}
 	
-	private ArrayList<String> spliter(String row){
-		ArrayList<String> list = new ArrayList<String>(Arrays.asList(row.split(" , ")));
-		return list;
-	}
-	
-	public ArrayList<List<String>> readFileToArray() {
-		openFileReader();
-		ArrayList<List<String>> rows = new ArrayList<List<String>>();
-		String line = null;
-		int listCount = Integer.parseInt(readLine());
-		
-		if (listCount != 0) {
-			
-			while((line = readLine()) != null) {
-				rows.add(spliter(line));
-				System.out.println("TL : " + line);
-			}
-		}		
-		
-		closeFileReader();
-		return rows;
-	}
-	
 	private void writeLine(String line) {
 		
 		try {
@@ -134,49 +118,92 @@ public class FileIO {
 		}
 	}
 	
+	private CarList jsonToClass(String carList) {
+		CarList list = null;
+		try {
+			list = oJsonMapper.readValue(carList, CarList.class);
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return list;
+	}
 	
-	public void writeToFile(ArrayList<Car> carList) {
-		int length = carList.size();
+	private String classToJson(CarList list) {
+		String json = null;
+		try {
+			json = oJsonMapper.writeValueAsString(list);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return json;
+	}
+	
+	public CarList readFile() {
 		String line = null;
-		ArrayList<String> rows = new ArrayList<String>();
-		
-		System.out.println("T0");
-		
-		//Open file reader and read current length of the file
+		CarList list = null;
 		openFileReader();
-		int listCount = Integer.parseInt(readLine());
-		String newListCount = Integer.toString(listCount + length);
+		try {
+			line = csvReader.readLine();
+			list = jsonToClass(line);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		closeFileReader();
+		return list;
+	}
+	
+	public void writeToFile(String carList) {
 		
-		//Read out all current lines in file
-		if (listCount != 0) {
-			System.out.println("T3");
-			while((line = readLine()) != null) {
-				rows.add(line);
-				System.out.println("TL : " + line);
+		openFileReader();
+		int listCount = 0;
+		CarList list = null;
+		CarList tempList = null;
+		String line = readLine();
+		String json = null;
+		
+		//Check is the file empty or not if not read json to car class
+		if (!line.equals("0")){
+			list = jsonToClass(line);
+			listCount = list.size();
+		}//If it is empty change CarId and add it to Car List 
+		else {
+			list = jsonToClass(carList);
+			int i = 0;
+			for(Car car : list) {
+				car.setCarId(i);
+				i++;
+			}
+		}
+		//Close File reader
+		closeFileReader();
+		//If the file is not empty add new cars to Car List
+		if (!line.equals("0")) {
+			tempList = jsonToClass(carList);
+			
+			int i = listCount;
+			for(Car car : tempList) {
+				car.setCarId(i);
+				i++;
+				list.add(car);
 			}
 		}
 		
-		//Add new lines to the ArrayList
-		int l = 0;
-		for(Car car : carList) {
-			l++;
-			rows.add(Integer.toString(listCount + l) + "," + car.toString());
-		}
+		//Translate Car Listin to json
+		json = classToJson(list);
 		
-		//Close File Reader
-		closeFileReader();
-		//Open File Writer 
 		openFileWriter();
-		
-		//Write new length to the file
-		writeLine(newListCount + "\n");
-		
-		//Write list back to file
-		for(String row : rows) {
-			writeLine(row + "\n");
-		}
-		
-		//Close File writer
+		//Write to file
+		writeLine(json);
 		closeFileWriter();
+		
 	}
 }
