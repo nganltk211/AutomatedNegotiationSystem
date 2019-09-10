@@ -25,20 +25,22 @@ import model.CarList;
  */
 public class JsonIO {
 
-	protected BufferedReader csvReader= null;
+	protected BufferedReader csvReader = null;
 	protected FileWriter csvWriter = null;
 	private String path;
 	private ObjectMapper oJsonMapper = new ObjectMapper();
+
 	/**
 	 * Method to open a text file.
-	 * @param path : File path.
+	 * 
+	 * @param path
+	 *            : File path.
 	 * @return true, if successful.
 	 */
-	
-	public JsonIO(String setpath){
+	public JsonIO(String setpath) {
 		path = setpath;
 	}
-	
+
 	private boolean openFileReader() {
 		try {
 			try {
@@ -53,11 +55,10 @@ public class JsonIO {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Method to open a text file writer.
 	 */
-	
 	private void openFileWriter() {
 		try {
 			csvWriter = new FileWriter(path);
@@ -77,7 +78,6 @@ public class JsonIO {
 			System.err.println("Error when closing the text file");
 		}
 	}
-	
 
 	/**
 	 * Method to close the text file writer.
@@ -89,16 +89,15 @@ public class JsonIO {
 			System.err.println("Error when closing the text file");
 		}
 	}
-	
+
 	/**
-	 * Method to read a line of the text file and return it. 
+	 * Method to read a line of the text file and return it.
+	 * 
 	 * @return context of the line.
 	 */
-	
-	
 	private String readLine() {
 		String line = null;
-		
+
 		try {
 			line = csvReader.readLine();
 		} catch (IOException e) {
@@ -107,9 +106,9 @@ public class JsonIO {
 		}
 		return line;
 	}
-	
+
 	private void writeLine(String line) {
-		
+
 		try {
 			csvWriter.append(line);
 		} catch (IOException e) {
@@ -117,7 +116,7 @@ public class JsonIO {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private CarList jsonToClass(String carList) {
 		CarList list = null;
 		try {
@@ -134,7 +133,7 @@ public class JsonIO {
 		}
 		return list;
 	}
-	
+
 	private String classToJson(CarList list) {
 		String json = null;
 		try {
@@ -145,14 +144,16 @@ public class JsonIO {
 		}
 		return json;
 	}
-	
+
 	public CarList readFile() {
 		String line = null;
 		CarList list = null;
 		openFileReader();
 		try {
 			line = csvReader.readLine();
-			list = jsonToClass(line);
+			if (line != null) {
+				list = jsonToClass(line);
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -160,50 +161,49 @@ public class JsonIO {
 		closeFileReader();
 		return list;
 	}
-	
+
 	public void writeToFile(String carList) {
-		
+
 		openFileReader();
 		int listCount = 0;
 		CarList list = null;
 		CarList tempList = null;
 		String line = readLine();
 		String json = null;
-		
-		//Check is the file empty or not if not read json to car class
-		if (line != null){
+
+		// Check is the file empty or not if not read json to car class
+		if (line != null) {
 			list = jsonToClass(line);
 			listCount = list.size();
-		}//If it is empty change CarId and add it to Car List 
-		else {
+		} else { // If it is empty change CarId and add it to Car List
 			list = jsonToClass(carList);
 			int i = 0;
-			for(Car car : list) {
+			for (Car car : list) {
 				car.setCarId(i);
 				i++;
 			}
 		}
-		//Close File reader
+		// Close File reader
 		closeFileReader();
-		//If the file is not empty add new cars to Car List
+		// If the file is not empty add new cars to Car List
 		if (line != null) {
 			tempList = jsonToClass(carList);
-			
+
 			int i = listCount;
-			for(Car car : tempList) {
+			for (Car car : tempList) {
 				car.setCarId(i);
 				i++;
 				list.add(car);
 			}
 		}
-		
-		//Translate Car Listin to json
+
+		// Translate Car Listin to json
 		json = classToJson(list);
-		
+
 		openFileWriter();
-		//Write to file
+		// Write to file
 		writeLine(json);
 		closeFileWriter();
-		
+
 	}
 }

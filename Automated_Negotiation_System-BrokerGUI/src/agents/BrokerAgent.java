@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.FileIO;
 import io.JsonIO;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -26,7 +27,7 @@ public class BrokerAgent extends Agent {
 	private static final long serialVersionUID = -1539612606764155406L;
 	private ObjectMapper o = new ObjectMapper();
 	private CarList catalog = new CarList();
-	private JsonIO JsonDB = new JsonIO("./DataBase/JsonDB.txt");
+	private JsonIO jsonDB = new JsonIO("./DataBase/JsonDB.txt");
 	
 	protected void setup() {
 		// Printout a welcome message
@@ -77,7 +78,7 @@ public class BrokerAgent extends Agent {
 			if (msg1 != null) {
 				// Message received. Process it
 				String carlist = msg1.getContent();
-				JsonDB.writeToFile(carlist);
+				jsonDB.writeToFile(carlist);
 				/*
 				try {
 					//convert the list of cars in Json-form to the Object CarList
@@ -109,8 +110,10 @@ public class BrokerAgent extends Agent {
 			
 			if (msg2 != null) {
 				//Load catalog
-				CarList list = JsonDB.readFile();
-				catalog = list;
+				CarList list = jsonDB.readFile();
+				if (list != null ) {
+					catalog.addAll(list);
+				}
 				// Message received. Process it
 				String desiredCarJson = msg2.getContent();
 				try {
@@ -209,7 +212,7 @@ public class BrokerAgent extends Agent {
 		
 		List<Car> endList = new CarList();
 		for (Car c : filterList) {
-			if (c.getPrice() <= desiredCar.getPrice()) {
+			if (c.getPrice() <= desiredCar.getPrice() || desiredCar.getPrice() == 0) {
 				endList.add(c);
 			}
 		}

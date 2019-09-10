@@ -50,8 +50,7 @@ public class FileIO {
 	
 	/**
 	 * Method to open a text file writer.
-	 */
-	
+	 */	
 	private void openFileWriter() {
 		try {
 			csvWriter = new FileWriter(path);
@@ -88,7 +87,6 @@ public class FileIO {
 	 * Method to read a line of the text file and return it. 
 	 * @return context of the line.
 	 */
-	
 	private String readLine() {
 		String line = null;
 		
@@ -124,8 +122,7 @@ public class FileIO {
 		return rows;
 	}
 	
-	private void writeLine(String line) {
-		
+	private void writeLine(String line) {	
 		try {
 			csvWriter.append(line);
 		} catch (IOException e) {
@@ -135,7 +132,7 @@ public class FileIO {
 	}
 	
 	
-	public void writeToFile(ArrayList<Car> carList) {
+	public void writeToFile(CarList carList) {
 		int length = carList.size();
 		String line = null;
 		ArrayList<String> rows = new ArrayList<String>();

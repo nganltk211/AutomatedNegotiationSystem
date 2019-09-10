@@ -1,4 +1,4 @@
-42
+44
 1,,D1@192.168.41.1:1099/JADE,Audi,A2,,,0,4000.0,SUV,,0
 2,,D1@192.168.41.1:1099/JADE,Honda,A3,,,0,2000.0,SUV,,0
 3,,D1@192.168.41.1:1099/JADE,Honda,A4,,,0,2000.0,Sedan,,0
@@ -41,3 +41,5 @@
 40,,D9@192.168.41.1:1099/JADE,Audi,A2,,,0,4000.0,SUV,,0
 41,,D9@192.168.41.1:1099/JADE,Honda,A3,,,0,2000.0,SUV,,0
 42,,D9@192.168.41.1:1099/JADE,Honda,A4,,,0,2000.0,Sedan,,0
+43,Car [carId=1, manufacture=Audi, model=A1, transmission=AMT, fuelType=null, km=0, bodyType=null, color=null, warranty=0, price=0.0, agent=DealerAgent1@192.168.229.1:8888/JADE]
+44,Car [carId=2, manufacture=Audi, model=A1, transmission=AMT, fuelType=null, km=0, bodyType=null, color=null, warranty=0, price=0.0, agent=DealerAgent1@192.168.229.1:8888/JADE]

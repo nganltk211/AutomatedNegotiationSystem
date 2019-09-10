@@ -32,7 +32,6 @@ public class BuyerAgent extends Agent {
 
 	private static final long serialVersionUID = -8414132078026686821L;
 	private AID brokerAgent;
-	private Car desiredCar;
 	private CarList offerCarlist;
 	private ObjectMapper o = new ObjectMapper();
 
