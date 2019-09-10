@@ -90,7 +90,7 @@ public class BuyerGUIController implements Initializable {
 		transmission_id.setItems(transmissionList);
 		fueltype_id.setItems(fuelList);
 		color_id.setItems(colorList);
-		model_id.setItems(modelAllList);
+		//model_id.setItems(modelAllList);
 
 		model_id.setPromptText("Appolo");
 		manufacture_id.setPromptText("No Select");
@@ -98,7 +98,7 @@ public class BuyerGUIController implements Initializable {
 		transmission_id.setPromptText("No Select");
 		color_id.setPromptText("No Select");
 		fueltype_id.setPromptText("No Select");
-
+		model_id.setPromptText("No Select");
 	}
 
 	public void setModelComboBox() {

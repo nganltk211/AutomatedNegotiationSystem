@@ -4,12 +4,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.FileIO;
 import io.JsonIO;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -79,19 +76,8 @@ public class BrokerAgent extends Agent {
 				// Message received. Process it
 				String carlist = msg1.getContent();
 				jsonDB.writeToFile(carlist);
-				/*
-				try {
-					//convert the list of cars in Json-form to the Object CarList
-					CarList list = o.readValue(carlist, CarList.class);
-					catalog.addAll(list);
-					System.out.println("Broker: Broker cataloge: \n" + catalog + "\n");
-				} catch (JsonParseException e) {
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}*/
+				CarList list = jsonDB.readFile();
+				System.out.println("Broker: Broker cataloge: \n" + list + "\n");
 			} else {
 				block();
 			}
