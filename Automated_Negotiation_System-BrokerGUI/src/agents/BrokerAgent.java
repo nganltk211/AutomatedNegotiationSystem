@@ -26,7 +26,7 @@ public class BrokerAgent extends Agent {
 	private static final long serialVersionUID = -1539612606764155406L;
 	private ObjectMapper o = new ObjectMapper();
 	private CarList catalog = new CarList();
-	private JsonIO JsonDB = new JsonIO("./DataBase/JsonDB.csv");
+	private JsonIO JsonDB = new JsonIO("./DataBase/JsonDB.txt");
 	
 	protected void setup() {
 		// Printout a welcome message
