@@ -31,6 +31,8 @@ public class CarInfoController {
 	@FXML
 	private Label warranty;
 	@FXML
+	private Label agent_name;
+	@FXML
 	private CheckBox checkbox;
 	@FXML
 	private ImageView imageView;
@@ -55,6 +57,7 @@ public class CarInfoController {
 		color.setText(car.getColor());
 		warranty.setText(String.valueOf(car.getWarranty()));
 		price.setText(String.valueOf(car.getPrice()));
+		agent_name.setText(car.getAgent());
 	}
 	
 	public Car getCar() {

@@ -22,7 +22,7 @@ public class DealerGUI extends Stage{
 		} catch (IOException e) {
 			System.err.println("Error by loading fxml-File");
 		}
-		this.setTitle("Dealer Agent");
+		this.setTitle(dealerAgent.getName());
 		Scene scene = new Scene(window);
 		this.setScene(scene);
 		this.show();

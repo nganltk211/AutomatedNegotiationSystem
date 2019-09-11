@@ -5,9 +5,11 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import agents.DealerAgent;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -15,10 +17,16 @@ import javafx.scene.control.Button;
 
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.util.Callback;
 import model.Car;
 import model.CarList;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 
 public class SellerController implements Initializable {
@@ -74,9 +82,35 @@ public class SellerController implements Initializable {
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		setDataComboBox();
-
+		setTableMenu();
 	}
 
+	private void setTableMenu() {
+		tableViewID.setRowFactory(new Callback<TableView<Car>, TableRow<Car>>() {  
+            @Override  
+            public TableRow<Car> call(TableView<Car> tableView) {  
+                final TableRow<Car> row = new TableRow<>();  
+                final ContextMenu contextMenu = new ContextMenu();  
+                final MenuItem removeMenuItem = new MenuItem("Remove");  
+                removeMenuItem.setOnAction(new EventHandler<ActionEvent>() {  
+                    @Override  
+                    public void handle(ActionEvent event) {  
+                    	tableViewID.getItems().remove(row.getItem());  
+                    	listOfCars.remove(row.getItem());
+                    }  
+                });  
+                contextMenu.getItems().add(removeMenuItem);  
+               // Set context menu on row, but use a binding to make it only show for non-empty rows:  
+                row.contextMenuProperty().bind(  
+                        Bindings.when(row.emptyProperty())  
+                        .then((ContextMenu)null)  
+                        .otherwise(contextMenu)  
+                );  
+                return row ;  
+            }
+        });  
+	}
+	
 	public void onManufactureChanged(ActionEvent event) {
 		setModelComboBox();
 	}

@@ -11,51 +11,55 @@
 
 <GridPane prefHeight="356.0" prefWidth="593.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.CarInfoController">
   <children>
-    <ImageView fx:id="imageView" fitHeight="150.0" fitWidth="280.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+    <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+      <children>
+        <Label fx:id="agent_name" text="">
+          <font>
+            <Font size="16.0" fx:id="x3" />
+          </font>
+        </Label>
+        <ImageView fx:id="imageView" fitHeight="155.8928529833184" fitWidth="291.0" pickOnBounds="true" preserveRatio="true" />
+      </children>
+    </VBox>
     <GridPane GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.rowSpan="2">
       <children>
         <Label text="Manufacture:" GridPane.columnIndex="0" GridPane.rowIndex="0">
           <font>
-            <Font name="System Bold" size="13.0" fx:id="x1" />
+            <Font name="System Bold" size="15.0" fx:id="x1" />
           </font>
         </Label>
-        <Label id="manufactureId" fx:id="manufacture" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-        <Label font="$x1" text="Model:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-        <Label id="modelId" fx:id="model" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-        <Label text="Engine" GridPane.columnIndex="0" GridPane.rowIndex="2">
+        <Label id="manufactureId" fx:id="manufacture" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="0">
           <font>
-            <Font name="System Bold Italic" size="16.0" fx:id="x2" />
+            <Font size="15.0" fx:id="x5" />
           </font>
-          <textFill>
-            <Color blue="1.000" green="0.161" red="0.000" fx:id="x5" />
-          </textFill>
         </Label>
+        <Label font="$x1" text="Model:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Label id="modelId" fx:id="model" font="$x5" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="1" />
         <Label font="$x1" text="Transmission:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-        <Label fx:id="transmission" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <Label fx:id="transmission" font="$x5" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="3" />
         <Label font="$x1" text="Fuel Type:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-        <Label fx:id="fuelType" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <Label fx:id="fuelType" font="$x5" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="4" />
         <Label font="$x1" text="Mileage (km):" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-        <Label fx:id="km" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-        <Label font="$x2" text="Style" textFill="$x5" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+        <Label fx:id="km" font="$x5" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="5" />
         <Label font="$x1" text="Body type:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
-        <Label fx:id="bodytype" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+        <Label fx:id="bodytype" font="$x5" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="7" />
         <Label font="$x1" text="Colour:" GridPane.columnIndex="0" GridPane.rowIndex="8" />
-        <Label fx:id="color" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+        <Label fx:id="color" font="$x5" text="No Details" GridPane.columnIndex="1" GridPane.rowIndex="8" />
       </children>
       <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="148.0" minWidth="10.0" prefWidth="141.0" />
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="124.0" minWidth="10.0" prefWidth="109.0" />
       </columnConstraints>
       <rowConstraints>
-        <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-        <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="43.0" minHeight="10.0" prefHeight="43.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="49.0" minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="19.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="43.0" minHeight="10.0" prefHeight="38.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="40.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="52.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="19.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="44.0" minHeight="10.0" prefHeight="39.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="40.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
       </rowConstraints>
       <GridPane.margin>
         <Insets />
@@ -65,7 +69,7 @@
       <children>
         <Label text="Price ($):" GridPane.columnIndex="0" GridPane.rowIndex="0">
           <font>
-            <Font name="System Bold Italic" size="18.0" fx:id="x3" />
+            <Font name="System Bold Italic" size="16.0" fx:id="x2" />
           </font>
         </Label>
         <Label fx:id="price" text="" GridPane.columnIndex="1" GridPane.rowIndex="0">
@@ -73,21 +77,13 @@
             <Font size="20.0" fx:id="x4" />
           </font>
         </Label>
-        <Label font="$x3" text="Warranty (Month):" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-        <Label fx:id="warranty" text="No details" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1">
-          <font>
-            <Font size="18.0" />
-          </font>
-        </Label>
-        <CheckBox fx:id="checkbox" mnemonicParsing="false" selected="false" text="Choosen" GridPane.columnIndex="0" GridPane.rowIndex="2">
-          <font>
-            <Font size="15.0" />
-          </font>
-        </CheckBox>
+        <Label font="$x2" text="Warranty (Month):" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Label fx:id="warranty" font="$x3" text="No details" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+        <CheckBox fx:id="checkbox" font="$x3" mnemonicParsing="false" selected="false" text="Choosen" GridPane.columnIndex="0" GridPane.rowIndex="2" />
       </children>
       <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" maxWidth="204.0" minWidth="10.0" prefWidth="177.0" />
-        <ColumnConstraints hgrow="SOMETIMES" maxWidth="147.0" minWidth="10.0" prefWidth="128.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="204.0" minWidth="10.0" prefWidth="155.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="10.0" prefWidth="150.0" />
       </columnConstraints>
       <padding>
         <Insets top="10.0" />

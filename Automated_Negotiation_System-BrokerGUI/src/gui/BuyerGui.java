@@ -25,7 +25,7 @@ public class BuyerGui extends Stage{
 		} catch (IOException e) {
 			System.err.println("Error by loading fxml-File");
 		}
-		this.setTitle("Buyer Agent");
+		this.setTitle(buyerAgent.getName());
 		Scene scene = new Scene(window);
 		this.setScene(scene);
 		this.show();
