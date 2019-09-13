@@ -9,7 +9,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<GridPane prefHeight="356.0" prefWidth="593.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.CarInfoController">
+<GridPane prefHeight="369.0" prefWidth="668.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.CarInfoController">
   <children>
     <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
       <children>
@@ -18,10 +18,10 @@
             <Font size="16.0" fx:id="x3" />
           </font>
         </Label>
-        <ImageView fx:id="imageView" fitHeight="155.8928529833184" fitWidth="291.0" pickOnBounds="true" preserveRatio="true" />
+        <ImageView fx:id="imageView" fitHeight="161.3571402203291" fitWidth="301.20001220703125" pickOnBounds="true" preserveRatio="true" />
       </children>
     </VBox>
-    <GridPane GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.rowSpan="2">
+    <GridPane prefWidth="244.0" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.rowSpan="2">
       <children>
         <Label text="Manufacture:" GridPane.columnIndex="0" GridPane.rowIndex="0">
           <font>
@@ -65,7 +65,7 @@
         <Insets />
       </GridPane.margin>
     </GridPane>
-    <GridPane prefHeight="132.0" prefWidth="297.0" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="1">
+    <GridPane prefHeight="124.0" prefWidth="318.0" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="1">
       <children>
         <Label text="Price ($):" GridPane.columnIndex="0" GridPane.rowIndex="0">
           <font>
@@ -77,7 +77,7 @@
             <Font size="20.0" fx:id="x4" />
           </font>
         </Label>
-        <Label font="$x2" text="Warranty (Month):" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Label font="$x2" text="Warranty (Year):" GridPane.columnIndex="0" GridPane.rowIndex="1" />
         <Label fx:id="warranty" font="$x3" text="No details" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
         <CheckBox fx:id="checkbox" font="$x3" mnemonicParsing="false" selected="false" text="Choosen" GridPane.columnIndex="0" GridPane.rowIndex="2" />
       </children>
@@ -96,8 +96,8 @@
     </GridPane>
   </children>
   <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="332.0" minWidth="10.0" prefWidth="305.0" />
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="248.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="372.0" minWidth="10.0" prefWidth="360.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="262.0" />
   </columnConstraints>
   <padding>
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

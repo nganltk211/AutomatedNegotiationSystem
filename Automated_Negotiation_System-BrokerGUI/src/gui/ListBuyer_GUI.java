@@ -57,7 +57,7 @@ public class ListBuyer_GUI extends Stage {
 		vBox.setSpacing(10);
 		vBox.getChildren().addAll(sp, sendbtn);
 		vBox.setPadding(new Insets(5));
-		Scene scene = new Scene(vBox,635,800);
+		Scene scene = new Scene(vBox,710,850);
 		this.setScene(scene);
 		this.setResizable(false);
 		this.show();

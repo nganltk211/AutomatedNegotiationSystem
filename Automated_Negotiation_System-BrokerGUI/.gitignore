@@ -1,3 +1,7 @@
+# Created by https://www.gitignore.io/api/eclipse
+# Edit at https://www.gitignore.io/?templates=eclipse
+
+### Eclipse ###
 .metadata
 bin/
 tmp/
@@ -9,6 +13,7 @@ local.properties
 .settings/
 .loadpath
 .recommenders
+.checkstyle
 
 # External tool builders
 .externalToolBuilders/
@@ -53,3 +58,19 @@ local.properties
 .cache-main
 .scala_dependencies
 .worksheet
+
+### Eclipse Patch ###
+# Eclipse Core
+.project
+
+# JDT-specific (Eclipse Java Development Tools)
+.classpath
+
+# Annotation Processing
+.apt_generated
+
+.sts4-cache/
+
+# End of https://www.gitignore.io/api/eclipse
+/WebContent/WEB-INF/lib
+/.project

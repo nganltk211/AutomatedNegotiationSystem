@@ -15,6 +15,7 @@ public class Car {
 	private double price;
 	private int carrating;
 	private String manufactureYear;
+	private String picturePath;
 	private String moreDetails; //only for showing data in the car details table of the seller 
 
 	public Car(int carId) {
@@ -127,6 +128,14 @@ public class Car {
 
 	public void setPrice(double price) {
 		this.price = price;
+	}
+
+	public String getPicturePath() {
+		return picturePath;
+	}
+
+	public void setPicturePath(String picturePath) {
+		this.picturePath = picturePath;
 	}
 
 	public String getMoreDetails() {

@@ -45,9 +45,11 @@ public class CarInfoController {
 	
 	public void setCar(Car car) {
 		this.car = car;
-		File file = new File("./image/test.jpg");
-        Image image = new Image(file.toURI().toString());
-        imageView.setImage(image);
+		if (car.getPicturePath() != null) {
+			File file = new File(car.getPicturePath());
+	        Image image = new Image(file.toURI().toString());
+	        imageView.setImage(image);
+		}
 		manufacture.setText(car.getManufacture());
 		model.setText(car.getModel());
 		transmission.setText(car.getTransmission());

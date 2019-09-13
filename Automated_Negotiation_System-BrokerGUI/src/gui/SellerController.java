@@ -1,8 +1,11 @@
 package gui;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import org.apache.commons.io.FileUtils;
 
 import agents.DealerAgent;
 import javafx.beans.binding.Bindings;
@@ -19,6 +22,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import model.Car;
 import model.CarList;
@@ -50,14 +54,18 @@ public class SellerController implements Initializable {
 	@FXML
 	private TextField km_id;
 	@FXML
+	private TextField priceMin;
+	@FXML
+	private TextField manu_year_id;
+	@FXML
+	private TextField picture_path;
+	@FXML
 	private Button done_id;
 	@FXML
 	private Button cancel_id;
 	@FXML
-	private TextField priceMin;
-	@FXML
-	private TextField manu_year_id;
-
+	private Button picture_btn;
+	
 	@FXML
 	private TableColumn<Car, Integer> nr_column;
 	@FXML
@@ -87,7 +95,7 @@ public class SellerController implements Initializable {
 		setTableMenu();
 	}
 
-	private void setValueForTheCombobox(Car car) {
+	private void setValueForTheCarInfoGUI(Car car) {
 		manufacture_id.setValue(car.getManufacture());
 		model_id.setValue(car.getModel());
 		transmission_id.setValue(car.getTransmission());
@@ -99,6 +107,7 @@ public class SellerController implements Initializable {
 		warrantyid.setValue(car.getWarranty());
 		priceMin.setText(String.valueOf(car.getPrice()));
 		km_id.setText(String.valueOf(car.getKm()));
+		picture_path.setText(car.getPicturePath());
 	}
 	
 	private void setTableMenu() {
@@ -112,7 +121,7 @@ public class SellerController implements Initializable {
                     @Override  
                     public void handle(ActionEvent event) {  
                     	tableViewID.getItems().remove(row.getItem());  
-                    	setValueForTheCombobox(row.getItem());
+                    	setValueForTheCarInfoGUI(row.getItem());
                     	listOfCars.remove(row.getItem());
                     }  
                 });  
@@ -221,6 +230,8 @@ public class SellerController implements Initializable {
 			newCar.setCarrating(rating_id.getValue());
 		}
 		newCar.setPrice(Double.parseDouble(priceMin.getText()));
+		setCarPicturePath(newCar);
+		
 		listOfCars.add(newCar);
 		ObservableList<Car> obList = FXCollections.observableArrayList(listOfCars);
 		tableViewID.setItems(obList);
@@ -228,8 +239,29 @@ public class SellerController implements Initializable {
 	}
 
 	public void OnButtonResetClick(ActionEvent event) throws IOException {
-		setValueForTheCombobox(new Car(0));
+		setValueForTheCarInfoGUI(new Car(0));
 		setPromptText();
+	}
+	
+	private void setCarPicturePath(Car newCar) {
+		if (!picture_path.getText().equals("")) {
+			//copy the selected picture to the folder image
+			File sourceFile = new File(picture_path.getText());
+			File targetFile = new File("./image/");
+			try {
+				FileUtils.copyFileToDirectory(sourceFile, targetFile, true);
+			} catch (IOException e) {
+				System.out.println("Problem with copying one picture to the folder image");
+			}
+			newCar.setPicturePath("./image/" + sourceFile.getName());
+		}
+	}
+	
+	public void selectPictureButton(ActionEvent event) throws IOException {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Please choose one picture");
+		File selectedFile = fileChooser.showOpenDialog(null);
+		if (selectedFile != null) picture_path.setText(selectedFile.getAbsolutePath());
 	}
 
 	public void onButtonSendClick(ActionEvent event) throws IOException {

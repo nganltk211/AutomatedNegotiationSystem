@@ -11,7 +11,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.text.Font?>
 
-<Pane id="seller_form" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="699.0" prefWidth="643.999977929685" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.SellerController">
+<Pane id="seller_form" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="727.0" prefWidth="643.999977929685" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.SellerController">
   <children>
     <Label layoutX="30.0" layoutY="93.0" prefHeight="25.0" text="Manufacture" />
     <Label layoutX="360.0" layoutY="94.0" prefHeight="25.0" text="Model" />
@@ -33,9 +33,9 @@
     <ComboBox id="Car_Rating" fx:id="rating_id" layoutX="463.0" layoutY="227.0" prefHeight="25.0" prefWidth="150.0" />
     <TextField id="Mileage" fx:id="km_id" layoutX="134.0" layoutY="225.0" prefHeight="25.0" prefWidth="111.0" text="0" />
     <Label layoutX="263.0" layoutY="225.0" prefHeight="25.0" text="Km" />
-    <Button id="Done" fx:id="done_id" layoutX="518.0" layoutY="310.0" mnemonicParsing="false" onAction="#OnButtonAddClick" prefWidth="94.0" text="Add" />
-    <Button id="Cancel" fx:id="cancel_id" layoutX="523.0" layoutY="651.0" mnemonicParsing="false" onAction="#onButtonSendClick" prefHeight="25.0" prefWidth="89.0" text="Send" />
-    <Label layoutX="228.0" layoutY="24.0" text="Car details">
+    <Button id="Done" fx:id="done_id" layoutX="518.0" layoutY="351.0" mnemonicParsing="false" onAction="#OnButtonAddClick" prefWidth="94.0" text="Add" />
+    <Button id="Cancel" fx:id="cancel_id" layoutX="525.0" layoutY="679.0" mnemonicParsing="false" onAction="#onButtonSendClick" prefHeight="25.0" prefWidth="89.0" text="Send" />
+    <Label layoutX="258.0" layoutY="24.0" text="Car details">
       <font>
         <Font size="30.0" />
       </font>
@@ -44,7 +44,7 @@
     <TextField id="MinPrice" fx:id="priceMin" layoutX="134.0" layoutY="310.0" prefHeight="25.0" prefWidth="104.0" text="0" />
     <TextField id="Warranty_Charge" fx:id="manu_year_id" layoutX="464.0" layoutY="268.0" prefHeight="25.0" prefWidth="150.0" text="0" />
     <Label layoutX="357.0" layoutY="272.0" prefWidth="103.9998779296875" text="Manufacture year" />
-    <TableView fx:id="tableViewID" layoutX="14.0" layoutY="373.0" prefHeight="266.708984375" prefWidth="600.0">
+    <TableView fx:id="tableViewID" layoutX="29.0" layoutY="401.0" prefHeight="266.708984375" prefWidth="585.0">
       <columns>
         <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="28.0" text="Nr" fx:id="nr_column" />
         <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="96.0" text="Manufacture" fx:id="manu_column" />
@@ -54,6 +54,9 @@
         <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="169.0" text="More details" fx:id="details_column" />
       </columns>
     </TableView>
-    <Button layoutX="14.0" layoutY="652.0" mnemonicParsing="false" onAction="#OnButtonResetClick" prefWidth="75.0" text="Reset" />
+    <Button layoutX="28.0" layoutY="680.0" mnemonicParsing="false" onAction="#OnButtonResetClick" prefWidth="75.0" text="Reset" />
+    <Label layoutX="30.0" layoutY="351.0" prefHeight="25.0" text="Picture" />
+    <Button id="select_picture" fx:id="picture_btn" layoutX="376.0" layoutY="352.0" mnemonicParsing="false" onAction="#selectPictureButton" text="Select" />
+    <TextField fx:id="picture_path" layoutX="135.0" layoutY="353.0" prefWidth="233.0" />
   </children>
 </Pane>
