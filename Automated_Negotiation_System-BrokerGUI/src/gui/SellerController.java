@@ -44,9 +44,9 @@ public class SellerController implements Initializable {
 	@FXML
 	private ComboBox<String> body_id;
 	@FXML
-	private ComboBox<String> warrantyid;
+	private ComboBox<Integer> warrantyid;
 	@FXML
-	private ComboBox<String> rating_id;
+	private ComboBox<Integer> rating_id;
 	@FXML
 	private TextField km_id;
 	@FXML
@@ -56,7 +56,7 @@ public class SellerController implements Initializable {
 	@FXML
 	private TextField priceMin;
 	@FXML
-	private TextField changeOfYearId;
+	private TextField manu_year_id;
 
 	@FXML
 	private TableColumn<Car, Integer> nr_column;
@@ -68,6 +68,8 @@ public class SellerController implements Initializable {
 	private TableColumn<Car, Double> price_column;
 	@FXML
 	private TableColumn<Car, String> details_column;
+	@FXML
+	private TableColumn<Car, String> manu_year_column;
 	@FXML
 	private TableView<Car> tableViewID;
 
@@ -85,17 +87,32 @@ public class SellerController implements Initializable {
 		setTableMenu();
 	}
 
+	private void setValueForTheCombobox(Car car) {
+		manufacture_id.setValue(car.getManufacture());
+		model_id.setValue(car.getModel());
+		transmission_id.setValue(car.getTransmission());
+		colorid.setValue(car.getColor());
+		fuel_id.setValue(car.getFuelType());
+		body_id.setValue(car.getBodyType());
+		rating_id.setValue(car.getCarrating());
+		manu_year_id.setText(car.getManufactureYear());
+		warrantyid.setValue(car.getWarranty());
+		priceMin.setText(String.valueOf(car.getPrice()));
+		km_id.setText(String.valueOf(car.getKm()));
+	}
+	
 	private void setTableMenu() {
 		tableViewID.setRowFactory(new Callback<TableView<Car>, TableRow<Car>>() {  
             @Override  
             public TableRow<Car> call(TableView<Car> tableView) {  
                 final TableRow<Car> row = new TableRow<>();  
                 final ContextMenu contextMenu = new ContextMenu();  
-                final MenuItem removeMenuItem = new MenuItem("Remove");  
+                final MenuItem removeMenuItem = new MenuItem("Edit");  
                 removeMenuItem.setOnAction(new EventHandler<ActionEvent>() {  
                     @Override  
                     public void handle(ActionEvent event) {  
                     	tableViewID.getItems().remove(row.getItem());  
+                    	setValueForTheCombobox(row.getItem());
                     	listOfCars.remove(row.getItem());
                     }  
                 });  
@@ -123,14 +140,13 @@ public class SellerController implements Initializable {
 		ObservableList<String> colorList = FXCollections.observableArrayList("Red", "Blue", "White", "Black", "Yellow",
 				"Silver", "Grey");
 		ObservableList<String> fuelList = FXCollections.observableArrayList("Diesel", "Gas", "Petrol");
-		ObservableList<String> warrantyList = FXCollections.observableArrayList("1", "2", "3", "4", "5");
+		ObservableList<Integer> warrantyList = FXCollections.observableArrayList(1, 2, 3, 4, 5);
 		ObservableList<String> modelAllList = FXCollections.observableArrayList("A1", "A2", "A3", "A4", "A5", "A6",
 				"A7", "A8", "Camry", "Corrola", "Aurian", "Echo", "Crown", "Mark", "Accord", "Civic", "Legend",
 				"Odysey", "Insight", "Seires 1", "Series 2", "Series 3", "Series 4", "Cima", "180xs", "200xs", "720",
 				"Appolo", "Astra", "Brock");
 
-		// ObservableList<String> ratingList = FXCollections.observableArrayList("Red",
-		// "Blue","White","Black","Yellow","Silver","Grey");
+		ObservableList<Integer> ratingList = FXCollections.observableArrayList(1,2,3,4,5);
 		manufacture_id.setItems(manufactureList);
 		body_id.setItems(bodyList);
 		transmission_id.setItems(transmissionList);
@@ -138,14 +154,20 @@ public class SellerController implements Initializable {
 		fuel_id.setItems(fuelList);
 		warrantyid.setItems(warrantyList);
 		model_id.setItems(modelAllList);
-
+		rating_id.setItems(ratingList);
+		
+		setPromptText();
+	}
+	
+	private void setPromptText() {
 		manufacture_id.setPromptText("No Select");
 		body_id.setPromptText("No Select");
 		transmission_id.setPromptText("No Select");
 		colorid.setPromptText("No Select");
 		fuel_id.setPromptText("No Select");
-		warrantyid.setPromptText("No Select");
+		warrantyid.setPromptText("0");
 		model_id.setPromptText("No Select");
+		rating_id.setPromptText("0");
 	}
 
 	public void setModelComboBox() {
@@ -192,7 +214,11 @@ public class SellerController implements Initializable {
 		newCar.setFuelType(fuel_id.getValue());
 		newCar.setKm(Integer.parseInt(km_id.getText()));
 		if (warrantyid.getValue() != null) {
-			newCar.setWarranty(Integer.parseInt(warrantyid.getValue()));
+			newCar.setWarranty(warrantyid.getValue());
+		}
+		newCar.setManufactureYear(manu_year_id.getText());
+		if (rating_id.getValue() != null) {
+			newCar.setCarrating(rating_id.getValue());
 		}
 		newCar.setPrice(Double.parseDouble(priceMin.getText()));
 		listOfCars.add(newCar);
@@ -202,7 +228,8 @@ public class SellerController implements Initializable {
 	}
 
 	public void OnButtonResetClick(ActionEvent event) throws IOException {
-
+		setValueForTheCombobox(new Car(0));
+		setPromptText();
 	}
 
 	public void onButtonSendClick(ActionEvent event) throws IOException {
@@ -216,6 +243,7 @@ public class SellerController implements Initializable {
 		model_column.setCellValueFactory(new PropertyValueFactory<Car, String>("model"));
 		price_column.setCellValueFactory(new PropertyValueFactory<Car, Double>("price"));
 		details_column.setCellValueFactory(new PropertyValueFactory<Car, String>("moreDetails"));
+		manu_year_column.setCellValueFactory(new PropertyValueFactory<Car, String>("manufactureYear"));
 	}
 
 	public void setAgent(DealerAgent ag) {

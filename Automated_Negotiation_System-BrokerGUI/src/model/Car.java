@@ -3,7 +3,7 @@ package model;
 public class Car {
 
 	private int carId;
-	public String manufacture = "";
+	private String manufacture = "";
 	private String model = "";
 	private String transmission = "";
 	private String fuelType = "";
@@ -13,7 +13,9 @@ public class Car {
 	private int warranty;
 	private String agent = "";
 	private double price;
-	private String moreDetails;
+	private int carrating;
+	private String manufactureYear;
+	private String moreDetails; //only for showing data in the car details table of the seller 
 
 	public Car(int carId) {
 		super();
@@ -23,6 +25,22 @@ public class Car {
 	public Car() {
 	}
 
+	public int getCarrating() {
+		return carrating;
+	}
+
+	public void setCarrating(int carrating) {
+		this.carrating = carrating;
+	}
+
+	public String getManufactureYear() {
+		return manufactureYear;
+	}
+
+	public void setManufactureYear(String manufactureYear) {
+		this.manufactureYear = manufactureYear;
+	}
+	
 	public int getCarId() {
 		return carId;
 	}
@@ -113,7 +131,7 @@ public class Car {
 
 	public String getMoreDetails() {
 		moreDetails = "Transmission: " + transmission + "\nFuel type: " + fuelType + "\nBody type: " + bodyType 
-					+ "\nColor: " + color + "\nWarranty: " + warranty;
+					+ "\nColor: " + color + "\nWarranty: " + warranty + "\nCar rating: " + carrating;
 		return moreDetails;
 	}
 
@@ -121,7 +139,8 @@ public class Car {
 	public String toString() {
 		return "Car [carId=" + carId + ", manufacture=" + manufacture + ", model=" + model + ", transmission="
 				+ transmission + ", fuelType=" + fuelType + ", km=" + km + ", bodyType=" + bodyType + ", color=" + color
-				+ ", warranty=" + warranty + ", price=" + price + ", agent=" + agent + "]";
+				+ ", warranty=" + warranty + ", agent=" + agent + ", price=" + price + ", carrating=" + carrating
+				+ ", manufactureYear=" + manufactureYear + "]";
 	}
 	
 }

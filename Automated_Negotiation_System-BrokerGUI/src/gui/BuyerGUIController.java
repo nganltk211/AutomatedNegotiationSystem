@@ -90,7 +90,7 @@ public class BuyerGUIController implements Initializable {
 		transmission_id.setItems(transmissionList);
 		fueltype_id.setItems(fuelList);
 		color_id.setItems(colorList);
-		//model_id.setItems(modelAllList);
+		model_id.setItems(modelAllList);
 
 		model_id.setPromptText("Appolo");
 		manufacture_id.setPromptText("No Select");

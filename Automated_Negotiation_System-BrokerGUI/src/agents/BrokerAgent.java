@@ -93,7 +93,7 @@ public class BrokerAgent extends Agent {
 			MessageTemplate mt2 = MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade-broker-buyer"),
 					MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
 			ACLMessage msg2 = myAgent.receive(mt2);
-			
+			catalog = new CarList();
 			if (msg2 != null) {
 				//Load catalog
 				CarList list = jsonDB.readFile();
@@ -143,8 +143,6 @@ public class BrokerAgent extends Agent {
 	}
 	
 	private class RequestFromBuyersToConnectToDealer extends CyclicBehaviour {
-
-		private static final long serialVersionUID = -1706099062248742245L;
 
 		@Override
 		public void action() {
