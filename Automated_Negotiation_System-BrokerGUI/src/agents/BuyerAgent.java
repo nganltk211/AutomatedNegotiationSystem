@@ -68,6 +68,7 @@ public class BuyerAgent extends Agent {
 		});
 		addBehaviour(new OfferFromBroker());
 		addBehaviour(new NegotiationWithDealer());
+		addBehaviour(new EndTheNegotiation());
 	}
 
 	// Put agent clean-up operations here
@@ -109,31 +110,7 @@ public class BuyerAgent extends Agent {
 		}
 	}
 
-	private class NegotiationWithDealer extends CyclicBehaviour {
 
-		@Override
-		public void action() {
-			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
-					MessageTemplate.MatchPerformative(ACLMessage.PROPOSE));
-			ACLMessage msg = myAgent.receive(mt);
-			if (msg != null) {
-				if (manualNegotiation) {
-					String content = msg.getContent();
-					AID dealer = msg.getSender();
-					System.out.println("Buyer: Receive offer from the dealer: " + content);
-					new Thread(() -> {
-						Platform.runLater(() -> {
-							//NegotiationBotGUI bot = new NegotiationBotGUI();
-						});
-					}).start();
-				} else {
-					// for automated Negotiation
-				}		
-			} else {
-				block();
-			}
-		}
-	}
 	
 	public void sendBackTheChoosenCarsToTheBroker(CarList listOfChoosenCars) {
 		addBehaviour(new OneShotBehaviour() {
@@ -191,6 +168,119 @@ public class BuyerAgent extends Agent {
 				}		
 			}
 			
+		});
+	}
+	
+	//Negotiation part
+	
+	private class NegotiationWithDealer extends CyclicBehaviour {
+
+		@Override
+		public void action() {
+			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
+					MessageTemplate.MatchPerformative(ACLMessage.PROPOSE));
+			ACLMessage msg = myAgent.receive(mt);
+			if (msg != null) {
+				if (manualNegotiation) {
+					String content = msg.getContent();
+					try {
+						Car negotiatedCar = o.readValue(content, Car.class);
+						String dealerName = msg.getSender().getName();
+						double offerPrice = Double.parseDouble(msg.getReplyWith());
+						System.out.println("Buyer: Receive offer from the dealer: " + offerPrice);
+						new Thread(() -> {
+							Platform.runLater(() -> {
+								NegotiationBotGUI bot = new NegotiationBotGUI(myAgent, dealerName, negotiatedCar, offerPrice);
+							});
+						}).start();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}			
+				} else {
+					// for automated Negotiation
+				}		
+			} else {
+				block();
+			}
+		}
+	}
+	
+	private class EndTheNegotiation extends CyclicBehaviour {
+
+		@Override
+		public void action() {
+			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
+					MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL));
+			ACLMessage msg = myAgent.receive(mt);
+			
+			if (msg != null) {
+				if (manualNegotiation) {
+					String content = msg.getContent();
+					try {
+						Car negotiatedCar = o.readValue(content, Car.class);
+						double offerPrice = Double.parseDouble(msg.getReplyWith());
+						System.out.println("End of the negotiation : ");
+						System.out.println("Bought car: " + negotiatedCar);
+						System.out.println("Bought price: " + offerPrice);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else {
+					// for automated Negotiation
+				}
+			} else {
+				block();
+			}
+		}
+	}
+	
+	public void makeAnEncounterOffer(String opponentAgentName, Car negotiatedCar, double price) {
+		addBehaviour(new OneShotBehaviour() {
+
+			@Override
+			public void action() {
+				ACLMessage mess = new ACLMessage(ACLMessage.PROPOSE);
+				System.out.println(myAgent.getName() + ": Encounter offer to the dealer: " + price);
+				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, opponentAgentName));
+				String jsonInString;
+				try {
+					jsonInString = o.writeValueAsString(negotiatedCar);
+					mess.setContent(jsonInString);
+					mess.setReplyWith(String.valueOf(price));
+					mess.setConversationId("car-negotiation");
+					myAgent.send(mess);
+				} catch (JsonProcessingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+			
+		});
+	}
+	
+	public void acceptOffer(String opponentAgentName, Car negotiatedCar, double price) {
+		addBehaviour(new OneShotBehaviour() {
+
+			@Override
+			public void action() {
+				ACLMessage mess = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
+				System.out.println(myAgent.getName() + ": Accept offer from the buyer: " + price);
+				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, opponentAgentName));
+				String jsonInString;
+				try {
+					jsonInString = o.writeValueAsString(negotiatedCar);
+					mess.setContent(jsonInString);
+					mess.setReplyWith(String.valueOf(price));
+					mess.setConversationId("car-negotiation");
+					myAgent.send(mess);
+				} catch (JsonProcessingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
+			}	
 		});
 	}
 	

@@ -60,11 +60,6 @@ public class NegotiationChoiceGUIController {
 		rb_automated.setToggleGroup(group);
 		rb_manual.setSelected(true);
 		radiobuttonChangeValue();
-		//setCarDetails();
-    }
-    
-    private void setCarDetails() {
-    	manufacture.setText(negotiatedCar.getManufacture());
     }
     
 	public void radiobuttonChangeValue() {
@@ -110,5 +105,17 @@ public class NegotiationChoiceGUIController {
 	
 	public void setNegotiatedCar(Car car) {
 		this.negotiatedCar = car;
+		setCarDetails();
 	}
+	
+    private void setCarDetails() {
+    	manufacture.setText(negotiatedCar.getManufacture());
+    	model.setText(negotiatedCar.getModel());
+    	transmission.setText(negotiatedCar.getTransmission());
+    	fuelType.setText(negotiatedCar.getFuelType());
+    	bodyType.setText(negotiatedCar.getBodyType());
+    	color.setText(negotiatedCar.getColor());
+    	km.setText(String.valueOf(negotiatedCar.getKm()));
+    	price.setText(String.valueOf(negotiatedCar.getPrice()));
+    }
 }
