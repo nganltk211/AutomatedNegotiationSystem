@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gui.BuyerGui;
 import gui.ListBuyer_GUI;
+import gui.NegotiationBotGUI;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -34,7 +35,8 @@ public class BuyerAgent extends Agent {
 	private AID brokerAgent;
 	private CarList offerCarlist;
 	private ObjectMapper o = new ObjectMapper();
-
+	private boolean manualNegotiation;
+	
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hallo! Buyer-agent " + getAID().getName() + " is ready.");
@@ -65,6 +67,7 @@ public class BuyerAgent extends Agent {
 			}
 		});
 		addBehaviour(new OfferFromBroker());
+		addBehaviour(new NegotiationWithDealer());
 	}
 
 	// Put agent clean-up operations here
@@ -106,19 +109,37 @@ public class BuyerAgent extends Agent {
 		}
 	}
 
+	private class NegotiationWithDealer extends CyclicBehaviour {
+
+		@Override
+		public void action() {
+			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
+					MessageTemplate.MatchPerformative(ACLMessage.PROPOSE));
+			ACLMessage msg = myAgent.receive(mt);
+			if (msg != null) {
+				if (manualNegotiation) {
+					String content = msg.getContent();
+					AID dealer = msg.getSender();
+					System.out.println("Buyer: Receive offer from the dealer: " + content);
+					new Thread(() -> {
+						Platform.runLater(() -> {
+							//NegotiationBotGUI bot = new NegotiationBotGUI();
+						});
+					}).start();
+				} else {
+					// for automated Negotiation
+				}		
+			} else {
+				block();
+			}
+		}
+	}
+	
 	public void sendBackTheChoosenCarsToTheBroker(CarList listOfChoosenCars) {
 		addBehaviour(new OneShotBehaviour() {
 
 			@Override
 			public void action() {
-//				CarList listOfChoosenCars = new CarList();
-//				int choosenCar;
-//				do {
-//					System.out.println("Please choose one offer!");
-//					choosenCar = readInt();
-//				} while (choosenCar > list.size() || choosenCar < 1);
-//
-//				listOfChoosenCars.add(offerCarlist.get(choosenCar - 1));
 				System.out.println("Trying to send a choosen car to the broker\n");
 				ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
 				mess.addReceiver(brokerAgent);
@@ -171,5 +192,9 @@ public class BuyerAgent extends Agent {
 			}
 			
 		});
+	}
+	
+	public void setNegotiationManual(boolean manualNegotiation) {
+		this.manualNegotiation = manualNegotiation;
 	}
 }

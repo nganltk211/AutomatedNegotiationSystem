@@ -7,8 +7,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gui.BuyerGui;
 import gui.DealerGUI;
+import gui.NegotiationChoiceGUI;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.AMSService;
@@ -30,7 +32,8 @@ public class DealerAgent extends Agent {
 	private static final long serialVersionUID = -8414132078026686821L;
 	private AID brokerAgent;
 	private ObjectMapper o = new ObjectMapper();
-
+	private int negotiationOption = 0; // 0 for manual negotiation and 1 for automated negotiation
+	
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hallo! Dealer-agent " + getAID().getName() + " is ready.");
@@ -88,15 +91,22 @@ public class DealerAgent extends Agent {
 					CarList choosenCars = o.readValue(content, CarList.class);
 					System.out.println(choosenCars + "\n");
 					System.out.println("Dealer: Trying to create a negotiation with the buyer: " + buyer);
+					// starts the Negotiation GUI 
+					new Thread(() -> {
+						Platform.runLater(() -> {
+							for (Car c : choosenCars) {
+								NegotiationChoiceGUI gui = new NegotiationChoiceGUI(myAgent,buyer, c);
+							}					
+						}); 
+					}).start();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		}
-		
 	}
-	
+		
 	public void sendListOfCarToBroker(CarList carList) {
 		addBehaviour(new OneShotBehaviour() {
 			@Override
@@ -118,8 +128,40 @@ public class DealerAgent extends Agent {
 					e.printStackTrace();
 				}			
 				
-			}
-			
+			}			
 		});
 	}	
+	
+	private class ManualNegotiationBehaviourWithBuyer extends OneShotBehaviour {
+		private String buyerAgentName;
+		private Car negotiatedCar;
+		private double offerPrice;
+		
+		public ManualNegotiationBehaviourWithBuyer(String opponentAgentName, Car car, double firstOfferPrice) {
+			buyerAgentName = opponentAgentName;
+			negotiatedCar = car;
+			this.offerPrice = firstOfferPrice;
+		}
+		
+		@Override
+		public void action() {
+			ACLMessage mess = new ACLMessage(ACLMessage.PROPOSE);
+			System.out.println(myAgent.getName() + ": First offer to the buyer: " + offerPrice);
+			mess.addReceiver(AgentSupport.findAgentWithName(myAgent, buyerAgentName));
+			mess.setContent(String.valueOf(offerPrice));
+			mess.setConversationId("car-negotiation");
+			myAgent.send(mess);
+		}
+	}
+	
+	public void startNegotiation(String opponentAgentName, Car car, double firstOfferPrice) {
+		if (negotiationOption == 0) {
+			addBehaviour(new ManualNegotiationBehaviourWithBuyer(opponentAgentName,car,firstOfferPrice));
+		}
+	}
+
+	public void setNegotiationChoice(int option) {
+		negotiationOption = option;
+	}
+
 }

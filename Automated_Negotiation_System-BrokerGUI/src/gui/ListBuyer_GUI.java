@@ -10,9 +10,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import model.Car;
@@ -47,15 +49,21 @@ public class ListBuyer_GUI extends Stage {
 				System.err.println("Error by loading fxml-File");
 			}	
 		}	
+		CheckBox negotiationChoice = new CheckBox("Manual");
 		Button sendbtn = new Button("Send");
-		setActionForSendButton(sendbtn);
+		setActionForSendButton(sendbtn,negotiationChoice);
 		sendbtn.setPrefWidth(100);
 		this.setTitle("List of possible cars");
 		sp.setContent(root);
         sp.setPannable(true); 
+              
+        HBox hBox = new HBox();
+        hBox.setSpacing(100);
+        hBox.getChildren().addAll(negotiationChoice,sendbtn);
+        
         VBox vBox = new VBox();
 		vBox.setSpacing(10);
-		vBox.getChildren().addAll(sp, sendbtn);
+		vBox.getChildren().addAll(sp, hBox);
 		vBox.setPadding(new Insets(5));
 		Scene scene = new Scene(vBox,710,850);
 		this.setScene(scene);
@@ -63,7 +71,7 @@ public class ListBuyer_GUI extends Stage {
 		this.show();
 	}
 	
-	private void setActionForSendButton(Button btn) {
+	private void setActionForSendButton(Button btn, CheckBox negotiationChoice) {
 		btn.setOnAction((ActionEvent me) -> {
 			for(CarInfoController controller : carController) {
 				if (controller.getValueChoosenCB()) {
@@ -72,7 +80,9 @@ public class ListBuyer_GUI extends Stage {
 			}
 			if (choosenOffers.size()>0) {
 				buyerAgent.sendBackTheChoosenCarsToTheBroker(choosenOffers);
-			}			
+				buyerAgent.setNegotiationManual(negotiationChoice.isSelected());
+				this.close();
+			}	
 		});
 		
 	}

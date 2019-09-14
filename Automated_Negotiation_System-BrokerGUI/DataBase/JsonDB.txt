@@ -1,0 +1,1 @@
+[{"carId":0,"manufacture":"Audi","model":"A1","transmission":"AMT","fuelType":"Diesel","km":0,"bodyType":null,"color":null,"warranty":0,"agent":"DealerAgent1@192.168.229.1:8888/JADE","price":15000.0,"carrating":0,"manufactureYear":"0","picturePath":null,"moreDetails":"Transmission: AMT\nFuel type: Diesel\nBody type: null\nColor: null\nWarranty: 0\nCar rating: 0"}]

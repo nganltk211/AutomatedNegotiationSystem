@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="385.0" prefWidth="517.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.NegotiationChoiceGUIController">
+  <children>
+    <Label layoutX="47.0" layoutY="30.0" text="Let start the negotiation">
+      <font>
+        <Font name="System Bold Italic" size="26.0" />
+      </font>
+    </Label>
+    <RadioButton fx:id="rb_manual" layoutX="51.0" layoutY="288.0" mnemonicParsing="false" text="Manual negotiation" />
+    <RadioButton fx:id="rb_automated" layoutX="51.0" layoutY="332.0" mnemonicParsing="false" text="Automated Negotiation" />
+    <Button fx:id="btn_start" layoutX="392.0" layoutY="332.0" mnemonicParsing="false" onAction="#startNegotiationButtonClick" prefWidth="73.0" text="Start" />
+    <Label layoutX="51.0" layoutY="90.0" text="Negotiated Car">
+      <font>
+        <Font name="System Bold Italic" size="16.0" />
+      </font>
+    </Label>
+    <Label layoutX="51.0" layoutY="133.0" text="Manufacture:">
+      <font>
+        <Font name="System Bold" size="15.0" fx:id="x1" />
+      </font>
+    </Label>
+    <Label fx:id="manufacture" layoutX="166.0" layoutY="133.0" text="No Details">
+      <font>
+        <Font size="15.0" fx:id="x2" />
+      </font>
+    </Label>
+    <Label font="$x1" layoutX="51.0" layoutY="170.0" text="Model:" />
+    <Label id="model" fx:id="transmission" font="$x2" layoutX="398.0" layoutY="133.0" text="No Details" />
+    <Label font="$x1" layoutX="277.0" layoutY="133.0" text="Transmission:" />
+    <Label id="transmission" fx:id="color" font="$x2" layoutX="396.0" layoutY="207.0" text="No Details" />
+    <Label font="$x1" layoutX="51.0" layoutY="207.0" text="Fuel Type:" />
+    <Label id="fuelType" fx:id="model" font="$x2" layoutX="166.0" layoutY="170.0" text="No Details" />
+    <Label font="$x1" layoutX="51.0" layoutY="241.0" text="Mileage (km):" />
+    <Label id="km" fx:id="fuelType" font="$x2" layoutX="166.0" layoutY="207.0" text="No Details" />
+    <Label font="$x1" layoutX="275.0" layoutY="174.0" text="Body type:" />
+    <Label id="bodytype" fx:id="km" font="$x2" layoutX="166.0" layoutY="241.0" text="No Details" />
+    <Label font="$x1" layoutX="275.0" layoutY="207.0" text="Colour:" />
+    <Label id="color" fx:id="bodyType" font="$x2" layoutX="396.0" layoutY="174.0" text="No Details" />
+    <Label font="$x1" layoutX="276.0" layoutY="241.0" text="Price" />
+    <Label id="bodytype" fx:id="price" font="$x2" layoutX="397.0" layoutY="241.0" text="No Details" />
+    <Label fx:id="lb_offerprice" font="$x1" layoutX="263.0" layoutY="286.0" text="Offer price" visible="true" />
+    <TextField fx:id="offer_price" layoutX="370.0" layoutY="284.0" prefWidth="95.0" text="0.0" visible="true" />
+  </children>
+</AnchorPane>
