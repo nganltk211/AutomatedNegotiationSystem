@@ -16,7 +16,7 @@
     </Label>
     <Button fx:id="btn_accept" layoutX="245.0" layoutY="82.0" mnemonicParsing="false" onAction="#buttonAcceptClick" prefWidth="87.0" text="Accept" />
     <Button fx:id="btn_reject" layoutX="361.0" layoutY="82.0" mnemonicParsing="false" onAction="#buttonRejectClick" prefWidth="87.0" text="Reject" />
-    <TextField id="counteroffer_price" fx:id="encounteroffer_price" layoutX="103.0" layoutY="161.0" prefWidth="200.0" text="0.0" visible="false" />
+    <TextField fx:id="counteroffer_price" layoutX="103.0" layoutY="161.0" prefWidth="200.0" text="0.0" visible="false" />
     <Label layoutX="30.0" layoutY="27.0" text="Offer">
       <font>
         <Font name="System Bold" size="20.0" />
@@ -25,7 +25,7 @@
     <Label font="$x1" layoutX="30.0" layoutY="80.0" text="Price:" />
     <Label fx:id="offer_price" font="$x1" layoutX="122.0" layoutY="80.0" text="0.0" />
     <Button fx:id="btn_send" layoutX="371.0" layoutY="163.0" mnemonicParsing="false" onAction="#buttonSendClick" prefWidth="80.0" text="Send" visible="false" />
-    <Label fx:id="lb_newoffer" layoutX="33.0" layoutY="121.0" text="Make an encounter offer" visible="false">
+    <Label fx:id="lb_newoffer" layoutX="33.0" layoutY="121.0" text="Make a counter offer" visible="false">
       <font>
         <Font name="System Bold" size="16.0" />
       </font>

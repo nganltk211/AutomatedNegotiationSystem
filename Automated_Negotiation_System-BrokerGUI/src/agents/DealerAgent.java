@@ -96,7 +96,7 @@ public class DealerAgent extends Agent {
 	}
 
 	// Negotiation part
-	
+
 	private class StartTheNegotiationWithBuyer extends CyclicBehaviour {
 
 		@Override
@@ -199,7 +199,7 @@ public class DealerAgent extends Agent {
 			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
 					MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL));
 			ACLMessage msg = myAgent.receive(mt);
-			
+
 			if (msg != null) {
 				if (negotiationOption == 0) {
 					String content = msg.getContent();
@@ -221,14 +221,14 @@ public class DealerAgent extends Agent {
 			}
 		}
 	}
-	
-	public void makeAnEncounterOffer(String opponentAgentName, Car negotiatedCar, double price) {
+
+	public void makeACounterOffer(String opponentAgentName, Car negotiatedCar, double price) {
 		addBehaviour(new OneShotBehaviour() {
 
 			@Override
 			public void action() {
 				ACLMessage mess = new ACLMessage(ACLMessage.PROPOSE);
-				System.out.println(myAgent.getName() + ": Encounter offer to the buyer: " + price);
+				System.out.println(myAgent.getName() + ": Counter offer to the buyer: " + price);
 				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, opponentAgentName));
 				String jsonInString;
 				try {
@@ -241,12 +241,12 @@ public class DealerAgent extends Agent {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 			}
-			
+
 		});
 	}
-	
+
 	public void acceptOffer(String opponentAgentName, Car negotiatedCar, double price) {
 		addBehaviour(new OneShotBehaviour() {
 
@@ -265,11 +265,11 @@ public class DealerAgent extends Agent {
 				} catch (JsonProcessingException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}	
+				}
 			}
 		});
 	}
-	
+
 	public void startNegotiation(String opponentAgentName, Car car, double firstOfferPrice) {
 		if (negotiationOption == 0) {
 			addBehaviour(new ManualNegotiationBehaviourWithBuyer(opponentAgentName, car, firstOfferPrice));

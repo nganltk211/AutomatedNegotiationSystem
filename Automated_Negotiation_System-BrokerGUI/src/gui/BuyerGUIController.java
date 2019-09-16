@@ -92,7 +92,7 @@ public class BuyerGUIController implements Initializable {
 		color_id.setItems(colorList);
 		model_id.setItems(modelAllList);
 
-		model_id.setPromptText("Appolo");
+		model_id.setPromptText("No Select");
 		manufacture_id.setPromptText("No Select");
 		body_id.setPromptText("No Select");
 		transmission_id.setPromptText("No Select");
@@ -115,23 +115,22 @@ public class BuyerGUIController implements Initializable {
 
 		if (manufacture_id.getValue() == "Audi") {
 			model_id.setItems(modelAudiList);
-			model_id.setPromptText("A1");
+			//model_id.setPromptText("A1");
 		} else if (manufacture_id.getValue() == "Toyota") {
 			model_id.setItems(modelToyotaList);
-			model_id.setPromptText("Camry");
+			//model_id.setPromptText("Camry");
 		} else if (manufacture_id.getValue() == "Honda") {
 			model_id.setItems(modelHondaList);
-			model_id.setPromptText("Accord");
+			//model_id.setPromptText("Accord");
 		} else if (manufacture_id.getValue() == "BMW") {
 			model_id.setItems(modelBmwList);
-			model_id.setPromptText("Series 1");
+			//model_id.setPromptText("Series 1");
 		} else if (manufacture_id.getValue() == "Holden") {
 			model_id.setItems(modelHoldenList);
 		} else if (manufacture_id.getValue() == "Nissan") {
 			model_id.setItems(modelNissanList);
-			model_id.setPromptText("Cima");
+			//model_id.setPromptText("Cima");
 		}
-
 	}
 
 	public void setAgent(BuyerAgent ag) {

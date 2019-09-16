@@ -28,7 +28,7 @@ public class NegotiationBotController {
 	@FXML
 	private Button btn_send;
 	@FXML
-	private TextField encounteroffer_price;
+	private TextField counteroffer_price;
 
 	private Agent agent;
 	private String opponentAgentName; // name of opponent agent
@@ -57,18 +57,18 @@ public class NegotiationBotController {
 	public void buttonRejectClick(ActionEvent event) {
 		lb_price.setVisible(true);
 		lb_newoffer.setVisible(true);
-		encounteroffer_price.setVisible(true);
+		counteroffer_price.setVisible(true);
 		btn_send.setVisible(true);
 	}
 
 	public void buttonSendClick(ActionEvent event) {
 		if (agent instanceof DealerAgent) {
 			DealerAgent dag = (DealerAgent) agent;
-			dag.makeAnEncounterOffer(opponentAgentName, negotiatedCar, Double.valueOf(encounteroffer_price.getText()));
+			dag.makeACounterOffer(opponentAgentName, negotiatedCar, Double.valueOf(counteroffer_price.getText()));
 			((Node) (event.getSource())).getScene().getWindow().hide();			
 		} else {
 			BuyerAgent bag = (BuyerAgent) agent;
-			bag.makeAnEncounterOffer(opponentAgentName, negotiatedCar, Double.valueOf(encounteroffer_price.getText()));
+			bag.makeACounterOffer(opponentAgentName, negotiatedCar, Double.valueOf(counteroffer_price.getText()));
 			((Node) (event.getSource())).getScene().getWindow().hide();
 		}
 	}

@@ -236,13 +236,13 @@ public class BuyerAgent extends Agent {
 		}
 	}
 	
-	public void makeAnEncounterOffer(String opponentAgentName, Car negotiatedCar, double price) {
+	public void makeACounterOffer(String opponentAgentName, Car negotiatedCar, double price) {
 		addBehaviour(new OneShotBehaviour() {
 
 			@Override
 			public void action() {
 				ACLMessage mess = new ACLMessage(ACLMessage.PROPOSE);
-				System.out.println(myAgent.getName() + ": Encounter offer to the dealer: " + price);
+				System.out.println(myAgent.getName() + ": Counter offer to the dealer: " + price);
 				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, opponentAgentName));
 				String jsonInString;
 				try {

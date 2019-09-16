@@ -125,6 +125,7 @@ public class BrokerAgent extends Agent {
 							e.printStackTrace();
 						}
 					} else {
+						// when no matching car is found
 						ACLMessage reply = msg2.createReply();
 						reply.setPerformative(ACLMessage.REFUSE);
 						reply.setReplyWith("performative");
