@@ -13,7 +13,7 @@ public class BrokerGUI extends Stage {
 
 	public BrokerGUI(){
 		Parent window = null;
-		loader = new FXMLLoader(getClass().getResource("Broker.fxml"));
+		loader = new FXMLLoader(getClass().getResource("BrokerGUI.fxml"));
 		try {
 			window = loader.load();
 		} catch (IOException e) {

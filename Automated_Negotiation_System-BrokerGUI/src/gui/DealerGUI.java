@@ -14,7 +14,7 @@ public class DealerGUI extends Stage{
 
 	public DealerGUI(DealerAgent dealerAgent){
 		Parent window = null;
-		loader = new FXMLLoader(getClass().getResource("Seller.fxml"));
+		loader = new FXMLLoader(getClass().getResource("DealerGUI.fxml"));
 		try {
 			window = loader.load();
 			DealerGUIController controller = loader.<DealerGUIController>getController();
