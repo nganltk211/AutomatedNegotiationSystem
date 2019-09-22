@@ -33,7 +33,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 
-public class SellerController implements Initializable {
+public class DealerGUIController implements Initializable {
 
 	@FXML
 	private ComboBox<String> manufacture_id;
@@ -85,7 +85,7 @@ public class SellerController implements Initializable {
 	private int carCounter;
 	private DealerAgent dealerAgent;
 
-	public SellerController() {
+	public DealerGUIController() {
 		listOfCars = new CarList();
 	}
 
@@ -105,7 +105,7 @@ public class SellerController implements Initializable {
 		rating_id.setValue(car.getCarrating());
 		manu_year_id.setText(car.getManufactureYear());
 		warrantyid.setValue(car.getWarranty());
-		priceMin.setText(String.valueOf(car.getPrice()));
+		priceMin.setText(String.valueOf(car.getMinprice()));
 		km_id.setText(String.valueOf(car.getKm()));
 		picture_path.setText(car.getPicturePath());
 	}
@@ -229,7 +229,7 @@ public class SellerController implements Initializable {
 		if (rating_id.getValue() != null) {
 			newCar.setCarrating(rating_id.getValue());
 		}
-		newCar.setPrice(Double.parseDouble(priceMin.getText()));
+		newCar.setMinprice(Double.parseDouble(priceMin.getText()));
 		setCarPicturePath(newCar);
 		
 		listOfCars.add(newCar);

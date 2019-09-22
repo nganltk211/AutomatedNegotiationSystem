@@ -62,7 +62,7 @@ public class BuyerGUIController implements Initializable {
 		searchCar.setBodyType(body_id.getValue());
 		searchCar.setColor(color_id.getValue());
 		searchCar.setFuelType(fueltype_id.getValue());
-		searchCar.setPrice(Double.parseDouble(max_id.getText()));
+		searchCar.setMaxprice(Double.parseDouble(max_id.getText()));
 		buyerAgent.requestInfoOfDesiredCar(searchCar);
 		((Node) (event.getSource())).getScene().getWindow().hide();
 	}

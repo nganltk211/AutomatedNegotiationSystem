@@ -7,11 +7,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Broker_GUI extends Stage {
+public class BrokerGUI extends Stage {
 
 	private FXMLLoader loader;
 
-	public Broker_GUI(){
+	public BrokerGUI(){
 		Parent window = null;
 		loader = new FXMLLoader(getClass().getResource("Broker.fxml"));
 		try {

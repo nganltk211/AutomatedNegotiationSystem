@@ -121,7 +121,6 @@ public class BrokerAgent extends Agent {
 							reply.setConversationId("car-offer");
 							myAgent.send(reply);
 						} catch (JsonProcessingException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					} else {
@@ -197,7 +196,7 @@ public class BrokerAgent extends Agent {
 		
 		List<Car> endList = new CarList();
 		for (Car c : filterList) {
-			if (c.getPrice() <= desiredCar.getPrice() || desiredCar.getPrice() == 0) {
+			if (c.getMinprice() <= desiredCar.getMaxprice() || desiredCar.getMaxprice() == 0) {
 				endList.add(c);
 			}
 		}

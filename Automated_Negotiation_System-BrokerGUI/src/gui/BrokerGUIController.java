@@ -16,7 +16,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
-public class BrokerController{
+public class BrokerGUIController{
 	@FXML
 	private Button buyer;
 	@FXML
@@ -26,7 +26,7 @@ public class BrokerController{
 	private int counterDealer;
 	private static ContainerController mainCtrl;
 
-	public BrokerController() {
+	public BrokerGUIController() {
 		super();
 		counterBuyer = 1;
 		counterDealer = 1;

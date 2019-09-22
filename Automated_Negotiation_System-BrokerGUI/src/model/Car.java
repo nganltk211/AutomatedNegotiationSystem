@@ -12,7 +12,8 @@ public class Car {
 	private String color = "";
 	private int warranty;
 	private String agent = "";
-	private double price;
+	private double maxprice;
+	private double minprice;
 	private double marketPrice;
 	private int carrating;
 	private String manufactureYear;
@@ -122,15 +123,23 @@ public class Car {
 	public void setWarranty(int warranty) {
 		this.warranty = warranty;
 	}
-	
-	public double getPrice() {
-		return price;
+
+	public double getMaxprice() {
+		return maxprice;
 	}
 
-	public void setPrice(double price) {
-		this.price = price;
+	public void setMaxprice(double maxprice) {
+		this.maxprice = maxprice;
 	}
-	
+
+	public double getMinprice() {
+		return minprice;
+	}
+
+	public void setMinprice(double minprice) {
+		this.minprice = minprice;
+	}
+
 	public double getMarketPrice() {
 		return marketPrice;
 	}
@@ -152,13 +161,13 @@ public class Car {
 					+ "\nColor: " + color + "\nWarranty: " + warranty + "\nCar rating: " + carrating;
 		return moreDetails;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "Car [carId=" + carId + ", manufacture=" + manufacture + ", model=" + model + ", transmission="
 				+ transmission + ", fuelType=" + fuelType + ", km=" + km + ", bodyType=" + bodyType + ", color=" + color
-				+ ", warranty=" + warranty + ", agent=" + agent + ", price=" + price + "marketPrice=" + marketPrice + ", carrating=" + carrating
-				+ ", manufactureYear=" + manufactureYear + "]";
+				+ ", warranty=" + warranty + ", agent=" + agent + ", maxprice=" + maxprice + ", minprice=" + minprice
+				+ ", marketPrice=" + marketPrice + ", carrating=" + carrating + ", manufactureYear=" + manufactureYear
+				+ ", picturePath=" + picturePath + "]";
 	}
-	
 }

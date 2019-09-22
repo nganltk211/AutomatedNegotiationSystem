@@ -20,16 +20,16 @@ import javafx.stage.Stage;
 import model.Car;
 import model.CarList;
 
-public class ListBuyer_GUI extends Stage {
+public class CarListToBuyerGUI extends Stage {
 
 	private FXMLLoader loader;
-	private CarInfoController[] carController;
+	private CarInfoGUIController[] carController;
 	private BuyerAgent buyerAgent;
 	private CarList choosenOffers;
 	
-	public ListBuyer_GUI(CarList offerCarlist, Agent myAgent){
+	public CarListToBuyerGUI(CarList offerCarlist, Agent myAgent){
 		choosenOffers = new CarList();
-		carController = new CarInfoController[offerCarlist.size()];
+		carController = new CarInfoGUIController[offerCarlist.size()];
 		buyerAgent = (BuyerAgent) myAgent;
 		ScrollPane sp = new ScrollPane();
 		VBox root = new VBox();
@@ -73,7 +73,7 @@ public class ListBuyer_GUI extends Stage {
 	
 	private void setActionForSendButton(Button btn, CheckBox negotiationChoice) {
 		btn.setOnAction((ActionEvent me) -> {
-			for(CarInfoController controller : carController) {
+			for(CarInfoGUIController controller : carController) {
 				if (controller.getValueChoosenCB()) {
 					choosenOffers.add(controller.getCar());
 				}

@@ -11,7 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import model.Car;
 
-public class CarInfoController {
+public class CarInfoGUIController {
 	@FXML
 	private Label manufacture;
 	@FXML
@@ -39,7 +39,7 @@ public class CarInfoController {
 	
 	private Car car;
 	
-	public CarInfoController() {
+	public CarInfoGUIController() {
 		super();
 	}
 	
@@ -58,7 +58,7 @@ public class CarInfoController {
 		bodytype.setText(car.getBodyType());
 		color.setText(car.getColor());
 		warranty.setText(String.valueOf(car.getWarranty()));
-		price.setText(String.valueOf(car.getPrice()));
+		price.setText(String.valueOf(car.getMaxprice()));
 		agent_name.setText(car.getAgent());
 	}
 	

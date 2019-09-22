@@ -18,7 +18,7 @@ public class NegotiationBotGUI extends Stage {
 		loader = new FXMLLoader(getClass().getResource("NegotiationBot.fxml"));
 		try {
 			window = loader.load();
-			NegotiationBotController controller = loader.<NegotiationBotController>getController();
+			NegotiationBotGUIController controller = loader.<NegotiationBotGUIController>getController();
 			controller.setAgent(agent);
 			controller.setOpponentAgentName(opponentAgentName);
 			controller.setNegotiatedCar(negotiatedCar);

@@ -17,7 +17,7 @@ public class DealerGUI extends Stage{
 		loader = new FXMLLoader(getClass().getResource("Seller.fxml"));
 		try {
 			window = loader.load();
-			SellerController controller = loader.<SellerController>getController();
+			DealerGUIController controller = loader.<DealerGUIController>getController();
 			controller.setAgent(dealerAgent);
 		} catch (IOException e) {
 			System.err.println("Error by loading fxml-File");

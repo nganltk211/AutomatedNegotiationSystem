@@ -12,7 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import model.Car;
 
-public class NegotiationBotController {
+public class NegotiationBotGUIController {
 
 	@FXML
 	private Label offer_price;
@@ -34,7 +34,7 @@ public class NegotiationBotController {
 	private String opponentAgentName; // name of opponent agent
 	private Car negotiatedCar;
 
-	public NegotiationBotController() {
+	public NegotiationBotGUIController() {
 	}
 
 	@FXML

@@ -10,11 +10,11 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 
-public class BuyerGui extends Stage{
+public class BuyerGUI extends Stage{
 
 	private FXMLLoader loader;
 
-	public BuyerGui(BuyerAgent buyerAgent){
+	public BuyerGUI(BuyerAgent buyerAgent){
 		Parent window = null;
 		loader = new FXMLLoader(getClass().getResource("BuyerGUI.fxml"));
 		//String css = BuyerGui.class.getResource("GUI.css").toExternalForm();

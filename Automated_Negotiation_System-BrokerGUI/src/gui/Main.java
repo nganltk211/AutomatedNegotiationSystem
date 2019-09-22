@@ -11,6 +11,6 @@ import javafx.stage.Stage;
 
 		@Override
 		public void start(Stage primaryStage) throws Exception {
-			primaryStage = new Broker_GUI();
+			primaryStage = new BrokerGUI();
 		}
 	}

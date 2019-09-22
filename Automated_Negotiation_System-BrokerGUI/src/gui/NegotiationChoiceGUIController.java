@@ -78,21 +78,18 @@ public class NegotiationChoiceGUIController {
 	}
 	
 	public void startNegotiationButtonClick(ActionEvent event) throws IOException {
-		if (rb_manual.isSelected()) {
+		
 			if(agent instanceof DealerAgent) {
 				DealerAgent dag = (DealerAgent) agent;
-				dag.setNegotiationChoice(0);
-				dag.startNegotiation(opponentAgentName, negotiatedCar, Double.parseDouble(offer_price.getText()));
+				if (rb_manual.isSelected()) {
+					dag.setNegotiationChoice(0);
+					dag.startNegotiation(opponentAgentName, negotiatedCar, Double.parseDouble(offer_price.getText()));
+				} else {
+					dag.setNegotiationChoice(1);
+					dag.startNegotiation(opponentAgentName, negotiatedCar, negotiatedCar.getMaxprice());
+				}		
 				((Node) (event.getSource())).getScene().getWindow().hide();
-			}
-		} 
-		
-		if (rb_automated.isSelected()) {
-			if(agent instanceof DealerAgent) {
-				DealerAgent da = (DealerAgent) agent;
-				da.setNegotiationChoice(1);
-			}
-		} 		
+			}	
 	}	
 	
 	public void setOpponentAgentName(String name) {
@@ -116,6 +113,6 @@ public class NegotiationChoiceGUIController {
     	bodyType.setText(negotiatedCar.getBodyType());
     	color.setText(negotiatedCar.getColor());
     	km.setText(String.valueOf(negotiatedCar.getKm()));
-    	price.setText(String.valueOf(negotiatedCar.getPrice()));
+    	price.setText(String.valueOf(negotiatedCar.getMaxprice()));
     }
 }
