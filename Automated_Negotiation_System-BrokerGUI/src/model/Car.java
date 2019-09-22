@@ -13,6 +13,7 @@ public class Car {
 	private int warranty;
 	private String agent = "";
 	private double price;
+	private double marketPrice;
 	private int carrating;
 	private String manufactureYear;
 	private String picturePath;
@@ -129,6 +130,14 @@ public class Car {
 	public void setPrice(double price) {
 		this.price = price;
 	}
+	
+	public double getMarketPrice() {
+		return marketPrice;
+	}
+
+	public void setMarketPrice(double marketPrice) {
+		this.marketPrice = marketPrice;
+	}
 
 	public String getPicturePath() {
 		return picturePath;
@@ -148,7 +157,7 @@ public class Car {
 	public String toString() {
 		return "Car [carId=" + carId + ", manufacture=" + manufacture + ", model=" + model + ", transmission="
 				+ transmission + ", fuelType=" + fuelType + ", km=" + km + ", bodyType=" + bodyType + ", color=" + color
-				+ ", warranty=" + warranty + ", agent=" + agent + ", price=" + price + ", carrating=" + carrating
+				+ ", warranty=" + warranty + ", agent=" + agent + ", price=" + price + "marketPrice=" + marketPrice + ", carrating=" + carrating
 				+ ", manufactureYear=" + manufactureYear + "]";
 	}
 	
