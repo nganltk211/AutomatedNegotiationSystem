@@ -47,6 +47,6 @@
     <Label font="$x1" layoutX="276.0" layoutY="241.0" text="Price" />
     <Label id="bodytype" fx:id="price" font="$x2" layoutX="397.0" layoutY="241.0" text="No Details" />
     <Label fx:id="lb_offerprice" font="$x1" layoutX="263.0" layoutY="286.0" text="Offer price" visible="true" />
-    <TextField fx:id="offer_price" layoutX="370.0" layoutY="284.0" prefWidth="95.0" text="0.0" visible="true" />
+    <TextField fx:id="offer_price" layoutX="371.0" layoutY="284.0" prefWidth="95.0" text="0.0" visible="true" />
   </children>
 </AnchorPane>

@@ -29,8 +29,8 @@ public class DealerAgent extends Agent {
 	private ObjectMapper o = new ObjectMapper();
 	private int negotiationOption = 0; // 0 for manual negotiation and 1 for automated negotiation
 	private double intialPrice = 15000; // max price
-	private double reservationPrice = 13500; // min price
-	private int maxStep = 20;
+	private double reservationPrice = 14700; // min price
+	private int maxStep = 30;
 	
 	protected void setup() {
 		// Printout a welcome message
@@ -154,7 +154,8 @@ public class DealerAgent extends Agent {
 			ACLMessage mess = new ACLMessage(ACLMessage.PROPOSE);
 			mess.addReceiver(AgentSupport.findAgentWithName(myAgent, buyerAgentName));
 			if (negotiationOption == 1) {
-				offerPrice = Algorithms.offer(intialPrice, reservationPrice, 1, maxStep, 1.1);
+				//offerPrice = Algorithms.offer(intialPrice, reservationPrice, 1, maxStep, 1.1);
+				offerPrice = intialPrice;
 			}
 			System.out.println(myAgent.getName() + ": First offer to the buyer: " + offerPrice);
 			String jsonInString;
@@ -176,7 +177,7 @@ public class DealerAgent extends Agent {
 	 * In case of automated negotiation .....
 	 */
 	private class NegotiationWithBuyer extends CyclicBehaviour {
-		private int step = 2;
+		private int step = 1;
 		@Override
 		public void action() {
 			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
@@ -184,6 +185,7 @@ public class DealerAgent extends Agent {
 			ACLMessage msg = myAgent.receive(mt);
 			if (msg != null) {
 				if (negotiationOption == 0) {
+					// for manual negotiation: receive offer from the buyer and start the GUI for the dealer to make a counter-offer
 					String content = msg.getContent();
 					try {
 						Car negotiatedCar = o.readValue(content, Car.class);
@@ -200,7 +202,7 @@ public class DealerAgent extends Agent {
 						e.printStackTrace();
 					}
 				} else {
-					// for automated Negotiation
+					// for automated Negotiation: receive offer from the buyer and decide to accept or make a counter-offer
 					if (step <= maxStep) {
 						String content = msg.getContent();
 						try {

@@ -33,8 +33,8 @@ public class BuyerAgent extends Agent {
 	private ObjectMapper o = new ObjectMapper();
 	private boolean manualNegotiation;
 	private double intialPrice = 14000; // min price
-	private double reservationPrice = 16000; // max price
-	private int maxStep = 20;
+	private double reservationPrice = 14600; // max price
+	private int maxStep = 30;
 	
 	protected void setup() {
 		// Printout a welcome message
@@ -212,7 +212,7 @@ public class BuyerAgent extends Agent {
 							String dealerName = msg.getSender().getName();
 							double offerPrice = Double.parseDouble(msg.getReplyWith());
 							System.out.println("Buyer: Receive offer from the dealer: " + offerPrice);
-							double nextPrice = Algorithms.offer(intialPrice, reservationPrice, step, maxStep, 1.1);
+							double nextPrice = Algorithms.offer(intialPrice, reservationPrice, step, maxStep, 0.2);
 							if (nextPrice >= offerPrice) {
 								acceptOffer(dealerName, messObject, offerPrice);
 							} else {
@@ -262,7 +262,7 @@ public class BuyerAgent extends Agent {
 			@Override
 			public void action() {
 				ACLMessage mess = new ACLMessage(ACLMessage.PROPOSE);
-				System.out.println(myAgent.getName() + ": Counter offer to the dealer: " + price);
+				System.err.println(myAgent.getName() + ": Counter offer to the dealer: " + price);
 				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, opponentAgentName));
 
 				String jsonInString;
