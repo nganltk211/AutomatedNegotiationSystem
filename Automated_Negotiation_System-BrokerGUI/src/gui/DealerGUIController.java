@@ -164,7 +164,7 @@ public class DealerGUIController implements Initializable {
 		warrantyid.setItems(warrantyList);
 		model_id.setItems(modelAllList);
 		rating_id.setItems(ratingList);
-		
+		picture_path.setText(null);
 		setPromptText();
 	}
 	
@@ -244,7 +244,7 @@ public class DealerGUIController implements Initializable {
 	}
 	
 	private void setCarPicturePath(Car newCar) {
-		if (!picture_path.getText().equals("")) {
+		if (picture_path.getText() != null) {
 			//copy the selected picture to the folder image
 			File sourceFile = new File(picture_path.getText());
 			File targetFile = new File("./image/");

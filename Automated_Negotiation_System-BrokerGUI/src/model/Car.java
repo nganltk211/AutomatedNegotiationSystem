@@ -3,15 +3,15 @@ package model;
 public class Car {
 
 	private int carId;
-	private String manufacture = "";
-	private String model = "";
-	private String transmission = "";
-	private String fuelType = "";
+	private String manufacture ;
+	private String model;
+	private String transmission;
+	private String fuelType;
 	private int km;
-	private String bodyType = "";
-	private String color = "";
+	private String bodyType;
+	private String color;
 	private int warranty;
-	private String agent = "";
+	private String agent;
 	private double maxprice;
 	private double minprice;
 	private double marketPrice;
