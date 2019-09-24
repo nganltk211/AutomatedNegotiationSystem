@@ -28,8 +28,8 @@ public class DealerAgent extends Agent {
 	private AID brokerAgent;
 	private ObjectMapper o = new ObjectMapper();
 	private int negotiationOption = 0; // 0 for manual negotiation and 1 for automated negotiation
-	private double intialPrice = 15000; // max price
-	private double reservationPrice = 14700; // min price
+	private double intialPrice = 15200; // max price
+	private double reservationPrice = 13000; // min price
 	private int maxStep = 30;
 	
 	protected void setup() {

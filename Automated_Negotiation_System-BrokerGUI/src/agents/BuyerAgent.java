@@ -33,7 +33,7 @@ public class BuyerAgent extends Agent {
 	private ObjectMapper o = new ObjectMapper();
 	private boolean manualNegotiation;
 	private double intialPrice = 14000; // min price
-	private double reservationPrice = 14600; // max price
+	private double reservationPrice = 15000; // max price
 	private int maxStep = 30;
 	
 	protected void setup() {

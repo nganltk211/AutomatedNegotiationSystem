@@ -273,7 +273,7 @@ public class DealerGUIController implements Initializable {
 		nr_column.setCellValueFactory(new PropertyValueFactory<Car, Integer>("carId"));
 		manu_column.setCellValueFactory(new PropertyValueFactory<Car, String>("manufacture"));
 		model_column.setCellValueFactory(new PropertyValueFactory<Car, String>("model"));
-		price_column.setCellValueFactory(new PropertyValueFactory<Car, Double>("price"));
+		price_column.setCellValueFactory(new PropertyValueFactory<Car, Double>("minprice"));
 		details_column.setCellValueFactory(new PropertyValueFactory<Car, String>("moreDetails"));
 		manu_year_column.setCellValueFactory(new PropertyValueFactory<Car, String>("manufactureYear"));
 	}

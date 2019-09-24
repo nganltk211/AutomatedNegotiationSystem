@@ -113,6 +113,6 @@ public class NegotiationChoiceGUIController {
     	bodyType.setText(negotiatedCar.getBodyType());
     	color.setText(negotiatedCar.getColor());
     	km.setText(String.valueOf(negotiatedCar.getKm()));
-    	price.setText(String.valueOf(negotiatedCar.getMaxprice()));
+    	price.setText(String.valueOf(negotiatedCar.getMinprice()));
     }
 }
