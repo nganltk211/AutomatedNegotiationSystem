@@ -25,10 +25,10 @@ public class Algorithms {
 		score = score + ((-5 * year) + 25);
 		
 		float km = ((float) car.getKm()/1000);
-		
-		if(km < 12000) {
+	
+		if(km < 12) {
 			score = score + 25;
-		}else {// [ y = -0.52x + 31.25 ]
+		}else {//Mileage [ y = -0.52x + 31.25 ]
 			score = score + ((-0.52f * km) + 31.25f);
 		}
 		
