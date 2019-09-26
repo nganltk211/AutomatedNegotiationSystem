@@ -20,7 +20,6 @@ import jade.lang.acl.MessageTemplate;
 import javafx.application.Platform;
 import model.Car;
 import model.CarList;
-import model.Negotiation;
 
 /**
  * Class as representation of an buyer agent
@@ -272,6 +271,7 @@ public class BuyerAgent extends Agent {
 					mess.setReplyWith(String.valueOf(price));
 					mess.setConversationId("car-negotiation");
 					myAgent.send(mess);
+					confirmSell(negotiatedCar, price);//Confirm offer with buyer
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();
 				}
@@ -293,10 +293,36 @@ public class BuyerAgent extends Agent {
 					mess.setReplyWith(String.valueOf(price));
 					mess.setConversationId("car-negotiation");
 					myAgent.send(mess);
+					confirmSell(negotiatedCar, price);//Confirm offer with buyer
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();
 				}
 			}
+		});
+	}
+	
+	//Send negotiation confirmation message to broker agent
+	private void confirmSell(Car car, double price)
+	{
+		addBehaviour(new OneShotBehaviour() {
+			@Override
+			public void action() {
+				ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
+				System.out.println(myAgent.getName() + " : Confirm  car sell with broker: " + price);
+				mess.addReceiver(brokerAgent);
+				String jsonInString;
+				try {
+					jsonInString = o.writeValueAsString(car);
+					mess.setContent(jsonInString);
+					mess.setReplyWith(String.valueOf(price));
+					mess.setConversationId("confirm_sell");
+					myAgent.send(mess);
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}
+
+			}
+
 		});
 	}
 

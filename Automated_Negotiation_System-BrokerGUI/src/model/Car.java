@@ -140,11 +140,11 @@ public class Car {
 		this.minprice = minprice;
 	}
 
-	public boolean setcarStatus() {
+	public boolean getcarStatus() {
 		return carStatus;
 	}
 
-	public void getcarStatus(boolean carStatus) {
+	public void setcarStatus(boolean carStatus) {
 		this.carStatus = carStatus;
 	}
 
@@ -167,7 +167,7 @@ public class Car {
 		return "Car [carId=" + carId + ", manufacture=" + manufacture + ", model=" + model + ", transmission="
 				+ transmission + ", fuelType=" + fuelType + ", km=" + km + ", bodyType=" + bodyType + ", color=" + color
 				+ ", warranty=" + warranty + ", agent=" + agent + ", maxprice=" + maxprice + ", minprice=" + minprice
-				+ ", marketPrice=" + marketPrice + ", carrating=" + carrating + ", manufactureYear=" + manufactureYear
+				+ ", carStatus=" + carStatus + ", carrating=" + carrating + ", manufactureYear=" + manufactureYear
 				+ ", picturePath=" + picturePath + "]";
 	}
 }
