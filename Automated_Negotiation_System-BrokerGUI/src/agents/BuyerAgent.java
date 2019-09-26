@@ -32,8 +32,9 @@ public class BuyerAgent extends Agent {
 	private ObjectMapper o = new ObjectMapper();
 	private boolean manualNegotiation;
 	private double intialPrice = 14000; // min price
-	private double reservationPrice = 14600; // max price
+	private double reservationPrice = 15000; // max price
 	private int maxStep = 30;
+	private NegotiationWithDealer nd;
 	
 	protected void setup() {
 		// Printout a welcome message
@@ -64,8 +65,9 @@ public class BuyerAgent extends Agent {
 				}
 			}
 		});
+		nd = new NegotiationWithDealer();
 		addBehaviour(new OfferFromBroker());
-		addBehaviour(new NegotiationWithDealer());
+		addBehaviour(nd);
 		addBehaviour(new EndTheNegotiation());
 	}
 
@@ -125,7 +127,7 @@ public class BuyerAgent extends Agent {
 	 * 
 	 * @param listOfChosenCars
 	 */
-	public void sendBackTheChoosenCarsToTheBroker(CarList listOfChosenCars) {
+	public void sendBackTheChoosenCarsToTheBroker(Car negotiatedCar) {
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
@@ -134,7 +136,7 @@ public class BuyerAgent extends Agent {
 				mess.addReceiver(brokerAgent);
 				String jsonInString;
 				try {
-					jsonInString = o.writeValueAsString(listOfChosenCars);
+					jsonInString = o.writeValueAsString(negotiatedCar);
 					mess.setContent(jsonInString);
 					mess.setConversationId("car-trade-broker-buyer");
 					myAgent.send(mess);
@@ -166,18 +168,23 @@ public class BuyerAgent extends Agent {
 			}
 		});
 	}
-	
+
 	// -----------------------------------------------------------------------------------------------------------------------------------------
 	// Negotiation part
 
 	/**
-	 * This behavior is for the negotiation with dealer.
-	 * In case of manual negotiation, a GUI will be shown with the offer price from the dealer and options for buyer to accept or decline the offer 
-	 * In case of automated negotiation .....
+	 * This behavior is for the negotiation with dealer. In case of manual
+	 * negotiation, a GUI will be shown with the offer price from the dealer and
+	 * options for buyer to accept or decline the offer In case of automated
+	 * negotiation .....
 	 */
 	private class NegotiationWithDealer extends CyclicBehaviour {
 		private int step = 1;
 
+		public void setStep(int step) {
+			this.step = step;
+		}
+		
 		@Override
 		public void action() {
 			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
@@ -192,7 +199,7 @@ public class BuyerAgent extends Agent {
 						String dealerName = msg.getSender().getName();
 						double offerPrice = Double.parseDouble(msg.getReplyWith());
 						System.out.println("Buyer: Receive offer from the dealer: " + offerPrice);
-						// start the NegotiationBotGUI  
+						// start the NegotiationBotGUI
 						new Thread(() -> {
 							Platform.runLater(() -> {
 								NegotiationBotGUI bot = new NegotiationBotGUI(myAgent, dealerName, messObject,
@@ -213,15 +220,17 @@ public class BuyerAgent extends Agent {
 							System.out.println("Buyer: Receive offer from the dealer: " + offerPrice);
 							double nextPrice = Algorithms.offer(intialPrice, reservationPrice, step, maxStep, 0.2);
 							if (nextPrice >= offerPrice) {
+								step = 1;
 								acceptOffer(dealerName, messObject, offerPrice);
 							} else {
 								makeACounterOffer(dealerName, messObject, nextPrice);
+								step++;
 							}
-							step++;
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
 					} else {
+						step = 1;
 						endTheNegotiationBecauseOfOutOfTime();
 					}
 				}
@@ -247,6 +256,7 @@ public class BuyerAgent extends Agent {
 					System.out.println("End of the negotiation : ");
 					System.out.println("Bought car: " + negotiatedCar);
 					System.out.println("Bought price: " + offerPrice);
+					nd.setStep(1);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -261,7 +271,7 @@ public class BuyerAgent extends Agent {
 			@Override
 			public void action() {
 				ACLMessage mess = new ACLMessage(ACLMessage.PROPOSE);
-				System.err.println(myAgent.getName() + ": Counter offer to the dealer: " + price);
+				System.err.println(myAgent.getName() + ": Counter offer to the dealer: " + price + "\n");
 				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, opponentAgentName));
 
 				String jsonInString;

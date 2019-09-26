@@ -25,10 +25,10 @@ public class CarListToBuyerGUI extends Stage {
 	private FXMLLoader loader;
 	private CarInfoGUIController[] carController;
 	private BuyerAgent buyerAgent;
-	private CarList choosenOffers;
+	//private CarList choosenOffers;
 	
 	public CarListToBuyerGUI(CarList offerCarlist, Agent myAgent){
-		choosenOffers = new CarList();
+		//choosenOffers = new CarList();
 		carController = new CarInfoGUIController[offerCarlist.size()];
 		buyerAgent = (BuyerAgent) myAgent;
 		ScrollPane sp = new ScrollPane();
@@ -43,47 +43,20 @@ public class CarListToBuyerGUI extends Stage {
 				carController[i] = loader.getController();
 		        // Set data in the controller
 				carController[i].setCar(offerCarlist.get(i));
+				
+				carController[i].setBuyerAgent(buyerAgent);
 				window.setStyle("-fx-background-color: #ffffff");
 				root.getChildren().add(window);
 			} catch (IOException e) {
 				System.err.println("Error by loading fxml-File");
 			}	
 		}	
-		CheckBox negotiationChoice = new CheckBox("Manual");
-		Button sendbtn = new Button("Send");
-		setActionForSendButton(sendbtn,negotiationChoice);
-		sendbtn.setPrefWidth(100);
 		this.setTitle("List of possible cars");
 		sp.setContent(root);
         sp.setPannable(true); 
-              
-        HBox hBox = new HBox();
-        hBox.setSpacing(100);
-        hBox.getChildren().addAll(negotiationChoice,sendbtn);
-        
-        VBox vBox = new VBox();
-		vBox.setSpacing(10);
-		vBox.getChildren().addAll(sp, hBox);
-		vBox.setPadding(new Insets(5));
-		Scene scene = new Scene(vBox,710,850);
+		Scene scene = new Scene(sp,710,850);
 		this.setScene(scene);
 		this.setResizable(false);
 		this.show();
-	}
-	
-	private void setActionForSendButton(Button btn, CheckBox negotiationChoice) {
-		btn.setOnAction((ActionEvent me) -> {
-			for(CarInfoGUIController controller : carController) {
-				if (controller.getValueChoosenCB()) {
-					choosenOffers.add(controller.getCar());
-				}
-			}
-			if (choosenOffers.size()>0) {
-				buyerAgent.sendBackTheChoosenCarsToTheBroker(choosenOffers);
-				buyerAgent.setNegotiationManual(negotiationChoice.isSelected());
-				this.close();
-			}	
-		});
-		
 	}
 }

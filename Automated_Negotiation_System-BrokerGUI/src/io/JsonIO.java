@@ -41,6 +41,16 @@ public class JsonIO {
 		path = setpath;
 	}
 
+	public void clearFile() {
+		openFileWriter();
+		try {
+			csvWriter.write("");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		closeFileWriter();
+	}
+	
 	private boolean openFileReader() {
 		try {
 			try {

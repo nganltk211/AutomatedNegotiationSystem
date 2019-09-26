@@ -2,6 +2,7 @@ package gui;
 
 import java.io.IOException;
 
+import agents.BuyerAgent;
 import agents.DealerAgent;
 import jade.core.Agent;
 import javafx.beans.value.ChangeListener;
@@ -89,6 +90,15 @@ public class NegotiationChoiceGUIController {
 					dag.startNegotiation(opponentAgentName, negotiatedCar, negotiatedCar.getMaxprice());
 				}		
 				((Node) (event.getSource())).getScene().getWindow().hide();
+			} else {
+				BuyerAgent bag = (BuyerAgent) agent;
+				if (rb_manual.isSelected()) {		
+					bag.setNegotiationManual(true);
+				} else {
+					bag.setNegotiationManual(false);
+				}
+				bag.sendBackTheChoosenCarsToTheBroker(negotiatedCar);		
+				((Node) (event.getSource())).getScene().getWindow().hide();
 			}	
 	}	
 	
@@ -113,6 +123,6 @@ public class NegotiationChoiceGUIController {
     	bodyType.setText(negotiatedCar.getBodyType());
     	color.setText(negotiatedCar.getColor());
     	km.setText(String.valueOf(negotiatedCar.getKm()));
-    	price.setText(String.valueOf(negotiatedCar.getMaxprice()));
+    	price.setText(String.valueOf(negotiatedCar.getMinprice()));
     }
 }
