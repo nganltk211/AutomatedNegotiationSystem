@@ -2,6 +2,7 @@ package gui;
 
 import java.io.File;
 
+import agents.BuyerAgent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -32,12 +33,15 @@ public class CarInfoGUIController {
 	private Label warranty;
 	@FXML
 	private Label agent_name;
+//	@FXML
+//	private CheckBox checkbox;
 	@FXML
-	private CheckBox checkbox;
+	private Button btn_negotiate;
 	@FXML
 	private ImageView imageView;
 	
 	private Car car;
+	private BuyerAgent buyerAgent;
 	
 	public CarInfoGUIController() {
 		super();
@@ -67,7 +71,12 @@ public class CarInfoGUIController {
 		return car;
 	}
 	
-	public boolean getValueChoosenCB() {
-		return checkbox.isSelected();
+	public void setBuyerAgent(BuyerAgent buyerAgent) {
+		this.buyerAgent = buyerAgent;
+	}
+	
+	@FXML
+	public void buttonNegotiateClick(ActionEvent action) {
+		NegotiationChoiceGUI negotiationChoice = new NegotiationChoiceGUI(buyerAgent, "", car);
 	}
 }

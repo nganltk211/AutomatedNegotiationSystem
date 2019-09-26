@@ -153,10 +153,10 @@ public class BrokerAgent extends Agent {
 				System.out.println("Broker: Receive a choosen car from buyer " + msg.getSender().getName());
 				String choosenCarJson = msg.getContent();
 				try {
-					CarList choosenCar = o.readValue(choosenCarJson, CarList.class);
+					Car choosenCar = o.readValue(choosenCarJson, Car.class);
 					System.out.println(choosenCar + "\n");
 					ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
-					mess.addReceiver(AgentSupport.findAgentWithName(myAgent, choosenCar.get(0).getAgent()));
+					mess.addReceiver(AgentSupport.findAgentWithName(myAgent, choosenCar.getAgent()));
 					mess.setContent(choosenCarJson);
 					mess.setConversationId("car-trade-broker-seller");
 					mess.setReplyWith(msg.getSender().getName()); // name of the buyer.

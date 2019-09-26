@@ -119,16 +119,16 @@ public class DealerAgent extends Agent {
 				String content = msg.getContent();
 				String buyer = msg.getReplyWith();
 				try {
-					CarList choosenCars = o.readValue(content, CarList.class);
+					Car choosenCars = o.readValue(content, Car.class);
 					System.out.println(choosenCars + "\n");
 					System.out.println("Dealer: Trying to create a negotiation with the buyer: " + buyer);
 					// starts the Negotiation GUI, where the dealer can choose,
 					// whether he want to negotiate manually or automated
 					new Thread(() -> {
 						Platform.runLater(() -> {
-							for (Car c : choosenCars) {
-								NegotiationChoiceGUI gui = new NegotiationChoiceGUI(myAgent, buyer, c);
-							}
+							//for (Car c : choosenCars) {
+								NegotiationChoiceGUI gui = new NegotiationChoiceGUI(myAgent, buyer, choosenCars);
+							//}
 						});
 					}).start();
 				} catch (IOException e) {
@@ -178,6 +178,7 @@ public class DealerAgent extends Agent {
 	 */
 	private class NegotiationWithBuyer extends CyclicBehaviour {
 		private int step = 1;
+		
 		@Override
 		public void action() {
 			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
@@ -216,8 +217,9 @@ public class DealerAgent extends Agent {
 								step = 1;
 							} else {
 								makeACounterOffer(buyerName, messObject, nextPrice);
+								step++;
 							}
-							step++;
+							System.out.println(step);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
