@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gui.NegotiationBotGUI;
 import io.JsonIO;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -16,6 +19,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import javafx.application.Platform;
 import model.Car;
 import model.CarList;
 
@@ -47,6 +51,7 @@ public class BrokerAgent extends Agent {
 		addBehaviour(new ReceiveListOfCarsFromDealer());
 		addBehaviour(new DealWithRequestFromBuyers());
 		addBehaviour(new RequestFromBuyersToConnectToDealer());
+		addBehaviour(new ConformSellWithBroker());
 	}
 
 	/**
@@ -56,6 +61,52 @@ public class BrokerAgent extends Agent {
 		// Printout a dismissal message
 		System.out.println("Broker-agent " + getAID().getName() + " terminating.");
 	}
+	
+	/*
+	 This Behaviour (Receive confirmation from buyer agent) does the agent handshake after both agents accept offers
+	 */
+	private class ConformSellWithBroker extends CyclicBehaviour{
+		
+		@Override
+		public void action() {
+			//MessageTemplate for the Conversation between dealer and broker (the agents confirm car sell with broker)
+			MessageTemplate mt0 = MessageTemplate.and(MessageTemplate.MatchConversationId("confirm_sell"),MessageTemplate.MatchPerformative(ACLMessage.INFORM));
+			ACLMessage msg0 = myAgent.receive(mt0);
+			
+
+			if (msg0 != null) {
+				// Message received. Process it
+				String content = msg0.getContent();
+				try {
+					Car negotiatedCar = o.readValue(content, Car.class);
+					String buyerName = msg0.getSender().getName();
+					double offerPrice = Double.parseDouble(msg0.getReplyWith());
+					System.out.println("Broker confirm !!! Buyer " + buyerName + " confirm sell at: " + offerPrice );
+					
+					//Update JsonDB/CarList
+					CarList list = jsonDB.readFile();
+					for(Car c : list) {
+						if(negotiatedCar.getCarId() == c.getCarId()) {
+							c.setcarStatus(true);
+						}
+					}
+					
+					String jsonInString = o.writeValueAsString(list);
+					jsonDB.writeToFile(jsonInString);
+					System.out.println("Broker: Broker cataloge: \n" + list + "\n");
+					System.out.println("Test : " + jsonInString);
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+				}				
+				
+			} else {
+				block();
+			}
+			
+		}
+	}
+	
 
 	/**
 	 * Class for behavior of the broker agent. 
