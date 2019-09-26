@@ -224,7 +224,6 @@ public class BuyerAgent extends Agent {
 								step = 1;
 								acceptOffer(dealerName, messObject, offerPrice);
 							} else {
-								System.out.println(step);
 								makeACounterOffer(dealerName, messObject, nextPrice);
 								step++;
 							}
@@ -273,7 +272,7 @@ public class BuyerAgent extends Agent {
 			@Override
 			public void action() {
 				ACLMessage mess = new ACLMessage(ACLMessage.PROPOSE);
-				System.err.println(myAgent.getName() + ": Counter offer to the dealer: " + price);
+				System.err.println(myAgent.getName() + ": Counter offer to the dealer: " + price + "\n");
 				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, opponentAgentName));
 
 				String jsonInString;

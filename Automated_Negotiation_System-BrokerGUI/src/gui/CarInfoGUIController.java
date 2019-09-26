@@ -33,8 +33,6 @@ public class CarInfoGUIController {
 	private Label warranty;
 	@FXML
 	private Label agent_name;
-//	@FXML
-//	private CheckBox checkbox;
 	@FXML
 	private Button btn_negotiate;
 	@FXML

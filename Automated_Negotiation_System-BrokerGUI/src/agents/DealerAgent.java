@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import gui.DealerGUI;
 import gui.NegotiationBotGUI;
 import gui.NegotiationChoiceGUI;
@@ -31,6 +32,7 @@ public class DealerAgent extends Agent {
 	private double intialPrice = 15200; // max price
 	private double reservationPrice = 13000; // min price
 	private int maxStep = 30;
+	private NegotiationWithBuyer nb;
 	
 	protected void setup() {
 		// Printout a welcome message
@@ -61,8 +63,9 @@ public class DealerAgent extends Agent {
 				}
 			}
 		});
+		nb = new NegotiationWithBuyer();
 		addBehaviour(new StartTheNegotiationWithBuyer());
-		addBehaviour(new NegotiationWithBuyer());
+		addBehaviour(nb);
 		addBehaviour(new EndTheNegotiation());
 	}
 
@@ -126,9 +129,7 @@ public class DealerAgent extends Agent {
 					// whether he want to negotiate manually or automated
 					new Thread(() -> {
 						Platform.runLater(() -> {
-							//for (Car c : choosenCars) {
-								NegotiationChoiceGUI gui = new NegotiationChoiceGUI(myAgent, buyer, choosenCars);
-							//}
+							NegotiationChoiceGUI gui = new NegotiationChoiceGUI(myAgent, buyer, choosenCars);
 						});
 					}).start();
 				} catch (IOException e) {
@@ -157,7 +158,7 @@ public class DealerAgent extends Agent {
 				//offerPrice = Algorithms.offer(intialPrice, reservationPrice, 1, maxStep, 1.1);
 				offerPrice = intialPrice;
 			}
-			System.out.println(myAgent.getName() + ": First offer to the buyer: " + offerPrice);
+			System.out.println(myAgent.getName() + ": First offer to the buyer: " + offerPrice + "\n");
 			String jsonInString;
 			try {
 				jsonInString = o.writeValueAsString(negotiatedCar);
@@ -177,7 +178,11 @@ public class DealerAgent extends Agent {
 	 * In case of automated negotiation .....
 	 */
 	private class NegotiationWithBuyer extends CyclicBehaviour {
-		private int step = 1;
+		private int step = 0;
+		
+		public void setStep(int step) {
+			this.step = step;
+		}
 		
 		@Override
 		public void action() {
@@ -214,18 +219,17 @@ public class DealerAgent extends Agent {
 							double nextPrice = Algorithms.offer(intialPrice, reservationPrice, step, maxStep, 0.9);
 							if (nextPrice <= offerPrice) {
 								acceptOffer(buyerName, messObject, offerPrice);
-								step = 1;
+								step = 0;
 							} else {
 								makeACounterOffer(buyerName, messObject, nextPrice);
 								step++;
 							}
-							System.out.println(step);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
 					} else {
 						endTheNegotiationBecauseOfOutOfTime();
-						step = 1;
+						step = 0;
 					}
 				}
 			} else {
@@ -254,6 +258,7 @@ public class DealerAgent extends Agent {
 					System.out.println("End of the negotiation : ");
 					System.out.println("Sold car: " + negotiatedCar);
 					System.out.println("Sold price: " + offerPrice);
+					nb.setStep(0);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -277,7 +282,7 @@ public class DealerAgent extends Agent {
 			@Override
 			public void action() {
 				ACLMessage mess = new ACLMessage(ACLMessage.PROPOSE);
-				System.out.println(myAgent.getName() + ": Counter offer to the buyer: " + price);
+				System.out.println(myAgent.getName() + ": Counter offer to the buyer: " + price + "\n");
 				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, opponentAgentName));
 				String jsonInString;
 				try {

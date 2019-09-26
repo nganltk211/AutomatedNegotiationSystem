@@ -51,41 +51,12 @@ public class CarListToBuyerGUI extends Stage {
 				System.err.println("Error by loading fxml-File");
 			}	
 		}	
-//		CheckBox negotiationChoice = new CheckBox("Manual");
-//		Button sendbtn = new Button("Send");
-		//setActionForSendButton(sendbtn,negotiationChoice);
-//		sendbtn.setPrefWidth(100);
 		this.setTitle("List of possible cars");
 		sp.setContent(root);
         sp.setPannable(true); 
-//              
-//        HBox hBox = new HBox();
-//        hBox.setSpacing(100);
-//        hBox.getChildren().addAll(negotiationChoice,sendbtn);
-//        
-//        VBox vBox = new VBox();
-//		vBox.setSpacing(10);
-//		vBox.getChildren().addAll(sp, hBox);
-//		vBox.setPadding(new Insets(5));
 		Scene scene = new Scene(sp,710,850);
 		this.setScene(scene);
 		this.setResizable(false);
 		this.show();
 	}
-	
-//	private void setActionForSendButton(Button btn, CheckBox negotiationChoice) {
-//		btn.setOnAction((ActionEvent me) -> {
-//			for(CarInfoGUIController controller : carController) {
-//				if (controller.getValueChoosenCB()) {
-//					choosenOffers.add(controller.getCar());
-//				}
-//			}
-//			if (choosenOffers.size()>0) {
-//				buyerAgent.sendBackTheChoosenCarsToTheBroker(choosenOffers);
-//				buyerAgent.setNegotiationManual(negotiationChoice.isSelected());
-//				this.close();
-//			}	
-//		});
-//		
-//	}
 }
