@@ -14,7 +14,7 @@
         <Font name="System Bold" size="26.0" />
       </font>
     </Label>
-    <Button fx:id="dealer" contentDisplay="CENTER" layoutX="44.0" layoutY="88.0" mnemonicParsing="false" onAction="#buttonDealerClick" prefHeight="175.0" prefWidth="185.0" style="-fx-background-radius: 10em;&#10;" text="Dealer" textAlignment="LEFT">
+    <Button fx:id="dealer" contentDisplay="CENTER" layoutX="44.0" layoutY="88.0" mnemonicParsing="false" onAction="#buttonDealerClick" prefHeight="175.0" prefWidth="185.0" style="-fx-background-radius: 10em;&#10;-fx-background-image: url('./image/background.png');" text="Dealer" textAlignment="LEFT">
       <font>
         <Font size="35.0" fx:id="x1" />
       </font>

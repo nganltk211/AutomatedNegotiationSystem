@@ -213,6 +213,7 @@ public class DealerAgent extends Agent {
 							double nextPrice = Algorithms.offer(intialPrice, reservationPrice, step, maxStep, 0.9);
 							if (nextPrice <= offerPrice) {
 								acceptOffer(buyerName, messObject, offerPrice);
+								step = 1;
 							} else {
 								makeACounterOffer(buyerName, messObject, nextPrice);
 							}
@@ -222,6 +223,7 @@ public class DealerAgent extends Agent {
 						}
 					} else {
 						endTheNegotiationBecauseOfOutOfTime();
+						step = 1;
 					}
 				}
 			} else {

@@ -29,7 +29,7 @@ public class BrokerAgent extends Agent {
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hallo! Broker-agent " + getAID().getName() + " is ready.");
-
+		jsonDB.clearFile();
 		// Register the car-broker service in the yellow pages
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID());

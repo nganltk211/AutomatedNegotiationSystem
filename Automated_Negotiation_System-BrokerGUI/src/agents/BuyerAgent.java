@@ -215,6 +215,7 @@ public class BuyerAgent extends Agent {
 							double nextPrice = Algorithms.offer(intialPrice, reservationPrice, step, maxStep, 0.2);
 							if (nextPrice >= offerPrice) {
 								acceptOffer(dealerName, messObject, offerPrice);
+								step = 1;
 							} else {
 								makeACounterOffer(dealerName, messObject, nextPrice);
 							}
@@ -224,6 +225,7 @@ public class BuyerAgent extends Agent {
 						}
 					} else {
 						endTheNegotiationBecauseOfOutOfTime();
+						step = 1;
 					}
 				}
 			} else {

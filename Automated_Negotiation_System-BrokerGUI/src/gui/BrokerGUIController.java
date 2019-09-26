@@ -14,7 +14,6 @@ import jade.wrapper.StaleProxyException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.stage.Stage;
 
 public class BrokerGUIController{
 	@FXML
@@ -36,7 +35,7 @@ public class BrokerGUIController{
 			System.err.println("Problem by starting a BrokerAgent");
 		}
 	}
-
+	
 	public static void startBrokerAgent() throws InterruptedException {
 		// Get a hold to the JADE runtime
 		Runtime rt = Runtime.instance();
@@ -56,7 +55,6 @@ public class BrokerGUIController{
 		} catch (StaleProxyException e) {
 			System.err.println("Problem by creating a BrokerAgent");
 		}
-
 	}
 
 	@FXML
