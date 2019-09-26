@@ -14,7 +14,7 @@ public class Car {
 	private String agent = "";
 	private double maxprice;
 	private double minprice;
-	private double marketPrice;
+	private boolean carStatus = false;
 	private int carrating;
 	private String manufactureYear;
 	private String picturePath;
@@ -140,12 +140,12 @@ public class Car {
 		this.minprice = minprice;
 	}
 
-	public double getMarketPrice() {
-		return marketPrice;
+	public boolean setcarStatus() {
+		return carStatus;
 	}
 
-	public void setMarketPrice(double marketPrice) {
-		this.marketPrice = marketPrice;
+	public void getcarStatus(boolean carStatus) {
+		this.carStatus = carStatus;
 	}
 
 	public String getPicturePath() {
