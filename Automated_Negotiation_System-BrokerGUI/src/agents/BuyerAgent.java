@@ -217,7 +217,7 @@ public class BuyerAgent extends Agent {
 							Car messObject = o.readValue(content, Car.class);
 							String dealerName = msg.getSender().getName();
 							double offerPrice = Double.parseDouble(msg.getReplyWith());
-							System.out.println("Buyer: Receive offer from the dealer: " + offerPrice);
+							System.err.println("Buyer: Receive offer from the dealer: " + offerPrice);
 							double nextPrice = Algorithms.offer(intialPrice, reservationPrice, step, maxStep, 0.2);
 							if (nextPrice >= offerPrice) {
 								step = 1;
@@ -281,7 +281,7 @@ public class BuyerAgent extends Agent {
 					mess.setReplyWith(String.valueOf(price));
 					mess.setConversationId("car-negotiation");
 					myAgent.send(mess);
-					confirmSell(negotiatedCar, price);//Confirm offer with buyer
+					//confirmSell(negotiatedCar, price);//Confirm offer with buyer
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();
 				}
@@ -332,7 +332,6 @@ public class BuyerAgent extends Agent {
 				}
 
 			}
-
 		});
 	}
 

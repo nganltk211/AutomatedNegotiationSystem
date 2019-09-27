@@ -161,7 +161,7 @@ public class Car {
 					+ "\nColor: " + color + "\nWarranty: " + warranty + "\nCar rating: " + carrating;
 		return moreDetails;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Car [carId=" + carId + ", manufacture=" + manufacture + ", model=" + model + ", transmission="
@@ -170,4 +170,5 @@ public class Car {
 				+ ", carStatus=" + carStatus + ", carrating=" + carrating + ", manufactureYear=" + manufactureYear
 				+ ", picturePath=" + picturePath + "]";
 	}
+	
 }

@@ -94,7 +94,7 @@ public class BrokerAgent extends Agent {
 					String jsonInString = o.writeValueAsString(list);
 					jsonDB.writeToFile(jsonInString);
 					System.out.println("Broker: Broker cataloge: \n" + list + "\n");
-					System.out.println("Test : " + jsonInString);
+					//System.out.println("Test : " + jsonInString);
 					
 				} catch (IOException e) {
 					e.printStackTrace();
