@@ -262,6 +262,7 @@ public class DealerAgent extends Agent {
 					System.out.println("End of the negotiation : ");
 					System.out.println("Sold car: " + negotiatedCar);
 					System.out.println("Sold price: " + offerPrice);
+					
 					nb.setStep(0);
 				} catch (IOException e) {
 					e.printStackTrace();
