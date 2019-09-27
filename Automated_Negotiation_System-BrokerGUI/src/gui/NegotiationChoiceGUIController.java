@@ -127,12 +127,8 @@ public class NegotiationChoiceGUIController {
 		{
 			isValidate = true;
 		}
-		if(Double.parseDouble(BeetaValue.getText()) < 1)
-		{
-			validationLabel.setText("Format Beeta > 1");
-			isValidate = false;
-		}
-		if(Double.parseDouble(PricetoEnter.getText()) > 1000)
+		
+		if(Double.parseDouble(PricetoEnter.getText()) < 1000)
 		{
 			pricevalidationLabel.setText("Price can't be less than 1000");
 			isValidate = false;
@@ -145,6 +141,11 @@ public class NegotiationChoiceGUIController {
 				
 				isValidate = false;
 			}else {
+				if(Double.parseDouble(BeetaValue.getText()) < 1)
+				{
+					validationLabel.setText("Format Beeta > 1");
+					isValidate = false;
+				}
 				isValidate = true;
 			}
 		}
