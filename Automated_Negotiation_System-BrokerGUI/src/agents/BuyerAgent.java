@@ -147,8 +147,11 @@ public class BuyerAgent extends Agent {
 		});
 	}
 
+	/**
+	 * To request the broker to send a list of possible cars
+	 * @param desiredCar
+	 */
 	public void requestInfoOfDesiredCar(Car desiredCar) {
-		// To request the broker to send a list of possible cars
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
@@ -173,10 +176,9 @@ public class BuyerAgent extends Agent {
 	// Negotiation part
 
 	/**
-	 * This behavior is for the negotiation with dealer. In case of manual
-	 * negotiation, a GUI will be shown with the offer price from the dealer and
-	 * options for buyer to accept or decline the offer In case of automated
-	 * negotiation .....
+	 * This behavior is for the negotiation with dealer. In case of manual negotiation, 
+	 * a GUI will be shown with the offer price from the dealer and options for buyer to accept or decline the offer.
+	 * In case of automated negotiation, the buyer AI will decide to accept the offer or make a counter-offer 
 	 */
 	private class NegotiationWithDealer extends CyclicBehaviour {
 		private int step = 1;
@@ -218,6 +220,7 @@ public class BuyerAgent extends Agent {
 							String dealerName = msg.getSender().getName();
 							double offerPrice = Double.parseDouble(msg.getReplyWith());
 							System.err.println("Buyer: Receive offer from the dealer: " + offerPrice);
+							// calculate the next offer
 							double nextPrice = Algorithms.offer(intialPrice, reservationPrice, step, maxStep, 0.2);
 							if (nextPrice >= offerPrice) {
 								step = 1;
