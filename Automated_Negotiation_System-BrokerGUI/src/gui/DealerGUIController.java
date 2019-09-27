@@ -31,6 +31,7 @@ import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import model.Car;
 import model.CarList;
+import model.FormValidation;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -77,6 +78,22 @@ public class DealerGUIController implements Initializable {
 	@FXML
 	private Label stepsLabel;
 	@FXML
+	private Label manufactureValidationLabel;
+	@FXML
+	private Label modelValidationLabel;
+	@FXML
+	private Label transmissionValidationLabel;
+	@FXML
+	private Label bodyValidationLabel;
+	@FXML
+	private Label priceValidationLabel;
+	@FXML
+	private Label yearValidationLabel;
+	@FXML
+	private Label beetaValidationLabel;
+	@FXML
+	private Label stepsValidationLabel;
+	@FXML
 	private Button done_id;
 	@FXML
 	private Button cancel_id;
@@ -107,6 +124,8 @@ public class DealerGUIController implements Initializable {
 	private int carCounter;
 	private DealerAgent dealerAgent;
 	private ToggleGroup group;
+	
+	private boolean isvalidate = false;
 
 	public DealerGUIController() {
 		listOfCars = new CarList();
@@ -126,6 +145,18 @@ public class DealerGUIController implements Initializable {
 		radioButtonValueChanged();
 		setDataComboBox();
 		setTableMenu();
+		
+		manufactureValidationLabel.setText("");
+		modelValidationLabel.setText("");
+		bodyValidationLabel.setText("");
+		transmissionValidationLabel.setText("");
+		yearValidationLabel.setText("");
+		priceValidationLabel.setText("");
+		beetaValidationLabel.setText("");
+		stepsValidationLabel.setText("");
+		beetaValidationLabel.setVisible(false);		
+		stepsValidationLabel.setVisible(false);
+		
 	}
 	public void radioButtonValueChanged() {
 		group.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
@@ -138,12 +169,16 @@ public class DealerGUIController implements Initializable {
 					stepsLabel.setVisible(true);
 					beetaLabel.setVisible(true);
 					helpMenu.setVisible(true);
+					beetaValidationLabel.setVisible(true);		
+					stepsValidationLabel.setVisible(true);
 				}else {
 					beetaValue.setVisible(false);
 					stepsValue.setVisible(false);
 					stepsLabel.setVisible(false);
 					beetaLabel.setVisible(false);
 					helpMenu.setVisible(false);
+					beetaValidationLabel.setVisible(false);		
+					stepsValidationLabel.setVisible(false);
 				}
 			}
 		});
@@ -268,45 +303,85 @@ public class DealerGUIController implements Initializable {
 			model_id.setValue("Cima");
 		}
 	}
-
+	public boolean Validation()
+	{
+		boolean manufacture = FormValidation.comboBoxNotSelected(manufacture_id, manufactureValidationLabel, "Please select manufacture type");
+		boolean model = FormValidation.comboBoxNotSelected(model_id, modelValidationLabel, "Please select model type");
+		boolean transmission = FormValidation.comboBoxNotSelected(transmission_id, transmissionValidationLabel, "Please select transmission type");
+		boolean body = FormValidation.comboBoxNotSelected(body_id, bodyValidationLabel, "Please select body type");
+		boolean year = FormValidation.textFieldNotEmpty(manu_year_id, yearValidationLabel, "Please enter manufacture year");
+		boolean minPrice = FormValidation.textFieldNotEmpty(priceMin, priceValidationLabel, "Please enter minimum price");
+		boolean maxPrice = FormValidation.textFieldNotEmpty(priceMax, priceValidationLabel, "Please enter maximum price");
+		boolean beeta = FormValidation.textFieldNotEmpty(beetaValue, beetaValidationLabel, "Please enter Beeta Value ");
+		boolean steps = FormValidation.textFieldNotEmpty(stepsValue, stepsValidationLabel, "Please enter steps Value ");
+		//System.out.println(year + "Year++++====");
+		if(!minPrice && !maxPrice)
+		{
+			FormValidation.textFieldNotEmpty(priceMax, priceValidationLabel, "Please enter minimum and maximum price");
+		}
+		if(autoNego.isSelected())
+		{
+			if(!beeta && !steps)
+			{
+				isvalidate = false;
+			}
+		}
+		if(manufacture && model && transmission && body && year && minPrice && maxPrice)
+		{
+			isvalidate = true;
+		}
+		else {
+			isvalidate = false;
+		}
+		
+		return isvalidate;
+	}
 	@FXML
 	public void OnButtonAddClick(ActionEvent event) throws IOException {
-		carCounter++;
-		Car newCar = new Car(carCounter);
-		newCar.setManufacture(manufacture_id.getValue());
-		newCar.setModel(model_id.getValue());
-		newCar.setTransmission(transmission_id.getValue());
-		newCar.setBodyType(body_id.getValue());
-		newCar.setColor(colorid.getValue());
-		newCar.setFuelType(fuel_id.getValue());
-		newCar.setKm(Integer.parseInt(km_id.getText()));
-		if (warrantyid.getValue() != null) {
-			newCar.setWarranty(warrantyid.getValue());
-		}
-		newCar.setManufactureYear(manu_year_id.getText());
-		if (rating_id.getValue() != null) {
-			newCar.setCarrating(rating_id.getValue());
-		}
-		if(manualNego.isSelected())
-		{
-			//This is Manual Stuff
-			newCar.setNegotiatable(true);
-		}else {
-			//This Is Automated Stuff
-			newCar.setNegotiatable(false);
-			newCar.setBeeta(Double.parseDouble(beetaValue.getText()));
-			newCar.setSteps(Integer.parseInt(stepsValue.getText()));
-		}
-		newCar.setMinprice(Double.parseDouble(priceMin.getText()));
-		newCar.setMaxprice(Double.parseDouble(priceMax.getText()));
-	
-		setCarPicturePath(newCar);
+		//boolean manufacture = FormValidation.comboBoxNotSelected(manufacture_id, , validationString)
+		Validation();
+		if(	isvalidate) {
+			carCounter++;
+			Car newCar = new Car(carCounter);
+			newCar.setManufacture(manufacture_id.getValue());
+			newCar.setModel(model_id.getValue());
+			newCar.setTransmission(transmission_id.getValue());
+			newCar.setBodyType(body_id.getValue());
+			newCar.setColor(colorid.getValue());
+			newCar.setFuelType(fuel_id.getValue());
+			newCar.setKm(Integer.parseInt(km_id.getText()));
+			if (warrantyid.getValue() != null) {
+				newCar.setWarranty(warrantyid.getValue());
+			}
+			newCar.setManufactureYear(manu_year_id.getText());
+			if (rating_id.getValue() != null) {
+				newCar.setCarrating(rating_id.getValue());
+			}
+			if(manualNego.isSelected())
+			{
+				//This is Manual Stuff
+				newCar.setNegotiatable(true);
+				
+			}else {
+				//This Is Automated Stuff
+				
+				newCar.setNegotiatable(false);
+				newCar.setBeeta(Double.parseDouble(beetaValue.getText()));
+				newCar.setSteps(Integer.parseInt(stepsValue.getText()));
+			
+				
+			}
+			newCar.setMinprice(Double.parseDouble(priceMin.getText()));
+			newCar.setMaxprice(Double.parseDouble(priceMax.getText()));
 		
-		listOfCars.add(newCar);
-		ObservableList<Car> obList = FXCollections.observableArrayList(listOfCars);
-		tableViewID.setItems(obList);
-		updateTable();
+			setCarPicturePath(newCar);
+			
+			listOfCars.add(newCar);
+			ObservableList<Car> obList = FXCollections.observableArrayList(listOfCars);
+			tableViewID.setItems(obList);
+			updateTable();
 		
+		}
 	}
 
 	public void OnButtonResetClick(ActionEvent event) throws IOException {
