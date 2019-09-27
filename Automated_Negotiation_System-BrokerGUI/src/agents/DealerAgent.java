@@ -331,7 +331,7 @@ public class DealerAgent extends Agent {
 		System.out.println("No Agreement!");
 	}
 
-	public void startNegotiation(String opponentAgentName, Car car, double firstOfferPrice) {
+	public void startNegotiation(String opponentAgentName, Car car, double firstOfferPrice, double beeta, int steps) {
 		addBehaviour(new NegotiationBehaviourWithBuyerFirstOffer(opponentAgentName, car, firstOfferPrice));
 	}
 

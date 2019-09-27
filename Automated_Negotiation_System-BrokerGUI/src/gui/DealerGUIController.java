@@ -19,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -29,9 +30,12 @@ import model.CarList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 
 public class DealerGUIController implements Initializable {
 
@@ -65,6 +69,10 @@ public class DealerGUIController implements Initializable {
 	private Button cancel_id;
 	@FXML
 	private Button picture_btn;
+	@FXML
+	private RadioButton autoNego;
+	@FXML
+	private RadioButton manualNego;
 	
 	@FXML
 	private TableColumn<Car, Integer> nr_column;
@@ -84,6 +92,7 @@ public class DealerGUIController implements Initializable {
 	private CarList listOfCars;
 	private int carCounter;
 	private DealerAgent dealerAgent;
+	private ToggleGroup group;
 
 	public DealerGUIController() {
 		listOfCars = new CarList();
@@ -91,6 +100,10 @@ public class DealerGUIController implements Initializable {
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		group = new ToggleGroup();
+		manualNego.setToggleGroup(group);
+		autoNego.setToggleGroup(group);
+		manualNego.setSelected(true);
 		setDataComboBox();
 		setTableMenu();
 	}
@@ -229,6 +242,12 @@ public class DealerGUIController implements Initializable {
 		if (rating_id.getValue() != null) {
 			newCar.setCarrating(rating_id.getValue());
 		}
+		if(manualNego.isSelected())
+		{
+			newCar.setNegotiatable(true);
+		}else {
+			newCar.setNegotiatable(false);
+		}
 		newCar.setMinprice(Double.parseDouble(priceMin.getText()));
 		setCarPicturePath(newCar);
 		
@@ -236,6 +255,7 @@ public class DealerGUIController implements Initializable {
 		ObservableList<Car> obList = FXCollections.observableArrayList(listOfCars);
 		tableViewID.setItems(obList);
 		updateTable();
+		
 	}
 
 	public void OnButtonResetClick(ActionEvent event) throws IOException {

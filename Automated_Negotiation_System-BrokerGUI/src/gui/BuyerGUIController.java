@@ -63,8 +63,11 @@ public class BuyerGUIController implements Initializable {
 		searchCar.setColor(color_id.getValue());
 		searchCar.setFuelType(fueltype_id.getValue());
 		searchCar.setMaxprice(Double.parseDouble(max_id.getText()));
+		buyerAgent.setReservationPrice(Double.parseDouble(max_id.getText()));
 		buyerAgent.requestInfoOfDesiredCar(searchCar);
 		((Node) (event.getSource())).getScene().getWindow().hide();
+		
+		
 	}
 
 	public void ComboChanged(ActionEvent event) {
