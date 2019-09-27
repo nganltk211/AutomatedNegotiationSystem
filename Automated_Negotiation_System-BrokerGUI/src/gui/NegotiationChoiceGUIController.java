@@ -43,9 +43,18 @@ public class NegotiationChoiceGUIController {
 	@FXML
 	private Label price;
 	@FXML
-	private Label lb_offerprice;
+	private Label priceLable;
 	@FXML
-	private TextField offer_price;
+	private TextField PricetoEnter;
+	@FXML
+	private Label Beetalable;
+	@FXML
+	private TextField BeetaValue;
+	@FXML
+	private Label stepsLable;
+	@FXML
+	private TextField negotiationSteps;
+
 	
 	private Agent agent;
 	private String opponentAgentName; // name of opponent agent
@@ -61,6 +70,13 @@ public class NegotiationChoiceGUIController {
 		rb_automated.setToggleGroup(group);
 		rb_manual.setSelected(true);
 		radiobuttonChangeValue();
+		stepsLable.setVisible(false);
+		negotiationSteps.setVisible(false);
+        priceLable.setVisible(false);
+		PricetoEnter.setVisible(false);
+		BeetaValue.setVisible(false);
+		stepsLable.setVisible(false);
+		negotiationSteps.setVisible(false);
     }
     
 	public void radiobuttonChangeValue() {
@@ -68,11 +84,23 @@ public class NegotiationChoiceGUIController {
 			@Override
 			public void changed(ObservableValue<? extends Toggle> ov, Toggle oldToggle, Toggle newToggle) {
 				if (rb_manual.isSelected()) {
-					lb_offerprice.setVisible(true);
-					offer_price.setVisible(true);
+					priceLable.setVisible(true);
+				    PricetoEnter.setVisible(true);
+					priceLable.setText("OfferPrice");
+					Beetalable.setVisible(false);
+					BeetaValue.setVisible(false);
 				} else {
-					lb_offerprice.setVisible(false);
-					offer_price.setVisible(false);
+				    priceLable.setVisible(true);
+				    PricetoEnter.setVisible(true);
+					priceLable.setText("Min Price");
+					Beetalable.setVisible(true);
+					BeetaValue.setVisible(true);
+					stepsLable.setVisible(true);
+					negotiationSteps.setVisible(true);
+					
+					
+					
+					
 				}
 			}
 		});
@@ -84,14 +112,18 @@ public class NegotiationChoiceGUIController {
 				DealerAgent dag = (DealerAgent) agent;
 				if (rb_manual.isSelected()) {
 					dag.setNegotiationChoice(0);
-					dag.startNegotiation(opponentAgentName, negotiatedCar, Double.parseDouble(offer_price.getText()));
+					dag.startNegotiation(opponentAgentName, negotiatedCar, Double.parseDouble(PricetoEnter.getText()), 0,0);
 				} else {
 					dag.setNegotiationChoice(1);
-					dag.startNegotiation(opponentAgentName, negotiatedCar, negotiatedCar.getMaxprice());
+					dag.startNegotiation(opponentAgentName, negotiatedCar, negotiatedCar.getMaxprice(),1.1,10);
 				}		
 				((Node) (event.getSource())).getScene().getWindow().hide();
 			} else {
 				BuyerAgent bag = (BuyerAgent) agent;
+				bag.setIntialPrice(Double.parseDouble(PricetoEnter.getText()));
+				bag.setBeetavalue(Double.parseDouble(BeetaValue.getText()));
+				bag.setMaxStep(Integer.parseInt(negotiationSteps.getText()));
+
 				if (rb_manual.isSelected()) {		
 					bag.setNegotiationManual(true);
 				} else {

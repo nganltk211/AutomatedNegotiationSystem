@@ -15,6 +15,7 @@ public class Car {
 	private double maxprice;
 	private double minprice;
 	private boolean carStatus = false;
+	private boolean isNegotiatable = false;
 	private int carrating;
 	private String manufactureYear;
 	private String picturePath;
@@ -126,6 +127,13 @@ public class Car {
 
 	public double getMaxprice() {
 		return maxprice;
+	}
+	public boolean getisNegotiatable() {
+		return isNegotiatable;
+	}
+
+	public void setNegotiatable(boolean isNegotiatable) {
+		this.isNegotiatable = isNegotiatable;
 	}
 
 	public void setMaxprice(double maxprice) {

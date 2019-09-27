@@ -31,9 +31,46 @@ public class BuyerAgent extends Agent {
 	private CarList offerCarlist;
 	private ObjectMapper o = new ObjectMapper();
 	private boolean manualNegotiation;
-	private double intialPrice = 14000; // min price
-	private double reservationPrice = 15000; // max price
-	private int maxStep = 30;
+	private double intialPrice; // min price
+	public double getIntialPrice() {
+		return intialPrice;
+	}
+
+
+	public void setIntialPrice(double intialPrice) {
+		this.intialPrice = intialPrice;
+	}
+
+	private double reservationPrice; // max price
+	public double getReservationPrice() {
+		return reservationPrice;
+	}
+
+
+	public void setReservationPrice(double reservationPrice) {
+		this.reservationPrice = reservationPrice;
+	}
+
+	private int maxStep;
+	public int getMaxStep() {
+		return maxStep;
+	}
+
+
+	public void setMaxStep(int maxStep) {
+		this.maxStep = maxStep;
+	}
+
+	private double beetaValue;
+	public double getBeetavalue() {
+		return beetaValue;
+	}
+
+
+	public void setBeetavalue(double beetavalue) {
+		this.beetaValue = beetavalue;
+	}
+
 	private NegotiationWithDealer nd;
 	
 	protected void setup() {
@@ -70,6 +107,7 @@ public class BuyerAgent extends Agent {
 		addBehaviour(nd);
 		addBehaviour(new EndTheNegotiation());
 	}
+	
 
 	// Put agent clean-up operations here
 	protected void takeDown() {
@@ -220,8 +258,8 @@ public class BuyerAgent extends Agent {
 							String dealerName = msg.getSender().getName();
 							double offerPrice = Double.parseDouble(msg.getReplyWith());
 							System.err.println("Buyer: Receive offer from the dealer: " + offerPrice);
-							// calculate the next offer
-							double nextPrice = Algorithms.offer(intialPrice, reservationPrice, step, maxStep, 0.2);
+							//calculate the next offer
+							double nextPrice = Algorithms.offer(intialPrice,reservationPrice, step, maxStep, beetaValue);
 							if (nextPrice >= offerPrice) {
 								step = 1;
 								acceptOffer(dealerName, messObject, offerPrice);
