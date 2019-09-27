@@ -94,7 +94,9 @@ public class DealerGUIController implements Initializable {
 	@FXML
 	private TableColumn<Car, String> model_column;
 	@FXML
-	private TableColumn<Car, Double> price_column;
+	private TableColumn<Car, Double> minprice_column;
+	@FXML
+	private TableColumn<Car, Double> maxprice_column;
 	@FXML
 	private TableColumn<Car, String> details_column;
 	@FXML
@@ -291,8 +293,8 @@ public class DealerGUIController implements Initializable {
 		{
 			//This is Manual Stuff
 			newCar.setNegotiatable(true);
-		}else {
-			//This Is Automated Stuff
+		} else {
+			//This is Automated Stuff
 			newCar.setNegotiatable(false);
 			newCar.setBeeta(Double.parseDouble(beetaValue.getText()));
 			newCar.setSteps(Integer.parseInt(stepsValue.getText()));
@@ -346,7 +348,8 @@ public class DealerGUIController implements Initializable {
 		nr_column.setCellValueFactory(new PropertyValueFactory<Car, Integer>("carId"));
 		manu_column.setCellValueFactory(new PropertyValueFactory<Car, String>("manufacture"));
 		model_column.setCellValueFactory(new PropertyValueFactory<Car, String>("model"));
-		price_column.setCellValueFactory(new PropertyValueFactory<Car, Double>("minprice"));
+		minprice_column.setCellValueFactory(new PropertyValueFactory<Car, Double>("minprice"));
+		maxprice_column.setCellValueFactory(new PropertyValueFactory<Car, Double>("maxprice"));
 		details_column.setCellValueFactory(new PropertyValueFactory<Car, String>("moreDetails"));
 		manu_year_column.setCellValueFactory(new PropertyValueFactory<Car, String>("manufactureYear"));
 	}

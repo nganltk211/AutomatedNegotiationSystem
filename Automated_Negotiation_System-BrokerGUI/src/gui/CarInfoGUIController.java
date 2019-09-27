@@ -6,7 +6,6 @@ import agents.BuyerAgent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -60,8 +59,8 @@ public class CarInfoGUIController {
 		bodytype.setText(car.getBodyType());
 		color.setText(car.getColor());
 		warranty.setText(String.valueOf(car.getWarranty()));
-		//price.setText(String.valueOf(car.getMaxprice()));
-		price.setText(String.valueOf(car.getMinprice()));
+		price.setText(String.valueOf(car.getMaxprice()));
+		//price.setText(String.valueOf(car.getMinprice()));
 		agent_name.setText(car.getAgent());
 	}
 	

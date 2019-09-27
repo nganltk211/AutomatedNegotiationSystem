@@ -15,7 +15,7 @@ public class Car {
 	private double maxprice;
 	private double minprice;
 	private boolean carStatus = false;
-	private boolean isNegotiatable = false;
+	private boolean isNegotiatable = false; // true for manual negotiation
 	private int carrating;
 	private String manufactureYear;
 	private String picturePath;
@@ -182,7 +182,8 @@ public class Car {
 
 	public String getMoreDetails() {
 		moreDetails = "Transmission: " + transmission + "\nFuel type: " + fuelType + "\nBody type: " + bodyType 
-					+ "\nColor: " + color + "\nWarranty: " + warranty + "\nCar rating: " + carrating;
+					+ "\nColor: " + color + "\nWarranty: " + warranty + "\nCar rating: " + carrating 
+					+ "\nAutomated negotiation: " + !isNegotiatable;
 		return moreDetails;
 	}
 

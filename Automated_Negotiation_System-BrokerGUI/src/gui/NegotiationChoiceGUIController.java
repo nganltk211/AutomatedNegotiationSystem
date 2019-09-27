@@ -100,11 +100,7 @@ public class NegotiationChoiceGUIController {
 					Beetalable.setVisible(true);
 					BeetaValue.setVisible(true);
 					stepsLable.setVisible(true);
-					negotiationSteps.setVisible(true);
-					
-					
-					
-					
+					negotiationSteps.setVisible(true);				
 				}
 			}
 		});
@@ -114,7 +110,6 @@ public class NegotiationChoiceGUIController {
 				BuyerAgent bag = (BuyerAgent) agent;
 				bag.setIntialPrice(Double.parseDouble(PricetoEnter.getText()));
 				
-
 				if (rb_manual.isSelected()) {		
 					bag.setNegotiationManual(true);
 				} else {
@@ -147,6 +142,6 @@ public class NegotiationChoiceGUIController {
     	bodyType.setText(negotiatedCar.getBodyType());
     	color.setText(negotiatedCar.getColor());
     	km.setText(String.valueOf(negotiatedCar.getKm()));
-    	price.setText(String.valueOf(negotiatedCar.getMinprice()));
+    	price.setText(String.valueOf(negotiatedCar.getMaxprice()));
     }
 }

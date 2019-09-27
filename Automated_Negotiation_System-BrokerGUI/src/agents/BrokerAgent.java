@@ -85,7 +85,7 @@ public class BrokerAgent extends Agent {
 					double offerPrice = Double.parseDouble(msg0.getReplyWith());
 					offerPrice -= COMMISION;
 					recievedCommision += COMMISION;
-					System.out.println("Broker confirm !!! Buyer " + buyerName + " confirm sell including Broker Commision: " + offerPrice + "\nBroker Commision" + recievedCommision);
+					System.out.println("\nBroker confirm !!! Buyer " + buyerName + " confirm sell including Broker Commision: " + offerPrice + "\nBroker Commision: " + recievedCommision);
 					
 					//Update JsonDB/CarList
 					CarList list = jsonDB.readFile();
@@ -132,7 +132,7 @@ public class BrokerAgent extends Agent {
 				String carlist = msg1.getContent();
 				jsonDB.writeToFile(carlist);
 				CarList list = jsonDB.readFile();
-				System.out.println("Broker: Broker cataloge: \n" + list + "\n");
+				System.out.println("Broker: Broker cataloge: \n" + list);
 			} else {
 				block();
 			}

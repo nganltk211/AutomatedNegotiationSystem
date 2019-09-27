@@ -259,7 +259,7 @@ public class DealerAgent extends Agent {
 				try {
 					Car negotiatedCar = o.readValue(content, Car.class);
 					double offerPrice = Double.parseDouble(msg.getReplyWith());
-					System.out.println("End of the negotiation : ");
+					System.out.println("\nEnd of the negotiation : ");
 					System.out.println("Sold car: " + negotiatedCar);
 					System.out.println("Sold price: " + offerPrice);
 					
