@@ -165,7 +165,7 @@ public class BuyerAgent extends Agent {
 	 * 
 	 * @param listOfChosenCars
 	 */
-	public void sendBackTheChoosenCarsToTheBroker(Car negotiatedCar) {
+	public void sendBackTheChoosenCarsToTheBroker(Car negotiatedCar, double firstOfferPrice) {
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
@@ -177,6 +177,7 @@ public class BuyerAgent extends Agent {
 					jsonInString = o.writeValueAsString(negotiatedCar);
 					mess.setContent(jsonInString);
 					mess.setConversationId("car-trade-broker-buyer");
+					mess.setReplyWith(String.valueOf(firstOfferPrice));
 					myAgent.send(mess);
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();

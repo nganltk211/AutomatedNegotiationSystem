@@ -20,7 +20,9 @@ public class Car {
 	private String manufactureYear;
 	private String picturePath;
 	private String moreDetails; //only for showing data in the car details table of the seller 
-
+	private double beeta;
+	private int steps;
+	
 	public Car(int carId) {
 		super();
 		this.carId = carId;
@@ -28,7 +30,21 @@ public class Car {
 
 	public Car() {
 	}
+	public double getBeeta() {
+		return beeta;
+	}
 
+	public void setBeeta(double beeta) {
+		this.beeta = beeta;
+	}
+
+	public int getSteps() {
+		return steps;
+	}
+
+	public void setSteps(int steps) {
+		this.steps = steps;
+	}
 	public int getCarrating() {
 		return carrating;
 	}

@@ -203,6 +203,7 @@ public class BrokerAgent extends Agent {
 			if (msg != null) {
 				System.out.println("Broker: Receive a choosen car from buyer " + msg.getSender().getName());
 				String choosenCarJson = msg.getContent();
+				String firstOfferPrice = msg.getReplyWith();
 				try {
 					Car choosenCar = o.readValue(choosenCarJson, Car.class);
 					System.out.println(choosenCar + "\n");
@@ -211,6 +212,7 @@ public class BrokerAgent extends Agent {
 					mess.setContent(choosenCarJson);
 					mess.setConversationId("car-trade-broker-seller");
 					mess.setReplyWith(msg.getSender().getName()); // name of the buyer.
+					mess.setInReplyTo(firstOfferPrice);
 					myAgent.send(mess);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block

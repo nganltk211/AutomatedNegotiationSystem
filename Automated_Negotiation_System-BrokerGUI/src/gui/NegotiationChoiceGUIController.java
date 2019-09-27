@@ -72,9 +72,11 @@ public class NegotiationChoiceGUIController {
 		radiobuttonChangeValue();
 		stepsLable.setVisible(false);
 		negotiationSteps.setVisible(false);
-        priceLable.setVisible(false);
-		PricetoEnter.setVisible(false);
+        priceLable.setVisible(true);
+		PricetoEnter.setVisible(true);
+		priceLable.setText("OfferPrice");
 		BeetaValue.setVisible(false);
+		Beetalable.setVisible(false);
 		stepsLable.setVisible(false);
 		negotiationSteps.setVisible(false);
     }
@@ -89,6 +91,8 @@ public class NegotiationChoiceGUIController {
 					priceLable.setText("OfferPrice");
 					Beetalable.setVisible(false);
 					BeetaValue.setVisible(false);
+					stepsLable.setVisible(false);
+					negotiationSteps.setVisible(false);
 				} else {
 				    priceLable.setVisible(true);
 				    PricetoEnter.setVisible(true);
@@ -107,31 +111,19 @@ public class NegotiationChoiceGUIController {
 	}
 	
 	public void startNegotiationButtonClick(ActionEvent event) throws IOException {
-		
-			if(agent instanceof DealerAgent) {
-				DealerAgent dag = (DealerAgent) agent;
-				if (rb_manual.isSelected()) {
-					dag.setNegotiationChoice(0);
-					dag.startNegotiation(opponentAgentName, negotiatedCar, Double.parseDouble(PricetoEnter.getText()), 0,0);
-				} else {
-					dag.setNegotiationChoice(1);
-					dag.startNegotiation(opponentAgentName, negotiatedCar, negotiatedCar.getMaxprice(),1.1,10);
-				}		
-				((Node) (event.getSource())).getScene().getWindow().hide();
-			} else {
 				BuyerAgent bag = (BuyerAgent) agent;
 				bag.setIntialPrice(Double.parseDouble(PricetoEnter.getText()));
-				bag.setBeetavalue(Double.parseDouble(BeetaValue.getText()));
-				bag.setMaxStep(Integer.parseInt(negotiationSteps.getText()));
+				
 
 				if (rb_manual.isSelected()) {		
 					bag.setNegotiationManual(true);
 				} else {
 					bag.setNegotiationManual(false);
+					bag.setBeetavalue(Double.parseDouble(BeetaValue.getText()));
+					bag.setMaxStep(Integer.parseInt(negotiationSteps.getText()));
 				}
-				bag.sendBackTheChoosenCarsToTheBroker(negotiatedCar);		
+				bag.sendBackTheChoosenCarsToTheBroker(negotiatedCar, Double.parseDouble(PricetoEnter.getText()));		
 				((Node) (event.getSource())).getScene().getWindow().hide();
-			}	
 	}	
 	
 	public void setOpponentAgentName(String name) {

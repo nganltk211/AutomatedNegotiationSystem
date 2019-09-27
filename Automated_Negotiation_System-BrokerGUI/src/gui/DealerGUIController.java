@@ -7,8 +7,11 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.io.FileUtils;
 
+import javafx.scene.control.Label;
+
 import agents.DealerAgent;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -17,10 +20,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
@@ -35,7 +39,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
 
 public class DealerGUIController implements Initializable {
 
@@ -60,9 +63,19 @@ public class DealerGUIController implements Initializable {
 	@FXML
 	private TextField priceMin;
 	@FXML
+	private TextField priceMax;
+	@FXML
 	private TextField manu_year_id;
 	@FXML
 	private TextField picture_path;
+	@FXML
+	private TextField beetaValue;
+	@FXML
+	private TextField stepsValue;
+	@FXML
+	private Label beetaLabel;
+	@FXML
+	private Label stepsLabel;
 	@FXML
 	private Button done_id;
 	@FXML
@@ -88,7 +101,8 @@ public class DealerGUIController implements Initializable {
 	private TableColumn<Car, String> manu_year_column;
 	@FXML
 	private TableView<Car> tableViewID;
-
+	@FXML
+	private ImageView helpMenu;
 	private CarList listOfCars;
 	private int carCounter;
 	private DealerAgent dealerAgent;
@@ -104,8 +118,36 @@ public class DealerGUIController implements Initializable {
 		manualNego.setToggleGroup(group);
 		autoNego.setToggleGroup(group);
 		manualNego.setSelected(true);
+		beetaValue.setVisible(false);
+		stepsValue.setVisible(false);
+		stepsLabel.setVisible(false);
+		beetaLabel.setVisible(false);
+		helpMenu.setVisible(false);
+		radioButtonValueChanged();
 		setDataComboBox();
 		setTableMenu();
+	}
+	public void radioButtonValueChanged() {
+		group.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
+			@Override
+			public void changed(ObservableValue<? extends Toggle> ov, Toggle oldToggle, Toggle newToggle) {
+				if(autoNego.isSelected())
+				{
+					beetaValue.setVisible(true);
+					stepsValue.setVisible(true);
+					stepsLabel.setVisible(true);
+					beetaLabel.setVisible(true);
+					helpMenu.setVisible(true);
+				}else {
+					beetaValue.setVisible(false);
+					stepsValue.setVisible(false);
+					stepsLabel.setVisible(false);
+					beetaLabel.setVisible(false);
+					helpMenu.setVisible(false);
+				}
+			}
+		});
+		
 	}
 
 	private void setValueForTheCarInfoGUI(Car car) {
@@ -149,7 +191,10 @@ public class DealerGUIController implements Initializable {
             }
         });  
 	}
-	
+	public void openBeetaHelp(ActionEvent event)
+	{
+		
+	}
 	public void onManufactureChanged(ActionEvent event) {
 		setModelComboBox();
 	}
@@ -244,11 +289,17 @@ public class DealerGUIController implements Initializable {
 		}
 		if(manualNego.isSelected())
 		{
+			//This is Manual Stuff
 			newCar.setNegotiatable(true);
 		}else {
+			//This Is Automated Stuff
 			newCar.setNegotiatable(false);
+			newCar.setBeeta(Double.parseDouble(beetaValue.getText()));
+			newCar.setSteps(Integer.parseInt(stepsValue.getText()));
 		}
 		newCar.setMinprice(Double.parseDouble(priceMin.getText()));
+		newCar.setMaxprice(Double.parseDouble(priceMax.getText()));
+	
 		setCarPicturePath(newCar);
 		
 		listOfCars.add(newCar);
@@ -286,6 +337,8 @@ public class DealerGUIController implements Initializable {
 
 	public void onButtonSendClick(ActionEvent event) throws IOException {
 		dealerAgent.sendListOfCarToBroker(listOfCars);
+		//dealerAgent.setBeeta(Double.parseDouble(beetaValue.getText()));
+	    //dealerAgent.setMaxStep(Integer.parseInt(stepsValue.getText()));
 		((Node) (event.getSource())).getScene().getWindow().hide();
 	}
 
