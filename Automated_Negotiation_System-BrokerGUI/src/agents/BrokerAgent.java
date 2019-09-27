@@ -53,7 +53,7 @@ public class BrokerAgent extends Agent {
 		addBehaviour(new ReceiveListOfCarsFromDealer());
 		addBehaviour(new DealWithRequestFromBuyers());
 		addBehaviour(new RequestFromBuyersToConnectToDealer());
-		addBehaviour(new ConformSellWithBroker());
+		addBehaviour(new ConfirmSellWithBroker());
 	}
 
 	/**
@@ -65,9 +65,9 @@ public class BrokerAgent extends Agent {
 	}
 	
 	/*
-	 This Behaviour (Receive confirmation from buyer agent) does the agent handshake after both agents accept offers
+	 This Behaviour (Receive confirmation from buyer agent/dealer) does the agent handshake after both agents accept offers
 	 */
-	private class ConformSellWithBroker extends CyclicBehaviour{
+	private class ConfirmSellWithBroker extends CyclicBehaviour{
 		
 		@Override
 		public void action() {
@@ -81,25 +81,23 @@ public class BrokerAgent extends Agent {
 				String content = msg0.getContent();
 				try {
 					Car negotiatedCar = o.readValue(content, Car.class);
-					String buyerName = msg0.getSender().getName();
+					String agentName = msg0.getSender().getName();
 					double offerPrice = Double.parseDouble(msg0.getReplyWith());
 					offerPrice -= COMMISION;
 					recievedCommision += COMMISION;
-					System.out.println("\nBroker confirm !!! Buyer " + buyerName + " confirm sell including Broker Commision: " + offerPrice + "\nBroker Commision: " + recievedCommision);
+					System.out.println("\nBroker confirm !!! " + agentName + " confirm sell including Broker Commision: " + offerPrice + "\nBroker Commision: " + recievedCommision);
 					
 					//Update JsonDB/CarList
-					CarList list = jsonDB.readFile();
-					for(Car c : list) {
+					for(Car c : catalog) {
 						if(negotiatedCar.getCarId() == c.getCarId()) {
 							c.setcarStatus(true);
 						}
 					}
 					
-					String jsonInString = o.writeValueAsString(list);
+					String jsonInString = o.writeValueAsString(catalog);
+					jsonDB.clearFile();
 					jsonDB.writeToFile(jsonInString);
-					System.out.println("Broker: Broker cataloge: \n" + list + "\n");
-					//System.out.println("Test : " + jsonInString);
-					
+					System.out.println("Broker: Broker cataloge: \n" + catalog);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}				
@@ -131,8 +129,8 @@ public class BrokerAgent extends Agent {
 				// Message received. Process it
 				String carlist = msg1.getContent();
 				jsonDB.writeToFile(carlist);
-				CarList list = jsonDB.readFile();
-				System.out.println("Broker: Broker cataloge: \n" + list);
+				catalog = jsonDB.readFile();
+				System.out.println("Broker: Broker cataloge: \n" + catalog);
 			} else {
 				block();
 			}
@@ -148,13 +146,13 @@ public class BrokerAgent extends Agent {
 			MessageTemplate mt2 = MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade-broker-buyer"),
 					MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
 			ACLMessage msg2 = myAgent.receive(mt2);
-			catalog = new CarList();
+			//catalog = new CarList();
 			if (msg2 != null) {
 				//Load catalog
-				CarList list = jsonDB.readFile();
-				if (list != null ) {
-					catalog.addAll(list);
-				}
+				//CarList list = jsonDB.readFile();
+				//if (list != null ) {
+				//	catalog.addAll(list);
+				//}
 				// Message received. Process it
 				String desiredCarJson = msg2.getContent();
 				try {
@@ -250,10 +248,9 @@ public class BrokerAgent extends Agent {
 		if (desiredCar.getColor() != null) {
 			filterList.retainAll(catalog.stream().filter(car -> car.getColor().equals(desiredCar.getColor())).collect(Collectors.toList()));
 		}
-		
 		List<Car> endList = new CarList();
 		for (Car c : filterList) {
-			if (c.getMinprice() <= desiredCar.getMaxprice() || desiredCar.getMaxprice() == 0) {
+			if ((c.getMinprice() <= desiredCar.getMaxprice() || desiredCar.getMaxprice() == 0) && !c.getcarStatus()) {
 				endList.add(c);
 			}
 		}

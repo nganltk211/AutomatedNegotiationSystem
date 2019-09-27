@@ -14,7 +14,7 @@ public class Car {
 	private String agent;
 	private double maxprice;
 	private double minprice;
-	private boolean carStatus = false;
+	private boolean carStatus = false; // false when the car is able to be sold
 	private boolean isNegotiatable = false; // true for manual negotiation
 	private int carrating;
 	private String manufactureYear;
