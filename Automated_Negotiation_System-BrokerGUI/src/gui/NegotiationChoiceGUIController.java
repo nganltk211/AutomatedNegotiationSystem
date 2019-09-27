@@ -17,6 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import model.Car;
+import model.FormValidation;
 
 public class NegotiationChoiceGUIController {
 
@@ -54,6 +55,12 @@ public class NegotiationChoiceGUIController {
 	private Label stepsLable;
 	@FXML
 	private TextField negotiationSteps;
+	@FXML
+	private Label validationLabel;
+	@FXML
+	private Label pricevalidationLabel;
+	
+	private boolean isValidate = false;
 
 	
 	private Agent agent;
@@ -79,6 +86,7 @@ public class NegotiationChoiceGUIController {
 		Beetalable.setVisible(false);
 		stepsLable.setVisible(false);
 		negotiationSteps.setVisible(false);
+		validationLabel.setVisible(false);
     }
     
 	public void radiobuttonChangeValue() {
@@ -93,6 +101,8 @@ public class NegotiationChoiceGUIController {
 					BeetaValue.setVisible(false);
 					stepsLable.setVisible(false);
 					negotiationSteps.setVisible(false);
+					validationLabel.setVisible(false);
+					
 				} else {
 				    priceLable.setVisible(true);
 				    PricetoEnter.setVisible(true);
@@ -100,25 +110,82 @@ public class NegotiationChoiceGUIController {
 					Beetalable.setVisible(true);
 					BeetaValue.setVisible(true);
 					stepsLable.setVisible(true);
-					negotiationSteps.setVisible(true);				
+
+					negotiationSteps.setVisible(true);
+					validationLabel.setVisible(true);
+					
 				}
 			}
 		});
 	}
-	
-	public void startNegotiationButtonClick(ActionEvent event) throws IOException {
-				BuyerAgent bag = (BuyerAgent) agent;
-				bag.setIntialPrice(Double.parseDouble(PricetoEnter.getText()));
+	public boolean validation()
+	{
+		boolean beeta = FormValidation.textFieldNotEmpty(BeetaValue, validationLabel, "Please Enter Beeta Value");
+		boolean steps = FormValidation.textFieldNotEmpty(negotiationSteps, validationLabel, "Please Enter steps Value");
+		boolean price = FormValidation.textFieldNotEmpty(PricetoEnter, pricevalidationLabel, "Please Enter Price");
+		if(price)
+		{
+			isValidate = true;
+		}
+		if(Double.parseDouble(BeetaValue.getText()) < 1)
+		{
+			validationLabel.setText("Format Beeta > 1");
+			isValidate = false;
+		}
+		if(Double.parseDouble(PricetoEnter.getText()) > 1000)
+		{
+			pricevalidationLabel.setText("Price can't be less than 1000");
+			isValidate = false;
+		}
+		if(rb_automated.isSelected())
+		{
+			if(!beeta && !steps)
+			{
+				steps = FormValidation.textFieldNotEmpty(negotiationSteps, validationLabel, "Please Enter Beeta and steps Value");
 				
-				if (rb_manual.isSelected()) {		
-					bag.setNegotiationManual(true);
-				} else {
-					bag.setNegotiationManual(false);
-					bag.setBeetavalue(Double.parseDouble(BeetaValue.getText()));
-					bag.setMaxStep(Integer.parseInt(negotiationSteps.getText()));
+				isValidate = false;
+			}else {
+				isValidate = true;
+			}
+		}
+		
+		return isValidate;
+	}
+	public void startNegotiationButtonClick(ActionEvent event) throws IOException {
+				validation();
+				if(isValidate)
+				{
+					BuyerAgent bag = (BuyerAgent) agent;
+					try {
+						bag.setIntialPrice(Double.parseDouble(PricetoEnter.getText()));
+						
+					}catch(NumberFormatException e) {
+						pricevalidationLabel.setText("Please enter a number");
+					}
+					
+					if (rb_manual.isSelected()) {		
+						bag.setNegotiationManual(true);
+					} else {
+						bag.setNegotiationManual(false);
+						try {
+							bag.setBeetavalue(Double.parseDouble(BeetaValue.getText()));
+							
+						}catch(NumberFormatException e) {
+							validationLabel.setText("Please enter a number");
+						}
+						try {
+							bag.setMaxStep(Integer.parseInt(negotiationSteps.getText()));
+							
+						}catch(NumberFormatException e) {
+							validationLabel.setText("Please enter a number");
+						}
+						
+						
+					}
+					bag.sendBackTheChoosenCarsToTheBroker(negotiatedCar, Double.parseDouble(PricetoEnter.getText()));		
+					((Node) (event.getSource())).getScene().getWindow().hide();
 				}
-				bag.sendBackTheChoosenCarsToTheBroker(negotiatedCar, Double.parseDouble(PricetoEnter.getText()));		
-				((Node) (event.getSource())).getScene().getWindow().hide();
+				
 	}	
 	
 	public void setOpponentAgentName(String name) {
