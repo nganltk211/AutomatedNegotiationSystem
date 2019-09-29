@@ -2,6 +2,7 @@ package gui;
 
 import java.io.IOException;
 
+import agents.BuyerAgent;
 import jade.core.Agent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,14 +14,14 @@ public class NegotiationChoiceGUI extends Stage {
 
 	private FXMLLoader loader;
 
-	public NegotiationChoiceGUI(Agent agent, String name, Car negotiatedCar){
+	public NegotiationChoiceGUI(BuyerAgent agent, Car negotiatedCar){
 		Parent window = null;
 		loader = new FXMLLoader(getClass().getResource("ChoiceOfNegotiationWay.fxml"));
 		try {
 			window = loader.load();
 			NegotiationChoiceGUIController controller = loader.<NegotiationChoiceGUIController>getController();
 			controller.setAgent(agent);
-			controller.setOpponentAgentName(name);
+			//controller.setOpponentAgentName(name);
 			controller.setNegotiatedCar(negotiatedCar);
 		} catch (IOException e) {
 			System.err.println("Error by loading fxml-File");

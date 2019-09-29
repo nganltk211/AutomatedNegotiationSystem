@@ -414,10 +414,12 @@ public class DealerGUIController implements Initializable {
 	}
 
 	public void onButtonSendClick(ActionEvent event) throws IOException {
-		dealerAgent.sendListOfCarToBroker(listOfCars);
-		//dealerAgent.setBeeta(Double.parseDouble(beetaValue.getText()));
-	    //dealerAgent.setMaxStep(Integer.parseInt(stepsValue.getText()));
-		((Node) (event.getSource())).getScene().getWindow().hide();
+		if (listOfCars.size() > 0) {
+			dealerAgent.sendListOfCarToBroker(listOfCars);
+			//dealerAgent.setBeeta(Double.parseDouble(beetaValue.getText()));
+		    //dealerAgent.setMaxStep(Integer.parseInt(stepsValue.getText()));
+			((Node) (event.getSource())).getScene().getWindow().hide();
+		}	
 	}
 
 	private void updateTable() {

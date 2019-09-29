@@ -88,7 +88,7 @@ public class BuyerGUIController implements Initializable {
 			}
 			buyerAgent.setReservationPrice(Double.parseDouble(max_id.getText()));
 			buyerAgent.requestInfoOfDesiredCar(searchCar);
-			((Node) (event.getSource())).getScene().getWindow().hide();
+			//((Node) (event.getSource())).getScene().getWindow().hide();
 		}
 		
 		

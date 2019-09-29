@@ -28,56 +28,51 @@ public class BuyerAgent extends Agent {
 
 	private static final long serialVersionUID = -8414132078026686821L;
 	private AID brokerAgent;
-	private CarList offerCarlist;
 	private ObjectMapper o = new ObjectMapper();
-	private boolean manualNegotiation;
+	private boolean manualNegotiation; // true if the negotiation is manual
 	private double intialPrice; // min price
+	private double reservationPrice; // max price
+	private int maxStep; // dealine : max time step
+	private double beetaValue; // beetaValue using time dependent tactics
+	private NegotiationWithDealer nd;
+	
 	public double getIntialPrice() {
 		return intialPrice;
 	}
-
 
 	public void setIntialPrice(double intialPrice) {
 		this.intialPrice = intialPrice;
 	}
 
-	private double reservationPrice; // max price
 	public double getReservationPrice() {
 		return reservationPrice;
 	}
-
 
 	public void setReservationPrice(double reservationPrice) {
 		this.reservationPrice = reservationPrice;
 	}
 
-	private int maxStep;
 	public int getMaxStep() {
 		return maxStep;
 	}
-
 
 	public void setMaxStep(int maxStep) {
 		this.maxStep = maxStep;
 	}
 
-	private double beetaValue;
 	public double getBeetavalue() {
 		return beetaValue;
 	}
 
-
 	public void setBeetavalue(double beetavalue) {
 		this.beetaValue = beetavalue;
 	}
-
-	private NegotiationWithDealer nd;
 	
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hallo! Buyer-agent " + getAID().getName() + " is ready.");
 
-		// starts the GUI
+		// starts the BuyerGUI
 		new Thread(() -> {
 			Platform.runLater(() -> {
 				BuyerGUI guiBuyer = new BuyerGUI(this);
@@ -89,7 +84,6 @@ public class BuyerAgent extends Agent {
 
 		// using to find the AID of the broker agent
 		addBehaviour(new OneShotBehaviour() {
-
 			@Override
 			public void action() {
 				sd.setType("car-broker");
@@ -102,14 +96,17 @@ public class BuyerAgent extends Agent {
 				}
 			}
 		});
+		
 		nd = new NegotiationWithDealer();
+		// Adding behaviors to the buyer agent
 		addBehaviour(new OfferFromBroker());
 		addBehaviour(nd);
 		addBehaviour(new EndTheNegotiation());
 	}
 	
-
-	// Put agent clean-up operations here
+	/**
+	 * Method for the Agent clean-up
+	 */
 	protected void takeDown() {
 		// Printout a dismissal message
 		System.out.println("Buyer-agent " + getAID().getName() + " terminating.");
@@ -137,7 +134,7 @@ public class BuyerAgent extends Agent {
 					// When the broker can find cars, which match to the demand of the buyer
 					System.out.println("Buyer: There are following possible offers for you:");
 					try {
-						offerCarlist = o.readValue(content, CarList.class);
+						CarList offerCarlist = o.readValue(content, CarList.class);
 						System.out.println(offerCarlist);
 						// Start the GUI to show the list of possible cars to the buyer
 						new Thread(() -> {
@@ -220,7 +217,7 @@ public class BuyerAgent extends Agent {
 	 * In case of automated negotiation, the buyer AI will decide to accept the offer or make a counter-offer 
 	 */
 	private class NegotiationWithDealer extends CyclicBehaviour {
-		private int step = 1;
+		private int step = 0;
 
 		public void setStep(int step) {
 			this.step = step;
@@ -262,7 +259,7 @@ public class BuyerAgent extends Agent {
 							//calculate the next offer
 							double nextPrice = Algorithms.offer(intialPrice,reservationPrice, step, maxStep, beetaValue);
 							if (nextPrice >= offerPrice) {
-								step = 1;
+								step = 0;
 								acceptOffer(dealerName, messObject, offerPrice);
 							} else {
 								makeACounterOffer(dealerName, messObject, nextPrice);
@@ -272,7 +269,7 @@ public class BuyerAgent extends Agent {
 							e.printStackTrace();
 						}
 					} else {
-						step = 1;
+						step = 0;
 						endTheNegotiationBecauseOfOutOfTime();
 					}
 				}
@@ -282,8 +279,11 @@ public class BuyerAgent extends Agent {
 		}
 	}
 
+	/**
+	 * This behavior will be executed, when the negotiation is at the end, which
+	 * means that the dealer accept the offer from the buyer.
+	 */
 	private class EndTheNegotiation extends CyclicBehaviour {
-
 		@Override
 		public void action() {
 			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
@@ -298,7 +298,7 @@ public class BuyerAgent extends Agent {
 					System.out.println("\nEnd of the negotiation : ");
 					System.out.println("Bought car: " + negotiatedCar);
 					System.out.println("Bought price: " + offerPrice);
-					nd.setStep(1);
+					nd.setStep(0);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -308,6 +308,15 @@ public class BuyerAgent extends Agent {
 		}
 	}
 
+	/**
+	 * The buyer agent makes a counter-offer to the dealer agent
+	 * 
+	 * @param opponentAgentName
+	 *            : name of the dealer agent
+	 * @param negotiatedCar
+	 * @param price:
+	 *            offer-price
+	 */
 	public void makeACounterOffer(String opponentAgentName, Car negotiatedCar, double price) {
 		addBehaviour(new OneShotBehaviour() {
 			@Override
@@ -323,7 +332,6 @@ public class BuyerAgent extends Agent {
 					mess.setReplyWith(String.valueOf(price));
 					mess.setConversationId("car-negotiation");
 					myAgent.send(mess);
-					//confirmSell(negotiatedCar, price);//Confirm offer with buyer
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();
 				}
@@ -331,6 +339,13 @@ public class BuyerAgent extends Agent {
 		});
 	}
 
+	/**
+	 * This method will be called, when the buyer accepts the offer from the dealer
+	 * 
+	 * @param opponentAgentName : dealer agent name
+	 * @param negotiatedCar
+	 * @param price
+	 */
 	public void acceptOffer(String opponentAgentName, Car negotiatedCar, double price) {
 		addBehaviour(new OneShotBehaviour() {
 			@Override
@@ -345,7 +360,7 @@ public class BuyerAgent extends Agent {
 					mess.setReplyWith(String.valueOf(price));
 					mess.setConversationId("car-negotiation");
 					myAgent.send(mess);
-					confirmSell(negotiatedCar, price);//Confirm offer with buyer
+					confirmSell(negotiatedCar, price); //Confirm offer with broker
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();
 				}
@@ -353,7 +368,11 @@ public class BuyerAgent extends Agent {
 		});
 	}
 	
-	//Send negotiation confirmation message to broker agent
+	/**
+	 * Send negotiation confirmation message to broker agent
+	 * @param car : negotiated car
+	 * @param price : accepted price
+	 */
 	private void confirmSell(Car car, double price)
 	{
 		addBehaviour(new OneShotBehaviour() {
@@ -377,11 +396,17 @@ public class BuyerAgent extends Agent {
 		});
 	}
 
+	/**
+	 * Method for ending the negotiation because of out of time.
+	 */
 	public void endTheNegotiationBecauseOfOutOfTime() {
 		System.out.println("No Agreement!");
 	}
 
 	public void setNegotiationManual(boolean manualNegotiation) {
 		this.manualNegotiation = manualNegotiation;
+		if (!manualNegotiation) {
+			nd.setStep(1);
+		}
 	}
 }

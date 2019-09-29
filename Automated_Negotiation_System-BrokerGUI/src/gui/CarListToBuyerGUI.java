@@ -25,10 +25,9 @@ public class CarListToBuyerGUI extends Stage {
 	private FXMLLoader loader;
 	private CarInfoGUIController[] carController;
 	private BuyerAgent buyerAgent;
-	//private CarList choosenOffers;
 	
 	public CarListToBuyerGUI(CarList offerCarlist, Agent myAgent){
-		//choosenOffers = new CarList();
+		double blockHeight = 0;
 		carController = new CarInfoGUIController[offerCarlist.size()];
 		buyerAgent = (BuyerAgent) myAgent;
 		ScrollPane sp = new ScrollPane();
@@ -47,6 +46,7 @@ public class CarListToBuyerGUI extends Stage {
 				carController[i].setBuyerAgent(buyerAgent);
 				window.setStyle("-fx-background-color: #ffffff");
 				root.getChildren().add(window);
+				blockHeight = window.getPrefHeight();
 			} catch (IOException e) {
 				System.err.println("Error by loading fxml-File");
 			}	
@@ -54,7 +54,12 @@ public class CarListToBuyerGUI extends Stage {
 		this.setTitle("List of possible cars");
 		sp.setContent(root);
         sp.setPannable(true); 
-		Scene scene = new Scene(sp,710,850);
+        Scene scene;
+        if (offerCarlist.size()<=2) {
+        	scene = new Scene(sp,700,blockHeight*offerCarlist.size()+30);
+        } else {
+        	scene = new Scene(sp,710,blockHeight*2+30);
+        }	
 		this.setScene(scene);
 		this.setResizable(false);
 		this.show();
