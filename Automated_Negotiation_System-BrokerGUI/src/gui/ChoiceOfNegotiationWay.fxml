@@ -60,5 +60,6 @@
     <Label fx:id="validationLabel" layoutX="325.0" layoutY="384.0" text="Label" />
     <Label id="priceLable" fx:id="maxprice_buyer" font="$x1" layoutX="276.0" layoutY="282.0" text="Max price" visible="true" />
     <TextField id="PricetoEnter" fx:id="maxPriceFromBuyer" layoutX="371.0" layoutY="282.0" prefWidth="95.0" visible="true" />
+    <AnchorPane layoutX="29.0" layoutY="80.0" opacity="0.25" prefHeight="193.0" prefWidth="466.0" style="-fx-background-color:  #b3b6b7; " />
   </children>
 </AnchorPane>
