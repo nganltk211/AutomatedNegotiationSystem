@@ -405,8 +405,8 @@ public class BuyerAgent extends Agent {
 
 	public void setNegotiationManual(boolean manualNegotiation) {
 		this.manualNegotiation = manualNegotiation;
-		if (!manualNegotiation) {
-			nd.setStep(1);
-		}
+//		if (!manualNegotiation) {
+//			nd.setStep(1);
+//		}
 	}
 }

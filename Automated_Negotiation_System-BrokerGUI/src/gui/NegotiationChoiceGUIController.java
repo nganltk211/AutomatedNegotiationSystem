@@ -3,8 +3,6 @@ package gui;
 import java.io.IOException;
 
 import agents.BuyerAgent;
-import agents.DealerAgent;
-import jade.core.Agent;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;

@@ -3,7 +3,6 @@ package gui;
 import java.io.IOException;
 
 import agents.BuyerAgent;
-import jade.core.Agent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

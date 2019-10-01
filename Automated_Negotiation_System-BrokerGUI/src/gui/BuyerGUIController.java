@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import model.Car;
 import model.FormValidation;
-import javafx.scene.Node;
 import javafx.scene.text.Text;
 import javafx.scene.control.Button;
 
@@ -20,8 +19,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import java.util.function.UnaryOperator;
-import javafx.scene.control.TextFormatter;
 
 public class BuyerGUIController implements Initializable {
 	@FXML
@@ -60,35 +57,35 @@ public class BuyerGUIController implements Initializable {
 	@FXML
 	public void buttonSearchClick(ActionEvent event) throws IOException {
 		boolean price = FormValidation.textFieldNotEmpty(max_id, priceValidationLabel, "Please Enter Max Price");
-		if(Double.parseDouble(max_id.getText()) < 1000)
-		{
-			priceValidationLabel.setText("Please Enter Ablove 1000");
-			price = false;
-		}
+		
+		
 		//numbers Validation
 
        
 		if(price)
 		{
-			Car searchCar = new Car(0);
-			searchCar.setManufacture(manufacture_id.getValue());
-			searchCar.setModel(model_id.getValue());
-			searchCar.setTransmission(transmission_id.getValue());
-			searchCar.setBodyType(body_id.getValue());
-			searchCar.setColor(color_id.getValue());
-			searchCar.setFuelType(fueltype_id.getValue());
-			try {
-			
-				
-			searchCar.setMaxprice(Double.parseDouble(max_id.getText()));
-			
-			}catch(NumberFormatException e)
+			try {	
+			if(Double.parseDouble(max_id.getText()) < 1000)
+			{
+				priceValidationLabel.setText("Please Enter Ablove 1000");
+			}
+			else {
+				Car searchCar = new Car(0);
+				searchCar.setManufacture(manufacture_id.getValue());
+				searchCar.setModel(model_id.getValue());
+				searchCar.setTransmission(transmission_id.getValue());
+				searchCar.setBodyType(body_id.getValue());
+				searchCar.setColor(color_id.getValue());
+				searchCar.setFuelType(fueltype_id.getValue());
+				searchCar.setMaxprice(Double.parseDouble(max_id.getText()));
+				buyerAgent.setReservationPrice(Double.parseDouble(max_id.getText()));
+				buyerAgent.requestInfoOfDesiredCar(searchCar);
+				//((Node) (event.getSource())).getScene().getWindow().hide();
+			}}catch(NumberFormatException e)
 			{
 				priceValidationLabel.setText("Please Enter Number Value");
 			}
-			buyerAgent.setReservationPrice(Double.parseDouble(max_id.getText()));
-			buyerAgent.requestInfoOfDesiredCar(searchCar);
-			//((Node) (event.getSource())).getScene().getWindow().hide();
+			
 		}
 		
 		
