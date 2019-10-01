@@ -1,8 +1,6 @@
 package gui;
 
 import java.io.IOException;
-import java.net.URL;
-
 import agents.BuyerAgent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

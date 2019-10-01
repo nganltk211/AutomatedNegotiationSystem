@@ -23,19 +23,24 @@ import javafx.application.Platform;
 import model.Car;
 import model.CarList;
 
+/**
+ * Class as representation of an broker-agent
+ */
 public class BrokerAgent extends Agent {
 
 	private static final long serialVersionUID = -1539612606764155406L;
-	private ObjectMapper o = new ObjectMapper();
-	private CarList catalog = new CarList();
+	private ObjectMapper o = new ObjectMapper(); // object supporting converting object to json-form
+	private CarList catalog = new CarList(); // broker's catalog
 	private JsonIO jsonDB = new JsonIO("./DataBase/JsonDB.txt");
-	private static final double COMMISION = 100;
-	private double recievedCommision;
+	private static final double COMMISION = 100; // fix-commission for each successful negotiation
+	private double recievedCommision; // broker's commission from successful negotiations 
 	
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hallo! Broker-agent " + getAID().getName() + " is ready.");
-		jsonDB.clearFile();
+		jsonDB.clearFile(); // clear the data in file.
+		//catalog = jsonDB.readFile();
+		
 		// Register the car-broker service in the yellow pages
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID());
@@ -64,8 +69,8 @@ public class BrokerAgent extends Agent {
 		System.out.println("Broker-agent " + getAID().getName() + " terminating.");
 	}
 	
-	/*
-	 This Behaviour (Receive confirmation from buyer agent/dealer) does the agent handshake after both agents accept offers
+	/**
+	 * This Behavior (Receive confirmation from buyer agent/dealer) does the agent handshake after both agents accept offers
 	 */
 	private class ConfirmSellWithBroker extends CyclicBehaviour{
 		
@@ -75,7 +80,6 @@ public class BrokerAgent extends Agent {
 			MessageTemplate mt0 = MessageTemplate.and(MessageTemplate.MatchConversationId("confirm_sell"),MessageTemplate.MatchPerformative(ACLMessage.INFORM));
 			ACLMessage msg0 = myAgent.receive(mt0);
 			
-
 			if (msg0 != null) {
 				// Message received. Process it
 				String content = msg0.getContent();
@@ -100,19 +104,16 @@ public class BrokerAgent extends Agent {
 					System.out.println("Broker: Broker cataloge: \n" + catalog);
 				} catch (IOException e) {
 					e.printStackTrace();
-				}				
-				
+				}								
 			} else {
 				block();
-			}
-			
+			}		
 		}
 	}
 	
 
 	/**
-	 * Class for behavior of the broker agent. 
-	 * The broker is able to receive the list of cars from dealer agent and save it in his catalog.
+	 * This behavior of the broker agent is for receiving the list of cars from dealer agent and save it in his catalog.
 	 */
 	private class ReceiveListOfCarsFromDealer extends CyclicBehaviour {
 		
@@ -128,7 +129,8 @@ public class BrokerAgent extends Agent {
 			if (msg1 != null) {
 				// Message received. Process it
 				String carlist = msg1.getContent();
-				jsonDB.writeToFile(carlist);
+				// update catalog/jsonFile
+				jsonDB.writeToFile(carlist); 
 				catalog = jsonDB.readFile();
 				System.out.println("Broker: Broker cataloge: \n" + catalog);
 			} else {
@@ -137,22 +139,18 @@ public class BrokerAgent extends Agent {
 		}
 	}
 	
+	/**
+	 * This behavior of the broker agent is for handling with a car request from the buyer.
+	 */
 	private class DealWithRequestFromBuyers extends CyclicBehaviour {
-
-		private static final long serialVersionUID = -8496805180917867030L;
 
 		@Override
 		public void action() {
+			//MessageTemplate for the Conversation between buyer and broker (the broker receive a car request from the buyer)
 			MessageTemplate mt2 = MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade-broker-buyer"),
 					MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
 			ACLMessage msg2 = myAgent.receive(mt2);
-			//catalog = new CarList();
 			if (msg2 != null) {
-				//Load catalog
-				//CarList list = jsonDB.readFile();
-				//if (list != null ) {
-				//	catalog.addAll(list);
-				//}
 				// Message received. Process it
 				String desiredCarJson = msg2.getContent();
 				try {
@@ -160,10 +158,11 @@ public class BrokerAgent extends Agent {
 					System.out.println("Broker: Receive a request from Buyer:\n" + desiredCar + "\n");
 
 					CarList listOfPossibleCar = new CarList();
-					listOfPossibleCar.addAll(getListOfPossibleCars(desiredCar));
+					// get cars from catalog, which pass with buyer's demand
+					listOfPossibleCar.addAll(getListOfPossibleCars(desiredCar)); 
 
 					if (listOfPossibleCar.size() > 0) {
-						// Send back a list of cars to the Buyer if possible
+						// Send back a list of cars to the buyer 
 						String jsonInString;
 						try {
 							jsonInString = o.writeValueAsString(listOfPossibleCar);
@@ -186,7 +185,6 @@ public class BrokerAgent extends Agent {
 						myAgent.send(reply);
 					}
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			} else {
@@ -195,13 +193,18 @@ public class BrokerAgent extends Agent {
 		}
 	}
 	
+	/**
+	 * This behavior of the broker agent is for connecting the buyer with dealer.
+	 */
 	private class RequestFromBuyersToConnectToDealer extends CyclicBehaviour {
 
 		@Override
 		public void action() {
+			// MessageTemplate for the Conversation between buyer and broker 
+			// (the broker receive a request from the buyer to connect with a dealer)
 			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade-broker-buyer"),
 					MessageTemplate.MatchPerformative(ACLMessage.INFORM));
-			ACLMessage msg = myAgent.receive(mt);
+			ACLMessage msg = myAgent.receive(mt); // Receive message (chosen car and first offer) from the buyer
 			if (msg != null) {
 				System.out.println("Broker: Receive a choosen car from buyer " + msg.getSender().getName());
 				String choosenCarJson = msg.getContent();
@@ -209,15 +212,15 @@ public class BrokerAgent extends Agent {
 				try {
 					Car choosenCar = o.readValue(choosenCarJson, Car.class);
 					System.out.println(choosenCar + "\n");
+					// Send message (chosen car, first offer price, name of the buyer agent) to the dealer, who offer the chosen car
 					ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
 					mess.addReceiver(AgentSupport.findAgentWithName(myAgent, choosenCar.getAgent()));
-					mess.setContent(choosenCarJson);
+					mess.setContent(choosenCarJson); // chosen car
 					mess.setConversationId("car-trade-broker-seller");
 					mess.setReplyWith(msg.getSender().getName()); // name of the buyer.
-					mess.setInReplyTo(firstOfferPrice);
+					mess.setInReplyTo(firstOfferPrice); // first offer price
 					myAgent.send(mess);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			} else {
@@ -227,29 +230,42 @@ public class BrokerAgent extends Agent {
 		
 	}
 	
+	/**
+	 * This method is for filtering cars, which the buyer is looking for, from broker's catalog
+	 * @param desiredCar
+	 * @return list of car after filtering
+	 */
 	private List<Car> getListOfPossibleCars(Car desiredCar){
 		List<Car> filterList = new CarList();
-		filterList.addAll(catalog);
-		if (desiredCar.getManufacture() != null) {			
+		filterList.addAll(catalog); // get all cars from broker's catalog
+		if (desiredCar.getManufacture() != null) {	
+			// retain only cars, which have the same manufacture with desiredCar
 			filterList.retainAll(catalog.stream().filter(car -> car.getManufacture().equals(desiredCar.getManufacture())).collect(Collectors.toList()));
 		}
 		if (desiredCar.getModel() != null) {
+			// retain only cars, which have the same model with desiredCar
 			filterList.retainAll(catalog.stream().filter(car -> car.getModel().equals(desiredCar.getModel())).collect(Collectors.toList()));
 		}
 		if (desiredCar.getTransmission() != null) {
+			// retain only cars, which have the same transmission with desiredCar
 			filterList.retainAll(catalog.stream().filter(car -> car.getTransmission().equals(desiredCar.getTransmission())).collect(Collectors.toList()));
 		}
 		if (desiredCar.getBodyType() != null) {
+			// retain only cars, which have the same body type with desiredCar
 			filterList.retainAll(catalog.stream().filter(car -> car.getBodyType().equals(desiredCar.getBodyType())).collect(Collectors.toList()));
 		}
 		if (desiredCar.getFuelType() != null) {
+			// retain only cars, which have the same fuel type with desiredCar
 			filterList.retainAll(catalog.stream().filter(car -> car.getFuelType().equals(desiredCar.getFuelType())).collect(Collectors.toList()));
 		}
 		if (desiredCar.getColor() != null) {
+			// retain only cars, which have the same color with desiredCar
 			filterList.retainAll(catalog.stream().filter(car -> car.getColor().equals(desiredCar.getColor())).collect(Collectors.toList()));
 		}
 		List<Car> endList = new CarList();
 		for (Car c : filterList) {
+			// only get the cars, which has price lower than buyer max price or get all cars when the buyer didn't give a max price.
+			// another condition: only get not sold cars
 			if ((c.getMinprice() <= desiredCar.getMaxprice() || desiredCar.getMaxprice() == 0) && !c.getcarStatus()) {
 				endList.add(c);
 			}

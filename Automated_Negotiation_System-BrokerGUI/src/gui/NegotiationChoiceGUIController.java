@@ -3,8 +3,6 @@ package gui;
 import java.io.IOException;
 
 import agents.BuyerAgent;
-import agents.DealerAgent;
-import jade.core.Agent;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -59,12 +57,16 @@ public class NegotiationChoiceGUIController {
 	private Label validationLabel;
 	@FXML
 	private Label pricevalidationLabel;
+	@FXML
+	private Label maxprice_buyer;
+	@FXML
+	private TextField maxPriceFromBuyer;
 	
 	private boolean isValidate = false;
 
 	
-	private Agent agent;
-	private String opponentAgentName; // name of opponent agent
+	private BuyerAgent bag;
+	//private String opponentAgentName; // name of opponent agent
 	private Car negotiatedCar;
 	private ToggleGroup group;
 	public NegotiationChoiceGUIController() {
@@ -87,6 +89,8 @@ public class NegotiationChoiceGUIController {
 		stepsLable.setVisible(false);
 		negotiationSteps.setVisible(false);
 		validationLabel.setVisible(false);
+		maxPriceFromBuyer.setVisible(false);
+		maxprice_buyer.setVisible(false);
     }
     
 	public void radiobuttonChangeValue() {
@@ -102,7 +106,8 @@ public class NegotiationChoiceGUIController {
 					stepsLable.setVisible(false);
 					negotiationSteps.setVisible(false);
 					validationLabel.setVisible(false);
-					
+					maxPriceFromBuyer.setVisible(false);
+					maxprice_buyer.setVisible(false);
 				} else {
 				    priceLable.setVisible(true);
 				    PricetoEnter.setVisible(true);
@@ -113,7 +118,9 @@ public class NegotiationChoiceGUIController {
 
 					negotiationSteps.setVisible(true);
 					validationLabel.setVisible(true);
-					
+					maxPriceFromBuyer.setVisible(true);
+					maxprice_buyer.setVisible(true);
+					maxPriceFromBuyer.setText(String.valueOf(bag.getReservationPrice()));
 				}
 			}
 		});
@@ -156,7 +163,6 @@ public class NegotiationChoiceGUIController {
 				validation();
 				if(isValidate)
 				{
-					BuyerAgent bag = (BuyerAgent) agent;
 					try {
 						bag.setIntialPrice(Double.parseDouble(PricetoEnter.getText()));
 						
@@ -189,12 +195,12 @@ public class NegotiationChoiceGUIController {
 				
 	}	
 	
-	public void setOpponentAgentName(String name) {
-		this.opponentAgentName = name;
-	}
+//	public void setOpponentAgentName(String name) {
+//		this.opponentAgentName = name;
+//	}
 	
-	public void setAgent(Agent agent) {
-		this.agent = agent;
+	public void setAgent(BuyerAgent agent) {
+		bag = agent;
 	}
 	
 	public void setNegotiatedCar(Car car) {

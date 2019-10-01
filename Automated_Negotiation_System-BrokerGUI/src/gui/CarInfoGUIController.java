@@ -5,6 +5,7 @@ import java.io.File;
 import agents.BuyerAgent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -74,6 +75,7 @@ public class CarInfoGUIController {
 	
 	@FXML
 	public void buttonNegotiateClick(ActionEvent action) {
-		NegotiationChoiceGUI negotiationChoice = new NegotiationChoiceGUI(buyerAgent, "", car);
+		NegotiationChoiceGUI negotiationChoice = new NegotiationChoiceGUI(buyerAgent, car);
+		((Node) (action.getSource())).getScene().getWindow().hide();
 	}
 }

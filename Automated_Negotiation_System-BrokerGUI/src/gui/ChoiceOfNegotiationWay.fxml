@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="427.0" prefWidth="517.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.NegotiationChoiceGUIController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="413.0" prefWidth="516.9998779296875" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.NegotiationChoiceGUIController">
   <children>
     <Label layoutX="47.0" layoutY="30.0" text="Let start the negotiation">
       <font>
@@ -16,7 +20,7 @@
     </Label>
     <RadioButton fx:id="rb_manual" layoutX="51.0" layoutY="288.0" mnemonicParsing="false" text="Manual negotiation" />
     <RadioButton fx:id="rb_automated" layoutX="50.0" layoutY="324.0" mnemonicParsing="false" text="Automated Negotiation" />
-    <Button fx:id="btn_start" layoutX="396.0" layoutY="381.0" mnemonicParsing="false" onAction="#startNegotiationButtonClick" prefWidth="73.0" text="Start" />
+    <Button fx:id="btn_start" layoutX="51.0" layoutY="365.0" mnemonicParsing="false" onAction="#startNegotiationButtonClick" prefWidth="73.0" text="Start" />
     <Label layoutX="51.0" layoutY="90.0" text="Negotiated Car">
       <font>
         <Font name="System Bold Italic" size="16.0" />
@@ -46,21 +50,16 @@
     <Label id="color" fx:id="bodyType" font="$x2" layoutX="396.0" layoutY="174.0" text="No Details" />
     <Label font="$x1" layoutX="276.0" layoutY="241.0" text="Price" />
     <Label id="bodytype" fx:id="price" font="$x2" layoutX="397.0" layoutY="241.0" text="No Details" />
-    <Label fx:id="priceLable" font="$x1" layoutX="275.0" layoutY="286.0" text="Offer price" visible="true" />
-    <TextField fx:id="PricetoEnter" layoutX="371.0" layoutY="284.0" prefWidth="95.0" visible="true" />
-      <TextField fx:id="BeetaValue" layoutX="325.0" layoutY="329.0" prefHeight="25.0" prefWidth="52.0" />
-      <Label fx:id="Beetalable" layoutX="274.0" layoutY="331.0" text="Beeta">
-         <font>
-            <Font name="System Bold" size="15.0" />
-         </font>
-      </Label>
-      <Label fx:id="stepsLable" layoutX="446.0" layoutY="331.0" text="Steps">
-         <font>
-            <Font name="System Bold" size="15.0" />
-         </font>
-      </Label>
-      <TextField fx:id="negotiationSteps" layoutX="393.0" layoutY="329.0" prefHeight="25.0" prefWidth="52.0" />
-      <Label fx:id="pricevalidationLabel" layoutX="371.0" layoutY="309.0" text="Label" />
-      <Label fx:id="validationLabel" layoutX="325.0" layoutY="354.0" text="Label" />
+    <Label fx:id="priceLable" font="$x1" layoutX="275.0" layoutY="316.0" text="Offer price" visible="true" />
+    <TextField fx:id="PricetoEnter" layoutX="371.0" layoutY="314.0" prefWidth="95.0" visible="true" />
+    <TextField fx:id="BeetaValue" layoutX="325.0" layoutY="359.0" prefHeight="25.0" prefWidth="52.0" />
+    <Label fx:id="Beetalable" font="$x1" layoutX="274.0" layoutY="361.0" text="Beeta" />
+    <Label fx:id="stepsLable" font="$x1" layoutX="446.0" layoutY="361.0" text="Steps" />
+    <TextField fx:id="negotiationSteps" layoutX="393.0" layoutY="359.0" prefHeight="25.0" prefWidth="52.0" />
+    <Label fx:id="pricevalidationLabel" layoutX="371.0" layoutY="339.0" text="Label" />
+    <Label fx:id="validationLabel" layoutX="325.0" layoutY="384.0" text="Label" />
+    <Label id="priceLable" fx:id="maxprice_buyer" font="$x1" layoutX="276.0" layoutY="282.0" text="Max price" visible="true" />
+    <TextField id="PricetoEnter" fx:id="maxPriceFromBuyer" layoutX="371.0" layoutY="282.0" prefWidth="95.0" visible="true" />
+    <AnchorPane layoutX="29.0" layoutY="80.0" opacity="0.25" prefHeight="193.0" prefWidth="466.0" style="-fx-background-color:  #b3b6b7; " />
   </children>
 </AnchorPane>

@@ -25,8 +25,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import model.Car;
@@ -414,10 +412,12 @@ public class DealerGUIController implements Initializable {
 	}
 
 	public void onButtonSendClick(ActionEvent event) throws IOException {
-		dealerAgent.sendListOfCarToBroker(listOfCars);
-		//dealerAgent.setBeeta(Double.parseDouble(beetaValue.getText()));
-	    //dealerAgent.setMaxStep(Integer.parseInt(stepsValue.getText()));
-		((Node) (event.getSource())).getScene().getWindow().hide();
+		if (listOfCars.size() > 0) {
+			dealerAgent.sendListOfCarToBroker(listOfCars);
+			//dealerAgent.setBeeta(Double.parseDouble(beetaValue.getText()));
+		    //dealerAgent.setMaxStep(Integer.parseInt(stepsValue.getText()));
+			((Node) (event.getSource())).getScene().getWindow().hide();
+		}	
 	}
 
 	private void updateTable() {

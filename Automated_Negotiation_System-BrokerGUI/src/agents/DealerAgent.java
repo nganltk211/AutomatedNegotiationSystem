@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gui.DealerGUI;
 import gui.NegotiationBotGUI;
-import gui.NegotiationChoiceGUI;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -22,6 +21,9 @@ import javafx.application.Platform;
 import model.Car;
 import model.CarList;
 
+/**
+ * Class as representation of an dealer agent
+ */
 public class DealerAgent extends Agent {
 
 	private static final long serialVersionUID = -8414132078026686821L;
@@ -34,7 +36,7 @@ public class DealerAgent extends Agent {
 		// Printout a welcome message
 		System.out.println("Hallo! Dealer-agent " + getAID().getName() + " is ready.");
 
-		// starts the GUI
+		// starts the DealerGUI
 		new Thread(() -> {
 			Platform.runLater(() -> {
 				DealerGUI guiDealer = new DealerGUI(this);
@@ -46,12 +48,12 @@ public class DealerAgent extends Agent {
 
 		// using to find the AID of the broker agent
 		addBehaviour(new OneShotBehaviour() {
-
 			@Override
 			public void action() {
 				sd.setType("car-broker");
 				template.addServices(sd);
 				try {
+					// search agent with service "car-broker"
 					DFAgentDescription[] result = DFService.search(myAgent, template);
 					brokerAgent = result[0].getName();
 				} catch (FIPAException fe) {
@@ -59,8 +61,10 @@ public class DealerAgent extends Agent {
 				}
 			}
 		});
-		nb = new NegotiationWithBuyer();
+
+		// Adding behaviors to the dealer agent
 		addBehaviour(new StartTheNegotiationWithBuyer());
+		nb = new NegotiationWithBuyer();
 		addBehaviour(nb);
 		addBehaviour(new EndTheNegotiation());
 	}
@@ -74,8 +78,7 @@ public class DealerAgent extends Agent {
 	}
 
 	/**
-	 * The dealer agent sent a list of cars to the broker
-	 * 
+	 * The dealer agent sent a list of cars he want to sell to the broker
 	 * @param carList
 	 */
 	public void sendListOfCarToBroker(CarList carList) {
@@ -85,12 +88,13 @@ public class DealerAgent extends Agent {
 				System.out.println("Dealer : Trying to send a list of cars to Broker\n");
 				ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
 				mess.addReceiver(brokerAgent);
-				// to set information that these cars are offered from this dealer agent
+				// to set information of dealer agent to the offered cars
 				for (Car c : carList) {
 					c.setAgent(myAgent.getName());
 				}
 				String jsonInString;
 				try {
+					// sends list of cars to the broker
 					jsonInString = o.writeValueAsString(carList);
 					mess.setContent(jsonInString);
 					mess.setConversationId("car-trade-dealer-broker");
@@ -98,7 +102,6 @@ public class DealerAgent extends Agent {
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();
 				}
-
 			}
 		});
 	}
@@ -106,25 +109,30 @@ public class DealerAgent extends Agent {
 	// -----------------------------------------------------------------------------------------------------------------------------------------
 	// Negotiation part
 
+	/**
+	 * This behavior is for receiving an inform from the broker to start a negotiation with a buyer
+	 */
 	private class StartTheNegotiationWithBuyer extends CyclicBehaviour {
 
 		@Override
 		public void action() {
+			//MessageTemplate for the Conversation between dealer and broker
+			// (dealer receive inform from the broker to start a negotiation with a buyer)
 			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade-broker-seller"),
 					MessageTemplate.MatchPerformative(ACLMessage.INFORM));
 			ACLMessage msg = myAgent.receive(mt);
 			if (msg != null) {
 				System.out.println("Dealer: Receive an offer from the broker");
+				// Receives the message (negotiated car, buyer name, first-offer price from buyer)
 				String content = msg.getContent();
 				String buyer = msg.getReplyWith();
 			    double offerPrice = Double.parseDouble(msg.getInReplyTo());
-			
 				try {
 					Car choosenCars = o.readValue(content, Car.class);
 					System.out.println(choosenCars + "\n");
 					System.out.println("Dealer: Trying to create a negotiation with the buyer: " + buyer);
+					// starting to make an first offer to the buyer
 					addBehaviour(new NegotiationBehaviourWithBuyerFirstOffer(buyer, choosenCars, offerPrice));
-					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -132,6 +140,9 @@ public class DealerAgent extends Agent {
 		}
 	}
 
+	/**
+	 * This behavior is for making the buyer an first offer
+	 */
 	private class NegotiationBehaviourWithBuyerFirstOffer extends OneShotBehaviour {
 		private String buyerAgentName;
 		private Car negotiatedCar;
@@ -149,8 +160,6 @@ public class DealerAgent extends Agent {
 			mess.addReceiver(AgentSupport.findAgentWithName(myAgent, buyerAgentName));
 			//This is automate negotiation
 			if (!negotiatedCar.getisNegotiatable()) {
-				// offerPrice = Algorithms.offer(intialPrice, reservationPrice, 1, maxStep,
-				// 1.1);
 				offerPrice = negotiatedCar.getMaxprice();
 				System.out.println(myAgent.getName() + ": First offer to the buyer: " + offerPrice + "\n");
 				String jsonInString;
@@ -159,27 +168,27 @@ public class DealerAgent extends Agent {
 					mess.setContent(jsonInString);
 					mess.setReplyWith(String.valueOf(offerPrice));
 					mess.setConversationId("car-negotiation");
-				
+
 					myAgent.send(mess);
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();
 				}
 			}else {
+				// manual negotiation
 				new Thread(() -> {
 					Platform.runLater(() -> {
 						NegotiationBotGUI bot = new NegotiationBotGUI(myAgent, buyerAgentName, negotiatedCar, offerPrice);
 					});
 				}).start();
 			}
-			
 		}
 	}
 
 	/**
-	 * This behavior is for the negotiation with the buyer. In case of manual
-	 * negotiation, a GUI will be shown with the offer price from the buyer and
-	 * options for buyer to accept or decline the offer In case of automated
-	 * negotiation .....
+	 * This behavior is for the negotiation with the buyer.
+	 * In case of manual negotiation, a GUI will be shown with the offer price from the buyer and
+	 * options for buyer to accept or decline the offer.
+	 * In case of automated negotiation the dealer AI will decide to accept the offer or make a counter-offer
 	 */
 	private class NegotiationWithBuyer extends CyclicBehaviour {
 		private int step = 1;
@@ -204,6 +213,7 @@ public class DealerAgent extends Agent {
 						String buyerName = msg.getSender().getName();
 						double offerPrice = Double.parseDouble(msg.getReplyWith());
 						System.out.println("Dealer: Receive offer from the buyer: " + offerPrice);
+						// start the NegotiationBotGUI
 						new Thread(() -> {
 							Platform.runLater(() -> {
 								NegotiationBotGUI bot = new NegotiationBotGUI(myAgent, buyerName, messObject,
@@ -220,22 +230,23 @@ public class DealerAgent extends Agent {
 							int nextPrice = Algorithms.offer(messObject.getMaxprice(), messObject.getMinprice(),
 									step, messObject.getSteps(), messObject.getBeeta());
 							if (nextPrice <= offerPrice) {
+								// accept the offer from the buyer
 								acceptOffer(buyerName, messObject, offerPrice);
-								step = 0;
+								step = 1;
 							} else {
+								// make a counter-offer to the buyer
 								makeACounterOffer(buyerName, messObject, nextPrice);
 								step++;
 							}
 						} else {
+							// when reaching the deadline
 							endTheNegotiationBecauseOfOutOfTime();
-							step = 0;
+							step = 1;
 						}
 					}
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-
 			} else {
 				block();
 			}
@@ -262,8 +273,8 @@ public class DealerAgent extends Agent {
 					System.out.println("\nEnd of the negotiation : ");
 					System.out.println("Sold car: " + negotiatedCar);
 					System.out.println("Sold price: " + offerPrice);
-					
-					nb.setStep(0);
+
+					nb.setStep(1); // set the step to 1
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -275,7 +286,7 @@ public class DealerAgent extends Agent {
 
 	/**
 	 * The dealer agent makes a counter-offer to the buyer agent
-	 * 
+	 *
 	 * @param opponentAgentName
 	 *            : name of the buyer agent
 	 * @param negotiatedCar
@@ -299,13 +310,15 @@ public class DealerAgent extends Agent {
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();
 				}
-
 			}
-
 		});
 	}
 
-	// Send negotiation confirmation message to broker agent
+	/**
+	 * Send negotiation confirmation message to broker agent
+	 * @param car : negotiated car
+	 * @param price : accepted price
+	 */
 	private void confirmSell(Car car, double price) {
 		addBehaviour(new OneShotBehaviour() {
 			@Override
@@ -330,8 +343,8 @@ public class DealerAgent extends Agent {
 
 	/**
 	 * This method will be called, when the dealer accepts the offer from the buyer
-	 * 
-	 * @param opponentAgentName
+	 *
+	 * @param opponentAgentName : buyer agent name
 	 * @param negotiatedCar
 	 * @param price
 	 */
@@ -357,12 +370,11 @@ public class DealerAgent extends Agent {
 		});
 	}
 
+	/**
+	 * Method for ending the negotiation because of out of time.
+	 */
 	public void endTheNegotiationBecauseOfOutOfTime() {
 		System.out.println("No Agreement!");
 	}
-
-	
-
-	
 
 }
