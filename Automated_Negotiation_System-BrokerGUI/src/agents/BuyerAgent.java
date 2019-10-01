@@ -260,7 +260,7 @@ public class BuyerAgent extends Agent {
 							double offerPrice = Double.parseDouble(msg.getReplyWith());
 							System.err.println("Buyer: Receive offer from the dealer: " + offerPrice);
 							//calculate the next offer
-							double nextPrice = Algorithms.offer(intialPrice,reservationPrice, step, maxStep, beetaValue);
+							int nextPrice = Algorithms.offer(intialPrice,reservationPrice, step, maxStep, beetaValue);
 							if (nextPrice >= offerPrice) {
 								step = 1;
 								acceptOffer(dealerName, messObject, offerPrice);

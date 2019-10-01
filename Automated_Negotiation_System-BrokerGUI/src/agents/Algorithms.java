@@ -4,11 +4,11 @@ import model.Car;
 
 public class Algorithms {
 	
-	public static double offer(double initialPrice, double reservPrice, double time, double deadLine, double beeta)
+	public static int offer(double initialPrice, double reservPrice, double time, double deadLine, double beeta)
 	{	
 		double t = (double)(time/deadLine);
 		double offer = (double) (initialPrice + (reservPrice - initialPrice) * Math.pow( t, beeta));
-		return offer;
+		return (int) Math.round(offer);
 	}
 	
 	public static float carScore(Car car)

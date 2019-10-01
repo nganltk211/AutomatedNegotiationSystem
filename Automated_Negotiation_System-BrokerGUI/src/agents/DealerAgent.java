@@ -217,7 +217,7 @@ public class DealerAgent extends Agent {
 							String buyerName = msg.getSender().getName();
 							double offerPrice = Double.parseDouble(msg.getReplyWith());
 							System.out.println("Dealer: Receive offer from the buyer: " + offerPrice);
-							double nextPrice = Algorithms.offer(messObject.getMaxprice(), messObject.getMinprice(),
+							int nextPrice = Algorithms.offer(messObject.getMaxprice(), messObject.getMinprice(),
 									step, messObject.getSteps(), messObject.getBeeta());
 							if (nextPrice <= offerPrice) {
 								acceptOffer(buyerName, messObject, offerPrice);
