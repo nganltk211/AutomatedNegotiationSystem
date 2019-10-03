@@ -13,12 +13,20 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import model.CarList;
 
+/**
+ * A class for setting and showing a stage CarListToBuyerGUI
+ */
 public class CarListToBuyerGUI extends Stage {
 
 	private FXMLLoader loader;
 	private CarInfoGUIController[] carController;
 	private BuyerAgent buyerAgent;
 	
+	/**
+	 * Constructor of the class.
+	 * @param offerCarlist : list of possible cars to show the buyer
+	 * @param myAgent : a buyer agent
+	 */
 	public CarListToBuyerGUI(CarList offerCarlist, Agent myAgent){
 		double blockHeight = 0;
 		carController = new CarInfoGUIController[offerCarlist.size()];
@@ -29,6 +37,7 @@ public class CarListToBuyerGUI extends Stage {
 		root.setPadding(new Insets(10));
 		GridPane window = null;
 		for (int i = 0; i < offerCarlist.size(); i++) {
+			// // loads GUI-Elements for a car block info from the CarInformation.fxml file
 			loader = new FXMLLoader(getClass().getResource("CarInformation.fxml"));
 			try {
 				window = loader.load();
