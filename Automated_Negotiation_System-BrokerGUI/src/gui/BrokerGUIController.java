@@ -1,6 +1,5 @@
 package gui;
 
-
 import agents.BrokerAgent;
 import agents.BuyerAgent;
 import agents.DealerAgent;
@@ -15,16 +14,23 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-public class BrokerGUIController{
+/**
+ * A Controller class of BrokerGUI. The logic of GUI-Elements will be defined in
+ * this class.
+ */
+public class BrokerGUIController {
 	@FXML
 	private Button buyer;
 	@FXML
 	private Button dealer;
-	
-	private int counterBuyer;
-	private int counterDealer;
-	private static ContainerController mainCtrl;
 
+	private int counterBuyer; // uses to define buyer agent name
+	private int counterDealer; // uses to define dealer agent name
+	private static ContainerController mainCtrl; // JADE Main Container
+
+	/**
+	 * Constructor of the class. A broker agent will be created and started.
+	 */
 	public BrokerGUIController() {
 		super();
 		counterBuyer = 1;
@@ -35,15 +41,20 @@ public class BrokerGUIController{
 			System.err.println("Problem by starting a BrokerAgent");
 		}
 	}
-	
-	public static void startBrokerAgent() throws InterruptedException {
+
+	/**
+	 * Creates and starts a broker agent
+	 * 
+	 * @throws InterruptedException
+	 */
+	public void startBrokerAgent() throws InterruptedException {
 		// Get a hold to the JADE runtime
 		Runtime rt = Runtime.instance();
 		// Launch the Main Container (with the administration GUI on top) listening on
 		// port 8888
 		System.out.println("Launching the platform Main Container...");
 		Profile pMain = new ProfileImpl(null, 8888, null);
-		//pMain.setParameter(Profile.GUI, "false");
+		pMain.setParameter(Profile.GUI, "true");
 		mainCtrl = rt.createMainContainer(pMain);
 
 		// Create and start an agent of class BrokerAgent
@@ -57,9 +68,13 @@ public class BrokerGUIController{
 		}
 	}
 
+	/**
+	 * Sets event for the "Dealer" button.
+	 * 
+	 * @param event
+	 */
 	@FXML
 	public void buttonDealerClick(ActionEvent event) {
-
 		// Create and start an agent of class DealerAgent
 		System.out.println("Starting up a DealerAgent...");
 		AgentController agentCtrl;
@@ -74,6 +89,11 @@ public class BrokerGUIController{
 
 	}
 
+	/**
+	 * Sets event for the "Buyer" button.
+	 * 
+	 * @param event
+	 */
 	@FXML
 	public void buttonBuyerClick(ActionEvent event) {
 		// Create and start an agent of class BuyerAgent
@@ -86,7 +106,6 @@ public class BrokerGUIController{
 		} catch (StaleProxyException e) {
 			System.err.println("Problem by creating a BuyerAgent");
 		}
-
 	}
-	
+
 }

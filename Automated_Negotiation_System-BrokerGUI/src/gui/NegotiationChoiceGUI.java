@@ -9,18 +9,28 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import model.Car;
 
+/**
+ * A class for setting and showing a stage NegotiationChoiceGUI.
+ * This is an interface for a buyer to choose the negotiation way (manual or automated)
+ */
 public class NegotiationChoiceGUI extends Stage {
 
 	private FXMLLoader loader;
 
+	/**
+	 * Constructor of the class
+	 * @param agent : buyer agent
+	 * @param negotiatedCar
+	 */
 	public NegotiationChoiceGUI(BuyerAgent agent, Car negotiatedCar){
 		Parent window = null;
 		loader = new FXMLLoader(getClass().getResource("ChoiceOfNegotiationWay.fxml"));
 		try {
 			window = loader.load();
+			// get the controller of this GUI
 			NegotiationChoiceGUIController controller = loader.<NegotiationChoiceGUIController>getController();
+			// set necessary informations using for the interaction between GUI and Agent
 			controller.setAgent(agent);
-			//controller.setOpponentAgentName(name);
 			controller.setNegotiatedCar(negotiatedCar);
 		} catch (IOException e) {
 			System.err.println("Error by loading fxml-File");

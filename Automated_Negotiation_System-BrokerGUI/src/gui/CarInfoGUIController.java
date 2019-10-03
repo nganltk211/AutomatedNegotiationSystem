@@ -61,7 +61,6 @@ public class CarInfoGUIController {
 		color.setText(car.getColor());
 		warranty.setText(String.valueOf(car.getWarranty()));
 		price.setText(String.valueOf(car.getMaxprice()));
-		//price.setText(String.valueOf(car.getMinprice()));
 		agent_name.setText(car.getAgent());
 	}
 	

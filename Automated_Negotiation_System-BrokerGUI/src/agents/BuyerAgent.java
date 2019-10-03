@@ -403,10 +403,11 @@ public class BuyerAgent extends Agent {
 		System.out.println("No Agreement!");
 	}
 
+	/**
+	 * Method to set the buyers negotiation way (manual or automated)
+	 * @param manualNegotiation
+	 */
 	public void setNegotiationManual(boolean manualNegotiation) {
 		this.manualNegotiation = manualNegotiation;
-//		if (!manualNegotiation) {
-//			nd.setStep(1);
-//		}
 	}
 }

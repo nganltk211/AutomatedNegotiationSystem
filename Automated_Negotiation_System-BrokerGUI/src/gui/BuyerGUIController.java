@@ -20,6 +20,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
+/**
+ * A Controller class of BuyerGUI. The logic of GUI-Elements will be defined in
+ * this class.
+ */
 public class BuyerGUIController implements Initializable {
 	@FXML
 	private ComboBox<String> body_id;
@@ -47,55 +51,62 @@ public class BuyerGUIController implements Initializable {
 	public BuyerGUIController() {
 	}
 
+	/**
+	 * Calls method to set the data for Comboboxes on GUI
+	 */
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		setDataComboBox();
 		priceValidationLabel.setText("");
 	}
 
-	// Event Listener on Button[#search_id].onAction
+	/**
+	 * Event Listener on Button[#search_id].onAction
+	 * 
+	 * @param event
+	 * @throws IOException
+	 */
 	@FXML
 	public void buttonSearchClick(ActionEvent event) throws IOException {
 		boolean price = FormValidation.textFieldNotEmpty(max_id, priceValidationLabel, "Please Enter Max Price");
-		
-		
-		//numbers Validation
 
-       
-		if(price)
-		{
-			try {	
-			if(Double.parseDouble(max_id.getText()) < 1000)
-			{
-				priceValidationLabel.setText("Please Enter Ablove 1000");
-			}
-			else {
-				Car searchCar = new Car(0);
-				searchCar.setManufacture(manufacture_id.getValue());
-				searchCar.setModel(model_id.getValue());
-				searchCar.setTransmission(transmission_id.getValue());
-				searchCar.setBodyType(body_id.getValue());
-				searchCar.setColor(color_id.getValue());
-				searchCar.setFuelType(fueltype_id.getValue());
-				searchCar.setMaxprice(Double.parseDouble(max_id.getText()));
-				buyerAgent.setReservationPrice(Double.parseDouble(max_id.getText()));
-				buyerAgent.requestInfoOfDesiredCar(searchCar);
-				//((Node) (event.getSource())).getScene().getWindow().hide();
-			}}catch(NumberFormatException e)
-			{
+		// numbers Validation
+		if (price) {
+			try {
+				if (Double.parseDouble(max_id.getText()) < 1000) {
+					priceValidationLabel.setText("Please Enter Above 1000");
+				} else {
+					Car searchCar = new Car(0);
+					searchCar.setManufacture(manufacture_id.getValue());
+					searchCar.setModel(model_id.getValue());
+					searchCar.setTransmission(transmission_id.getValue());
+					searchCar.setBodyType(body_id.getValue());
+					searchCar.setColor(color_id.getValue());
+					searchCar.setFuelType(fueltype_id.getValue());
+					searchCar.setMaxprice(Double.parseDouble(max_id.getText()));
+					buyerAgent.setReservationPrice(Double.parseDouble(max_id.getText()));
+					// buyer agent sends a request to the broker to get a list of suitable cars
+					buyerAgent.requestInfoOfDesiredCar(searchCar);
+				}
+			} catch (NumberFormatException e) {
 				priceValidationLabel.setText("Please Enter Number Value");
 			}
-			
 		}
-		
-		
 	}
 
+	/**
+	 * 
+	 * @param event
+	 */
 	public void ComboChanged(ActionEvent event) {
 		setModelComboBox();
 	}
 
+	/**
+	 * Sets data for Comboboxes on GUI
+	 */
 	public void setDataComboBox() {
+		// defines lists storing data for comboboxes
 		ObservableList<String> bodyList = FXCollections.observableArrayList("SUV", "Sedan", "HatchBack");
 		ObservableList<String> manufactureList = FXCollections.observableArrayList("Audi", "Toyota", "Honda", "BMW",
 				"Nissan", "Holden");
@@ -108,7 +119,7 @@ public class BuyerGUIController implements Initializable {
 				"Odysey", "Insight", "Seires 1", "Series 2", "Series 3", "Series 4", "Cima", "180xs", "200xs", "720",
 				"Appolo", "Astra", "Brock");
 
-		// ModelList
+		// sets data
 		body_id.setItems(bodyList);
 		manufacture_id.setItems(manufactureList);
 		transmission_id.setItems(transmissionList);
@@ -116,6 +127,7 @@ public class BuyerGUIController implements Initializable {
 		color_id.setItems(colorList);
 		model_id.setItems(modelAllList);
 
+		// sets prompt text
 		model_id.setPromptText("No Select");
 		manufacture_id.setPromptText("No Select");
 		body_id.setPromptText("No Select");
@@ -125,7 +137,12 @@ public class BuyerGUIController implements Initializable {
 		model_id.setPromptText("No Select");
 	}
 
+	
+	/**
+	 * Sets data for car model combobox on GUI
+	 */
 	public void setModelComboBox() {
+		// defines lists storing data of different models
 		ObservableList<String> modelAudiList = FXCollections.observableArrayList("A1", "A2", "A3", "A4", "A5", "A6",
 				"A7", "A8");
 		ObservableList<String> modelToyotaList = FXCollections.observableArrayList("Camry", "Corrola", "Aurian", "Echo",
@@ -137,27 +154,27 @@ public class BuyerGUIController implements Initializable {
 		ObservableList<String> modelNissanList = FXCollections.observableArrayList("Cima", "180xs", "200xs", "720");
 		ObservableList<String> modelHoldenList = FXCollections.observableArrayList("Appolo", "Astra", "Brock");
 
+		// sets data for the model combobox depending on selected value of manufacture combobox
 		if (manufacture_id.getValue() == "Audi") {
 			model_id.setItems(modelAudiList);
-			//model_id.setPromptText("A1");
 		} else if (manufacture_id.getValue() == "Toyota") {
 			model_id.setItems(modelToyotaList);
-			//model_id.setPromptText("Camry");
 		} else if (manufacture_id.getValue() == "Honda") {
 			model_id.setItems(modelHondaList);
-			//model_id.setPromptText("Accord");
 		} else if (manufacture_id.getValue() == "BMW") {
 			model_id.setItems(modelBmwList);
-			//model_id.setPromptText("Series 1");
 		} else if (manufacture_id.getValue() == "Holden") {
 			model_id.setItems(modelHoldenList);
 		} else if (manufacture_id.getValue() == "Nissan") {
 			model_id.setItems(modelNissanList);
-			//model_id.setPromptText("Cima");
 		}
 	}
 
-	public void setAgent(BuyerAgent ag) {
-		buyerAgent = ag;
+	/**
+	 * set-Method for "buyerAgent" attribute.
+	 * @param bag : buyer agent
+	 */
+	public void setAgent(BuyerAgent bag) {
+		buyerAgent = bag;
 	}
 }
