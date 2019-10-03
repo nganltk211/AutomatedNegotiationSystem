@@ -2,8 +2,20 @@ package agents;
 
 import model.Car;
 
+/**
+ * 
+ */
 public class Algorithms {
 	
+	/**
+	 * Method for calculating the next offer through the time-dependent tactics 
+	 * @param initialPrice
+	 * @param reservPrice
+	 * @param time
+	 * @param deadLine
+	 * @param beeta
+	 * @return next offer
+	 */
 	public static int offer(double initialPrice, double reservPrice, double time, double deadLine, double beeta)
 	{	
 		double t = (double)(time/deadLine);
@@ -11,6 +23,11 @@ public class Algorithms {
 		return (int) Math.round(offer);
 	}
 	
+	/**
+	 * Method for calculating the car score of the passing car
+	 * @param car
+	 * @return car score
+	 */
 	public static float carScore(Car car)
 	{
 		float score = 0;
