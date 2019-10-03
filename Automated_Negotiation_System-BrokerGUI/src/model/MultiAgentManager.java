@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 public class MultiAgentManager {
 	
-	private int sessionID = 0;
 	ArrayList<Negotiation> negotiationList = null;
 	
 	public MultiAgentManager() {
