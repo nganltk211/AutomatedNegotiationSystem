@@ -226,8 +226,9 @@ public class DealerAgent extends Agent {
 					} else {
 						// for automated Negotiation: receive offer from the buyer and decide to accept
 						// or make a counter-offer
+						String buyerName = null;
 						if (step <= messObject.getSteps()) {
-							String buyerName = msg.getSender().getName();
+							buyerName = msg.getSender().getName();
 							double offerPrice = Double.parseDouble(msg.getReplyWith());
 							System.out.println("Dealer: Receive offer from the buyer: " + offerPrice);
 							int nextPrice = Algorithms.offer(messObject.getMaxprice(), messObject.getMinprice(),
@@ -236,6 +237,8 @@ public class DealerAgent extends Agent {
 								// accept the offer from the buyer
 								acceptOffer(buyerName, messObject, offerPrice);
 								step = 1;
+								//Remove agent from multiAgent Management list
+								agentManager.terminateSession(buyerName);
 							} else {
 								// make a counter-offer to the buyer
 								makeACounterOffer(buyerName, messObject, nextPrice);
@@ -244,6 +247,8 @@ public class DealerAgent extends Agent {
 						} else {
 							// when reaching the deadline
 							endTheNegotiationBecauseOfOutOfTime();
+							//Remove agent from multiAgent Management list
+							agentManager.terminateSession(buyerName);
 							step = 1;
 						}
 					}
