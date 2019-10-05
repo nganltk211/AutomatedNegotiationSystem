@@ -488,6 +488,15 @@ public class DealerGUIController implements Initializable {
 	}
 
 	/**
+	 * Event Listener on "Load Sample Date" button to load a prepared list of cars.
+	 * This is for the testing purpose
+	 * @param event
+	 */
+	public void onButtonLoadSampleDataClick(ActionEvent event) {
+		
+	}
+	
+	/**
 	 * Updates the table data
 	 */
 	private void updateTable() {

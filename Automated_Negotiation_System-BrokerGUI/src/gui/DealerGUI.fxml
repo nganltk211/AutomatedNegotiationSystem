@@ -94,5 +94,6 @@
     <Label fx:id="beetaValidationLabel" font="$x1" layoutX="361.0" layoutY="404.0" text="Label" textFill="$x2" />
     <Label fx:id="stepsValidationLabel" font="$x1" layoutX="476.0" layoutY="404.0" text="Label" textFill="$x2" />
     <Label fx:id="yearValidationLabel" font="$x1" layoutX="464.0" layoutY="293.0" text="Label" textFill="$x2" />
+    <Button layoutX="121.0" layoutY="680.0" mnemonicParsing="false" onAction="#onButtonLoadSampleDataClick" prefWidth="150.0" text="Load sample data" />
   </children>
 </Pane>
