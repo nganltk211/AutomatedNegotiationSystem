@@ -34,7 +34,7 @@ public class BrokerAgent extends Agent {
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hallo! Broker-agent " + getAID().getName() + " is ready.");
-		jsonDB.clearFile(); // clear the data in file.
+		jsonDB.clearFile(); // clear the data in file when restarting.
 		//catalog = jsonDB.readFile();
 		
 		// Register the car-broker service in the yellow pages
