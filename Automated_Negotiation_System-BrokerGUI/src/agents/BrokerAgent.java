@@ -29,7 +29,7 @@ public class BrokerAgent extends Agent {
 	private CarList catalog = new CarList(); // broker's catalog
 	private JsonIO jsonDB = new JsonIO("./DataBase/JsonDB.txt");
 	private static final double COMMISION = 100; // fix-commission for each successful negotiation
-	private double recievedCommision; // broker's commission from successful negotiations 
+	private double receivedCommision; // broker's commission from successful negotiations 
 	
 	protected void setup() {
 		// Printout a welcome message
@@ -83,9 +83,10 @@ public class BrokerAgent extends Agent {
 					Car negotiatedCar = o.readValue(content, Car.class);
 					String agentName = msg0.getSender().getName();
 					double offerPrice = Double.parseDouble(msg0.getReplyWith());
+					receivedCommision += COMMISION;
+					System.out.println("\nBroker confirm !!! " + agentName + " confirm sell at price: " + offerPrice + "\nBroker Commision: " + receivedCommision);
 					offerPrice -= COMMISION;
-					recievedCommision += COMMISION;
-					System.out.println("\nBroker confirm !!! " + agentName + " confirm sell including Broker Commision: " + offerPrice + "\nBroker Commision: " + recievedCommision);
+					System.out.println("Price of the car after eliminating Broker commission: " + offerPrice);
 					
 					//Update JsonDB/CarList
 					for(Car c : catalog) {
