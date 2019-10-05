@@ -217,6 +217,13 @@ public class DealerGUIController implements Initializable {
 		priceMin.setText(String.valueOf(car.getMinprice()));
 		km_id.setText(String.valueOf(car.getKm()));
 		picture_path.setText(car.getPicturePath());
+		if (car.getisNegotiatable()) {
+			manualNego.setSelected(true);
+		} else {
+			autoNego.setSelected(true);
+			beetaValue.setText(String.valueOf(car.getBeeta()));
+			stepsValue.setText(String.valueOf(car.getSteps()));
+		}
 	}
 
 	/**
@@ -423,8 +430,6 @@ public class DealerGUIController implements Initializable {
 			setCarPicturePath(newCar);
 
 			listOfCars.add(newCar);
-			ObservableList<Car> obList = FXCollections.observableArrayList(listOfCars);
-			tableViewID.setItems(obList);
 			updateTable();
 		}
 	}
@@ -493,13 +498,53 @@ public class DealerGUIController implements Initializable {
 	 * @param event
 	 */
 	public void onButtonLoadSampleDataClick(ActionEvent event) {
+		Car car1 = new Car(++carCounter);
+		car1.setAgent(dealerAgent.getName());
+		car1.setManufacture("Audi");
+		car1.setModel("A2");
+		car1.setMaxprice(20000);
+		car1.setMinprice(18000);
+		car1.setColor("Red");
+		car1.setFuelType("Diesel");
+		car1.setBodyType("SUV");
+		car1.setCarrating(5);
+		car1.setKm(5000);
+		car1.setManufactureYear("2018");
+		car1.setPicturePath("./image/auto1.jpg");
+		car1.setTransmission("AMT");
+		car1.setWarranty(0);
+		car1.setNegotiatable(false);
+		car1.setBeeta(0.8);
+		car1.setSteps(20);
 		
+		Car car2 = new Car(++carCounter);
+		car2.setAgent(dealerAgent.getName());
+		car2.setManufacture("Toyota");
+		car2.setModel("Camry");
+		car2.setMaxprice(19100);
+		car2.setMinprice(16900);
+		car2.setColor("Blue");
+		car2.setFuelType("Gas");
+		car2.setBodyType("Sedan");
+		car2.setCarrating(4);
+		car2.setKm(7000);
+		car2.setManufactureYear("2017");
+		car2.setPicturePath("./image/auto2.jpg");
+		car2.setTransmission("Auto");
+		car2.setWarranty(0);
+		car2.setNegotiatable(true);
+		
+		listOfCars.add(car1);
+		listOfCars.add(car2);
+		updateTable();
 	}
 	
 	/**
 	 * Updates the table data
 	 */
 	private void updateTable() {
+		ObservableList<Car> obList = FXCollections.observableArrayList(listOfCars);
+		tableViewID.setItems(obList);
 		nr_column.setCellValueFactory(new PropertyValueFactory<Car, Integer>("carId"));
 		manu_column.setCellValueFactory(new PropertyValueFactory<Car, String>("manufacture"));
 		model_column.setCellValueFactory(new PropertyValueFactory<Car, String>("model"));
