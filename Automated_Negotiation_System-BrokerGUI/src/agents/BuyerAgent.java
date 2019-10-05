@@ -92,7 +92,7 @@ public class BuyerAgent extends Agent {
 					DFAgentDescription[] result = DFService.search(myAgent, template);
 					brokerAgent = result[0].getName();
 				} catch (FIPAException fe) {
-					fe.printStackTrace();
+					System.err.println("Problem while searching an agent by its public service ");
 				}
 			}
 		});
@@ -143,7 +143,7 @@ public class BuyerAgent extends Agent {
 							});
 						}).start();
 					} catch (IOException e1) {
-						e1.printStackTrace();
+						System.err.println("Problem by converting a json-format to an object");
 					}
 					break;
 				case ACLMessage.REFUSE:
@@ -177,7 +177,7 @@ public class BuyerAgent extends Agent {
 					mess.setReplyWith(String.valueOf(firstOfferPrice));
 					myAgent.send(mess);
 				} catch (JsonProcessingException e) {
-					e.printStackTrace();
+					System.err.println("Problem by converting an object o json-format");
 				}
 			}
 		});
@@ -202,7 +202,7 @@ public class BuyerAgent extends Agent {
 					mess.setConversationId("car-trade-broker-buyer");
 					myAgent.send(mess);
 				} catch (JsonProcessingException e) {
-					e.printStackTrace();
+					System.err.println("Problem by converting an object o json-format");
 				}
 			}
 		});
@@ -300,7 +300,7 @@ public class BuyerAgent extends Agent {
 					System.out.println("Bought price: " + offerPrice);
 					nd.setStep(0);
 				} catch (IOException e) {
-					e.printStackTrace();
+					System.err.println("Problem by converting a json-format to an object");
 				}
 			} else {
 				block();
@@ -333,8 +333,7 @@ public class BuyerAgent extends Agent {
 					mess.setConversationId("car-negotiation");
 					myAgent.send(mess);
 				} catch (JsonProcessingException e) {
-					e.printStackTrace();
-				}
+					System.err.println("Problem by converting an object o json-format");				}
 			}
 		});
 	}
@@ -362,7 +361,7 @@ public class BuyerAgent extends Agent {
 					myAgent.send(mess);
 					confirmSell(negotiatedCar, price); //Confirm offer with broker
 				} catch (JsonProcessingException e) {
-					e.printStackTrace();
+					System.err.println("Problem by converting an object o json-format");
 				}
 			}
 		});
@@ -389,7 +388,7 @@ public class BuyerAgent extends Agent {
 					mess.setConversationId("confirm_sell");
 					myAgent.send(mess);
 				} catch (JsonProcessingException e) {
-					e.printStackTrace();
+					System.err.println("Problem by converting an object o json-format");
 				}
 
 			}
