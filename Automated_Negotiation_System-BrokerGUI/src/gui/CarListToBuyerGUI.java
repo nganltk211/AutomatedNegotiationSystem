@@ -31,32 +31,33 @@ public class CarListToBuyerGUI extends Stage {
 		double blockHeight = 0;
 		carController = new CarInfoGUIController[offerCarlist.size()];
 		buyerAgent = (BuyerAgent) myAgent;
-		ScrollPane sp = new ScrollPane();
+		ScrollPane sp = new ScrollPane(); // a scroll pane for showing list of cars
 		VBox root = new VBox();
 		root.setSpacing(10);
 		root.setPadding(new Insets(10));
-		GridPane window = null;
+		GridPane carBlock = null;
 		for (int i = 0; i < offerCarlist.size(); i++) {
-			// // loads GUI-Elements for a car block info from the CarInformation.fxml file
+			// loads GUI-Elements for one car from the CarInformation.fxml file
 			loader = new FXMLLoader(getClass().getResource("CarInformation.fxml"));
 			try {
-				window = loader.load();
+				carBlock = loader.load();
 				carController[i] = loader.getController();
 		        // Set data in the controller
-				carController[i].setCar(offerCarlist.get(i));
-				
+				carController[i].setCar(offerCarlist.get(i));			
 				carController[i].setBuyerAgent(buyerAgent);
-				window.setStyle("-fx-background-color: #ffffff");
-				root.getChildren().add(window);
-				blockHeight = window.getPrefHeight();
+				carBlock.setStyle("-fx-background-color: #ffffff");
+				root.getChildren().add(carBlock); // adds carBlock to the scroll pane
+				blockHeight = carBlock.getPrefHeight();
 			} catch (IOException e) {
 				System.err.println("Error by loading fxml-File");
 			}	
 		}	
+		
 		this.setTitle("List of possible cars");
 		sp.setContent(root);
         sp.setPannable(true); 
         Scene scene;
+        // sets the size of the window depending on the size of car list
         if (offerCarlist.size()<=2) {
         	scene = new Scene(sp,700,blockHeight*offerCarlist.size()+30);
         } else {

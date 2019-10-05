@@ -1,20 +1,13 @@
 package io;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import model.Car;
@@ -25,8 +18,8 @@ import model.CarList;
  */
 public class JsonIO {
 
-	protected BufferedReader csvReader = null;
-	protected FileWriter csvWriter = null;
+	protected BufferedReader jsonReader = null;
+	protected FileWriter jsonWriter = null;
 	private String path;
 	private ObjectMapper oJsonMapper = new ObjectMapper();
 
@@ -41,20 +34,27 @@ public class JsonIO {
 		path = setpath;
 	}
 
+	/**
+	 * Method to clear a file
+	 */
 	public void clearFile() {
 		openFileWriter();
 		try {
-			csvWriter.write("");
+			jsonWriter.write("");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		closeFileWriter();
 	}
 	
+	/**
+	 * Method to open a file for reading purpose
+	 * @return true if opening a file is successful
+	 */
 	private boolean openFileReader() {
 		try {
 			try {
-				csvReader = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"));
+				jsonReader = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"));
 			} catch (FileNotFoundException e) {
 				System.err.println("File is not ready");
 				return false;
@@ -71,10 +71,9 @@ public class JsonIO {
 	 */
 	private void openFileWriter() {
 		try {
-			csvWriter = new FileWriter(path);
+			jsonWriter = new FileWriter(path);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Error when opening the text writer");
 		}
 	}
 
@@ -83,7 +82,7 @@ public class JsonIO {
 	 */
 	private void closeFileReader() {
 		try {
-			csvReader.close();
+			jsonReader.close();
 		} catch (IOException e) {
 			System.err.println("Error when closing the text file");
 		}
@@ -94,7 +93,7 @@ public class JsonIO {
 	 */
 	private void closeFileWriter() {
 		try {
-			csvWriter.close();
+			jsonWriter.close();
 		} catch (IOException e) {
 			System.err.println("Error when closing the text file");
 		}
@@ -109,71 +108,81 @@ public class JsonIO {
 		String line = null;
 
 		try {
-			line = csvReader.readLine();
+			line = jsonReader.readLine();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Error when reading the text file");
 		}
 		return line;
 	}
 
+	/**
+	 * Method to append a line in a file
+	 * @param line
+	 */
 	private void writeLine(String line) {
 
 		try {
-			csvWriter.append(line);
+			jsonWriter.append(line);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Error when appending a line in the text file");
 		}
 	}
 
+	/**
+	 * Method to convert a car list in json-format to a CarList Object
+	 * @param carList : car list in json-format
+	 * @return an object CarList
+	 */
 	private CarList jsonToClass(String carList) {
 		CarList list = null;
-		try {
-			list = oJsonMapper.readValue(carList, CarList.class);
-		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			try {
+				list = oJsonMapper.readValue(carList, CarList.class);
+			} catch (IOException e) {
+				System.err.println("Error when converting json to CarList object");
+			}
 		return list;
 	}
 
+	/**
+	 * Method to convert an object CarList in json-format
+	 * @param list : list of cars
+	 * @return car list in json-format
+	 */
 	private String classToJson(CarList list) {
 		String json = null;
 		try {
 			json = oJsonMapper.writeValueAsString(list);
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Error when converting an object to json-format");
 		}
 		return json;
 	}
 
+	/**
+	 * Method to read a file
+	 * @return an object CarList
+	 */
 	public CarList readFile() {
 		String line = null;
 		CarList list = null;
 		openFileReader();
 		try {
-			line = csvReader.readLine();
+			line = jsonReader.readLine();
 			if (line != null) {
 				list = jsonToClass(line);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Error when reading a file");
 		}
 		closeFileReader();
 		return list;
 	}
 
+	/**
+	 * Method to update a file
+	 * @param carList car list needed to be written in the file
+	 */
 	public void writeToFile(String carList) {
-
 		openFileReader();
 		int listCount = 0;
 		CarList list = null;
@@ -181,11 +190,11 @@ public class JsonIO {
 		String line = readLine();
 		String json = null;
 
-		// Check is the file empty or not if not read json to car class
+		// Check whether the file is empty, if not convert json to a CarList Object
 		if (line != null) {
 			list = jsonToClass(line);
 			listCount = list.size();
-		} else { // If it is empty change CarId and add it to Car List
+		} else { // If it is empty change carId and add it to Car List
 			list = jsonToClass(carList);
 			int i = 0;
 			for (Car car : list) {
@@ -206,14 +215,11 @@ public class JsonIO {
 				list.add(car);
 			}
 		}
-
-		// Translate Car Listin to json
+		// Translate Car List into json
 		json = classToJson(list);
 
 		openFileWriter();
-		// Write to file
-		writeLine(json);
+		writeLine(json); // Write to file
 		closeFileWriter();
-
 	}
 }

@@ -133,22 +133,27 @@ public class DealerGUIController implements Initializable {
 
 	public DealerGUIController() {
 		listOfCars = new CarList();
+		carCounter = 0;
 	}
 
+	/**
+	 * Method to initialize the values for GUI-Elements.
+	 */
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		// creates a ToogleGroup for radio button to make sure that only one radio button is chosen
 		group = new ToggleGroup();
 		manualNego.setToggleGroup(group);
 		autoNego.setToggleGroup(group);
 		manualNego.setSelected(true);
+		
 		beetaValue.setVisible(false);
 		stepsValue.setVisible(false);
 		stepsLabel.setVisible(false);
 		beetaLabel.setVisible(false);
 		helpMenu.setVisible(false);
-		radioButtonValueChanged();
-		setDataComboBox();
-		setTableMenu();
+		beetaValidationLabel.setVisible(false);
+		stepsValidationLabel.setVisible(false);
 
 		manufactureValidationLabel.setText("");
 		modelValidationLabel.setText("");
@@ -158,16 +163,22 @@ public class DealerGUIController implements Initializable {
 		priceValidationLabel.setText("");
 		beetaValidationLabel.setText("");
 		stepsValidationLabel.setText("");
-		beetaValidationLabel.setVisible(false);
-		stepsValidationLabel.setVisible(false);
-
+		
+		radioButtonValueChanged();
+		setDataComboBox();
+		setTableMenu();	
 	}
 
+	/**
+	 * sets event for the (manual/automated) radio buttons on this GUI.
+	 */
 	public void radioButtonValueChanged() {
+		// when the radio button in the toggle group is clicked
 		group.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
 			@Override
 			public void changed(ObservableValue<? extends Toggle> ov, Toggle oldToggle, Toggle newToggle) {
 				if (autoNego.isSelected()) {
+					// if automated negotiation is chosen
 					beetaValue.setVisible(true);
 					stepsValue.setVisible(true);
 					stepsLabel.setVisible(true);
@@ -176,6 +187,7 @@ public class DealerGUIController implements Initializable {
 					beetaValidationLabel.setVisible(true);
 					stepsValidationLabel.setVisible(true);
 				} else {
+					// if manual negotiation is chosen
 					beetaValue.setVisible(false);
 					stepsValue.setVisible(false);
 					stepsLabel.setVisible(false);
@@ -186,9 +198,12 @@ public class DealerGUIController implements Initializable {
 				}
 			}
 		});
-
 	}
 
+	/**
+	 * Sets the value for GUI-Elements with the information from Object car
+	 * @param car: the car showed on the interface
+	 */
 	private void setValueForTheCarInfoGUI(Car car) {
 		manufacture_id.setValue(car.getManufacture());
 		model_id.setValue(car.getModel());
@@ -204,24 +219,28 @@ public class DealerGUIController implements Initializable {
 		picture_path.setText(car.getPicturePath());
 	}
 
+	/**
+	 * sets a menu item "Edit" to table rows
+	 */
 	private void setTableMenu() {
 		tableViewID.setRowFactory(new Callback<TableView<Car>, TableRow<Car>>() {
 			@Override
 			public TableRow<Car> call(TableView<Car> tableView) {
 				final TableRow<Car> row = new TableRow<>();
 				final ContextMenu contextMenu = new ContextMenu();
-				final MenuItem removeMenuItem = new MenuItem("Edit");
-				removeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+				final MenuItem editMenuItem = new MenuItem("Edit");
+				// event when click on this menu item
+				editMenuItem.setOnAction(new EventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {
-						tableViewID.getItems().remove(row.getItem());
-						setValueForTheCarInfoGUI(row.getItem());
-						listOfCars.remove(row.getItem());
+						tableViewID.getItems().remove(row.getItem()); // removes the row from the table
+						setValueForTheCarInfoGUI(row.getItem()); // shows info of the deleted row 
+						listOfCars.remove(row.getItem()); // removes the car from the list
 					}
 				});
-				contextMenu.getItems().add(removeMenuItem);
-				// Set context menu on row, but use a binding to make it only show for non-empty
-				// rows:
+				contextMenu.getItems().add(editMenuItem);
+				// Set context menu on row, 
+				// but use a binding to make it only show for non-empty rows:
 				row.contextMenuProperty()
 						.bind(Bindings.when(row.emptyProperty()).then((ContextMenu) null).otherwise(contextMenu));
 				return row;
@@ -229,14 +248,26 @@ public class DealerGUIController implements Initializable {
 		});
 	}
 
+	/**
+	 * Event handler for beetaHelp option (to show the meaning of beeta to users)
+	 * @param event
+	 */
 	public void openBeetaHelp(ActionEvent event) {
 
 	}
 
+	/**
+	 * Event Listener on the combox manufacture.
+	 * Changing the value of manufacture combobox will update the values of model combobox
+	 * @param event
+	 */
 	public void onManufactureChanged(ActionEvent event) {
 		setModelComboBox();
 	}
 
+	/**
+	 * Sets data for Comboboxes on GUI
+	 */
 	private void setDataComboBox() {
 		ObservableList<String> bodyList = FXCollections.observableArrayList("SUV", "Sedan", "HatchBack");
 		ObservableList<String> manufactureList = FXCollections.observableArrayList("Audi", "Toyota", "Honda", "BMW",
@@ -264,6 +295,9 @@ public class DealerGUIController implements Initializable {
 		setPromptText();
 	}
 
+	/**
+	 * sets prompt text for comboboxes on GUI
+	 */
 	private void setPromptText() {
 		manufacture_id.setPromptText("No Select");
 		body_id.setPromptText("No Select");
@@ -275,7 +309,10 @@ public class DealerGUIController implements Initializable {
 		rating_id.setPromptText("0");
 	}
 
-	public void setModelComboBox() {
+	/**
+	 * Sets data for car model combobox on GUI
+	 */
+	private void setModelComboBox() {
 		ObservableList<String> modelAudiList = FXCollections.observableArrayList("A1", "A2", "A3", "A4", "A5", "A6",
 				"A7", "A8");
 		ObservableList<String> modelToyotaList = FXCollections.observableArrayList("Camry", "Corrola", "Aurian", "Echo",
@@ -307,7 +344,11 @@ public class DealerGUIController implements Initializable {
 		}
 	}
 
-	public boolean Validation() {
+	/**
+	 * Method to check the validation of elements on GUI
+	 * @return true if validate
+	 */
+	private boolean validation() {
 		boolean manufacture = FormValidation.comboBoxNotSelected(manufacture_id, manufactureValidationLabel,
 				"Please select manufacture type");
 		boolean model = FormValidation.comboBoxNotSelected(model_id, modelValidationLabel, "Please select model type");
@@ -322,7 +363,7 @@ public class DealerGUIController implements Initializable {
 				"Please enter maximum price");
 		boolean beeta = FormValidation.textFieldNotEmpty(beetaValue, beetaValidationLabel, "Please enter Beeta Value ");
 		boolean steps = FormValidation.textFieldNotEmpty(stepsValue, stepsValidationLabel, "Please enter steps Value ");
-		// System.out.println(year + "Year++++====");
+
 		if (!minPrice && !maxPrice) {
 			FormValidation.textFieldNotEmpty(priceMax, priceValidationLabel, "Please enter minimum and maximum price");
 		}
@@ -341,11 +382,15 @@ public class DealerGUIController implements Initializable {
 		return isvalidate;
 	}
 
+	/**
+	 * Event Listener on "Add" button to add a new car to the dealer car list
+	 * @param event
+	 * @throws IOException
+	 */
 	@FXML
-	public void OnButtonAddClick(ActionEvent event) throws IOException {
-		// boolean manufacture = FormValidation.comboBoxNotSelected(manufacture_id, ,
-		// validationString)
-		Validation();
+	public void onButtonAddClick(ActionEvent event) throws IOException {
+		validation();
+		// adds a new car to the list
 		if (isvalidate) {
 			carCounter++;
 			Car newCar = new Car(carCounter);
@@ -366,14 +411,11 @@ public class DealerGUIController implements Initializable {
 			if (manualNego.isSelected()) {
 				// This is Manual Stuff
 				newCar.setNegotiatable(true);
-
 			} else {
-				// This Is Automated Stuff
-
+				// This is Automated Stuff
 				newCar.setNegotiatable(false);
 				newCar.setBeeta(Double.parseDouble(beetaValue.getText()));
 				newCar.setSteps(Integer.parseInt(stepsValue.getText()));
-
 			}
 			newCar.setMinprice(Double.parseDouble(priceMin.getText()));
 			newCar.setMaxprice(Double.parseDouble(priceMax.getText()));
@@ -384,15 +426,25 @@ public class DealerGUIController implements Initializable {
 			ObservableList<Car> obList = FXCollections.observableArrayList(listOfCars);
 			tableViewID.setItems(obList);
 			updateTable();
-
 		}
 	}
 
-	public void OnButtonResetClick(ActionEvent event) throws IOException {
+	/**
+	 * Event Listener on "Reset" button.
+	 * Reset values of GUI-elements relating to show car info to default value
+	 *  
+	 * @param event
+	 * @throws IOException
+	 */
+	public void onButtonResetClick(ActionEvent event) throws IOException {
 		setValueForTheCarInfoGUI(new Car(0));
 		setPromptText();
 	}
 
+	/**
+	 * sets selected picture path to the car and copies this image from local PC to image folder of the application
+	 * @param newCar
+	 */
 	private void setCarPicturePath(Car newCar) {
 		if (picture_path.getText() != null) {
 			// copy the selected picture to the folder image
@@ -407,23 +459,37 @@ public class DealerGUIController implements Initializable {
 		}
 	}
 
+	/**
+	 * Event Listener on "Select" button.
+	 * Opens a File Chooser dialog to select an image from local folder
+	 * @param event
+	 * @throws IOException
+	 */
 	public void selectPictureButton(ActionEvent event) throws IOException {
 		FileChooser fileChooser = new FileChooser();
-		fileChooser.setTitle("Please choose one picture");
+		fileChooser.setTitle("Please choose a car picture");
 		File selectedFile = fileChooser.showOpenDialog(null);
 		if (selectedFile != null)
+			// shows picture path on the picture_path text field
 			picture_path.setText(selectedFile.getAbsolutePath());
 	}
 
+	/**
+	 * Event Listener on "Send" button to send a list of cars to the broker agent.
+	 * @param event
+	 * @throws IOException
+	 */
 	public void onButtonSendClick(ActionEvent event) throws IOException {
 		if (listOfCars.size() > 0) {
+			// sends a list of cars to the broker agent 
 			dealerAgent.sendListOfCarToBroker(listOfCars);
-			// dealerAgent.setBeeta(Double.parseDouble(beetaValue.getText()));
-			// dealerAgent.setMaxStep(Integer.parseInt(stepsValue.getText()));
-			((Node) (event.getSource())).getScene().getWindow().hide();
+			((Node) (event.getSource())).getScene().getWindow().hide(); // hide the GUI
 		}
 	}
 
+	/**
+	 * Updates the table data
+	 */
 	private void updateTable() {
 		nr_column.setCellValueFactory(new PropertyValueFactory<Car, Integer>("carId"));
 		manu_column.setCellValueFactory(new PropertyValueFactory<Car, String>("manufacture"));
@@ -433,9 +499,13 @@ public class DealerGUIController implements Initializable {
 		details_column.setCellValueFactory(new PropertyValueFactory<Car, String>("moreDetails"));
 		manu_year_column.setCellValueFactory(new PropertyValueFactory<Car, String>("manufactureYear"));
 	}
-
-	public void setAgent(DealerAgent ag) {
-		dealerAgent = ag;
+	
+	/**
+	 * set-Method for "dealerAgent" attribute.
+	 * @param dag
+	 */
+	public void setAgent(DealerAgent dag) {
+		dealerAgent = dag;
 	}
 
 }

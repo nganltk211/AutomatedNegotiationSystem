@@ -48,6 +48,7 @@ public class BuyerGUIController implements Initializable {
 
 	private BuyerAgent buyerAgent;
 
+	// empty contructor
 	public BuyerGUIController() {
 	}
 
@@ -62,7 +63,7 @@ public class BuyerGUIController implements Initializable {
 
 	/**
 	 * Event Listener on Button[#search_id].onAction
-	 * 
+	 * The buyer agent sends a request to the broker agent to get a list of suitable cars
 	 * @param event
 	 * @throws IOException
 	 */
@@ -85,7 +86,7 @@ public class BuyerGUIController implements Initializable {
 					searchCar.setFuelType(fueltype_id.getValue());
 					searchCar.setMaxprice(Double.parseDouble(max_id.getText()));
 					buyerAgent.setReservationPrice(Double.parseDouble(max_id.getText()));
-					// buyer agent sends a request to the broker to get a list of suitable cars
+					// a request to the broker to get a list of suitable cars
 					buyerAgent.requestInfoOfDesiredCar(searchCar);
 				}
 			} catch (NumberFormatException e) {
@@ -95,7 +96,8 @@ public class BuyerGUIController implements Initializable {
 	}
 
 	/**
-	 * 
+	 * Event Listener on the combox manufacture.
+	 * Changing the value of manufacture combobox will update the values of model combobox
 	 * @param event
 	 */
 	public void ComboChanged(ActionEvent event) {
@@ -103,9 +105,9 @@ public class BuyerGUIController implements Initializable {
 	}
 
 	/**
-	 * Sets data for Comboboxes on GUI
+	 * Sets data for Comboboxes on GUI.
 	 */
-	public void setDataComboBox() {
+	private void setDataComboBox() {
 		// defines lists storing data for comboboxes
 		ObservableList<String> bodyList = FXCollections.observableArrayList("SUV", "Sedan", "HatchBack");
 		ObservableList<String> manufactureList = FXCollections.observableArrayList("Audi", "Toyota", "Honda", "BMW",
@@ -141,7 +143,7 @@ public class BuyerGUIController implements Initializable {
 	/**
 	 * Sets data for car model combobox on GUI
 	 */
-	public void setModelComboBox() {
+	private void setModelComboBox() {
 		// defines lists storing data of different models
 		ObservableList<String> modelAudiList = FXCollections.observableArrayList("A1", "A2", "A3", "A4", "A5", "A6",
 				"A7", "A8");

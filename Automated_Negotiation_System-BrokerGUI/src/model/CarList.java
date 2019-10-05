@@ -2,6 +2,9 @@ package model;
 
 import java.util.ArrayList;
 
+/**
+ * Class as representation for a list of cars
+ */
 public class CarList extends ArrayList<Car> {
 
 	private static final long serialVersionUID = -5857202238478847267L;

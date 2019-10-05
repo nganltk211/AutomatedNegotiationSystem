@@ -12,6 +12,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import model.Car;
 
+/**
+ * A Controller class of CarInfoGUIController. The logic of GUI-Elements will be defined in
+ * this class.
+ */
 public class CarInfoGUIController {
 	@FXML
 	private Label manufacture;
@@ -45,9 +49,14 @@ public class CarInfoGUIController {
 		super();
 	}
 	
+	/**
+	 * Sets the value for GUI-Elements with the information from Object car
+	 * @param car: the car showed on the interface
+	 */
 	public void setCar(Car car) {
 		this.car = car;
 		if (car.getPicturePath() != null) {
+			// path to car's picture
 			File file = new File(car.getPicturePath());
 	        Image image = new Image(file.toURI().toString());
 	        imageView.setImage(image);
@@ -64,17 +73,30 @@ public class CarInfoGUIController {
 		agent_name.setText(car.getAgent());
 	}
 	
+	/**
+	 * get-Method for the car showed on this GUI-block
+	 * @return an Car-object 
+	 */
 	public Car getCar() {
 		return car;
 	}
 	
+	/**
+	 * set-Method for the buyer agent, who is looking for cars
+	 * @return an Car-object 
+	 */
 	public void setBuyerAgent(BuyerAgent buyerAgent) {
 		this.buyerAgent = buyerAgent;
 	}
 	
+	/**
+	 * Sets event for the "Negotiate" button.
+	 * @param action
+	 */
 	@FXML
 	public void buttonNegotiateClick(ActionEvent action) {
+		// shows the NegotiationChoiceGUI 
 		NegotiationChoiceGUI negotiationChoice = new NegotiationChoiceGUI(buyerAgent, car);
-		((Node) (action.getSource())).getScene().getWindow().hide();
+		((Node) (action.getSource())).getScene().getWindow().hide(); // close the CarListToBuyerGUI
 	}
 }

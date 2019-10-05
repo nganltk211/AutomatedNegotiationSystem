@@ -17,6 +17,10 @@ import javafx.scene.control.ToggleGroup;
 import model.Car;
 import model.FormValidation;
 
+/**
+ * A Controller class of NegotiationChoiceGUI. The logic of GUI-Elements will be
+ * defined in this class.
+ */
 public class NegotiationChoiceGUIController {
 
 	@FXML
@@ -61,27 +65,31 @@ public class NegotiationChoiceGUIController {
 	private Label maxprice_buyer;
 	@FXML
 	private TextField maxPriceFromBuyer;
-	
-	private boolean isValidate = false;
 
-	
+	private boolean isValidate = false;
 	private BuyerAgent bag;
-	//private String opponentAgentName; // name of opponent agent
 	private Car negotiatedCar;
 	private ToggleGroup group;
+
 	public NegotiationChoiceGUIController() {
 	}
-	
-    @FXML
-    public void initialize() {
+
+	/**
+	 * Method to initialize the values for GUI-Elements.
+	 */
+	@FXML
+	public void initialize() {
+		// creates a ToogleGroup for radio button to make sure that only one radio
+		// button is chosen
 		group = new ToggleGroup();
 		rb_manual.setToggleGroup(group);
 		rb_automated.setToggleGroup(group);
+
 		rb_manual.setSelected(true);
 		radiobuttonChangeValue();
 		stepsLable.setVisible(false);
 		negotiationSteps.setVisible(false);
-        priceLable.setVisible(true);
+		priceLable.setVisible(true);
 		PricetoEnter.setVisible(true);
 		priceLable.setText("OfferPrice");
 		BeetaValue.setVisible(false);
@@ -91,15 +99,18 @@ public class NegotiationChoiceGUIController {
 		validationLabel.setVisible(false);
 		maxPriceFromBuyer.setVisible(false);
 		maxprice_buyer.setVisible(false);
-    }
-    
+	}
+
+	/**
+	 * sets event for the (manual/automated) radio buttons on this GUI.
+	 */
 	public void radiobuttonChangeValue() {
 		group.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
 			@Override
 			public void changed(ObservableValue<? extends Toggle> ov, Toggle oldToggle, Toggle newToggle) {
 				if (rb_manual.isSelected()) {
 					priceLable.setVisible(true);
-				    PricetoEnter.setVisible(true);
+					PricetoEnter.setVisible(true);
 					priceLable.setText("OfferPrice");
 					Beetalable.setVisible(false);
 					BeetaValue.setVisible(false);
@@ -109,8 +120,8 @@ public class NegotiationChoiceGUIController {
 					maxPriceFromBuyer.setVisible(false);
 					maxprice_buyer.setVisible(false);
 				} else {
-				    priceLable.setVisible(true);
-				    PricetoEnter.setVisible(true);
+					priceLable.setVisible(true);
+					PricetoEnter.setVisible(true);
 					priceLable.setText("Min Price");
 					Beetalable.setVisible(true);
 					BeetaValue.setVisible(true);
@@ -125,97 +136,101 @@ public class NegotiationChoiceGUIController {
 			}
 		});
 	}
-	public boolean validation()
-	{
+
+	/**
+	 * Method to check the validation of elements on GUI
+	 * @return true if validate
+	 */
+	private boolean validation() {
 		boolean beeta = FormValidation.textFieldNotEmpty(BeetaValue, validationLabel, "Please Enter Beeta Value");
 		boolean steps = FormValidation.textFieldNotEmpty(negotiationSteps, validationLabel, "Please Enter steps Value");
 		boolean price = FormValidation.textFieldNotEmpty(PricetoEnter, pricevalidationLabel, "Please Enter Price");
-		if(price)
-		{
+		if (price) {
 			isValidate = true;
 		}
-		
-		if(Double.parseDouble(PricetoEnter.getText()) < 1000)
-		{
+
+		if (Double.parseDouble(PricetoEnter.getText()) < 1000) {
 			pricevalidationLabel.setText("Price can't be less than 1000");
 			isValidate = false;
 		}
-		if(rb_automated.isSelected())
-		{
-			if(!beeta && !steps)
-			{
-				steps = FormValidation.textFieldNotEmpty(negotiationSteps, validationLabel, "Please Enter Beeta and steps Value");
-				
+		if (rb_automated.isSelected()) {
+			if (!beeta && !steps) {
+				steps = FormValidation.textFieldNotEmpty(negotiationSteps, validationLabel,
+						"Please Enter Beeta and steps Value");
+
 				isValidate = false;
-			}else {
-				if(Double.parseDouble(BeetaValue.getText()) < 1)
-				{
+			} else {
+				if (Double.parseDouble(BeetaValue.getText()) < 1) {
 					validationLabel.setText("Format Beeta > 1");
 					isValidate = false;
 				}
 				isValidate = true;
 			}
 		}
-		
+
 		return isValidate;
 	}
+
+	/**
+	 * Event Listener on "Start" button to start a negotiation with a dealer 
+	 * @param event
+	 * @throws IOException
+	 */
 	public void startNegotiationButtonClick(ActionEvent event) throws IOException {
-				validation();
-				if(isValidate)
-				{
-					try {
-						bag.setIntialPrice(Double.parseDouble(PricetoEnter.getText()));
-						
-					}catch(NumberFormatException e) {
-						pricevalidationLabel.setText("Please enter a number");
-					}
-					
-					if (rb_manual.isSelected()) {		
-						bag.setNegotiationManual(true);
-					} else {
-						bag.setNegotiationManual(false);
-						try {
-							bag.setBeetavalue(Double.parseDouble(BeetaValue.getText()));
-							
-						}catch(NumberFormatException e) {
-							validationLabel.setText("Please enter a number");
-						}
-						try {
-							bag.setMaxStep(Integer.parseInt(negotiationSteps.getText()));
-							
-						}catch(NumberFormatException e) {
-							validationLabel.setText("Please enter a number");
-						}
-						
-						
-					}
-					bag.sendBackTheChoosenCarsToTheBroker(negotiatedCar, Double.parseDouble(PricetoEnter.getText()));		
-					((Node) (event.getSource())).getScene().getWindow().hide();
+		validation();
+		if (isValidate) {
+			try {
+				bag.setIntialPrice(Double.parseDouble(PricetoEnter.getText()));
+
+			} catch (NumberFormatException e) {
+				pricevalidationLabel.setText("Please enter a number");
+			}
+
+			if (rb_manual.isSelected()) {
+				bag.setNegotiationManual(true);
+			} else {
+				bag.setNegotiationManual(false);
+				try {
+					bag.setBeetavalue(Double.parseDouble(BeetaValue.getText()));
+
+				} catch (NumberFormatException e) {
+					validationLabel.setText("Please enter a number");
 				}
-				
-	}	
-	
-//	public void setOpponentAgentName(String name) {
-//		this.opponentAgentName = name;
-//	}
-	
+				try {
+					bag.setMaxStep(Integer.parseInt(negotiationSteps.getText()));
+
+				} catch (NumberFormatException e) {
+					validationLabel.setText("Please enter a number");
+				}
+
+			}
+			// sends a negotiation request to the broker agent
+			bag.sendBackTheChoosenCarsToTheBroker(negotiatedCar, Double.parseDouble(PricetoEnter.getText()));
+			((Node) (event.getSource())).getScene().getWindow().hide();
+		}
+
+	}
+
 	public void setAgent(BuyerAgent agent) {
 		bag = agent;
 	}
-	
+
 	public void setNegotiatedCar(Car car) {
 		this.negotiatedCar = car;
-		setCarDetails();
+		setCarDetails(); 
 	}
-	
-    private void setCarDetails() {
-    	manufacture.setText(negotiatedCar.getManufacture());
-    	model.setText(negotiatedCar.getModel());
-    	transmission.setText(negotiatedCar.getTransmission());
-    	fuelType.setText(negotiatedCar.getFuelType());
-    	bodyType.setText(negotiatedCar.getBodyType());
-    	color.setText(negotiatedCar.getColor());
-    	km.setText(String.valueOf(negotiatedCar.getKm()));
-    	price.setText(String.valueOf(negotiatedCar.getMaxprice()));
-    }
+
+	/**
+	 * sets details of the car on GUI
+	 */
+	private void setCarDetails() {
+		manufacture.setText(negotiatedCar.getManufacture());
+		model.setText(negotiatedCar.getModel());
+		transmission.setText(negotiatedCar.getTransmission());
+		fuelType.setText(negotiatedCar.getFuelType());
+		bodyType.setText(negotiatedCar.getBodyType());
+		color.setText(negotiatedCar.getColor());
+		km.setText(String.valueOf(negotiatedCar.getKm()));
+		price.setText(String.valueOf(negotiatedCar.getMaxprice()));
+	}
 }

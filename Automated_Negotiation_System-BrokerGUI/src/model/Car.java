@@ -1,9 +1,12 @@
 package model;
 
+/**
+ * Class as representation for a car
+ */
 public class Car {
 
 	private int carId;
-	private String manufacture ;
+	private String manufacture;
 	private String model;
 	private String transmission;
 	private String fuelType;
@@ -19,17 +22,23 @@ public class Car {
 	private int carrating;
 	private String manufactureYear;
 	private String picturePath;
-	private String moreDetails; //only for showing data in the car details table of the seller 
+	private String moreDetails; // only for showing data in the car details table of the seller
 	private double beeta;
 	private int steps;
-	
+
+	/**
+	 * Constructor of the class
+	 * @param carId : id of the car
+	 */
 	public Car(int carId) {
 		super();
 		this.carId = carId;
 	}
 
+	// empty constructor (necessary to convert a car object to json-format)
 	public Car() {
 	}
+
 	public double getBeeta() {
 		return beeta;
 	}
@@ -45,6 +54,7 @@ public class Car {
 	public void setSteps(int steps) {
 		this.steps = steps;
 	}
+
 	public int getCarrating() {
 		return carrating;
 	}
@@ -60,7 +70,7 @@ public class Car {
 	public void setManufactureYear(String manufactureYear) {
 		this.manufactureYear = manufactureYear;
 	}
-	
+
 	public int getCarId() {
 		return carId;
 	}
@@ -144,6 +154,7 @@ public class Car {
 	public double getMaxprice() {
 		return maxprice;
 	}
+
 	public boolean getisNegotiatable() {
 		return isNegotiatable;
 	}
@@ -181,9 +192,9 @@ public class Car {
 	}
 
 	public String getMoreDetails() {
-		moreDetails = "Transmission: " + transmission + "\nFuel type: " + fuelType + "\nBody type: " + bodyType 
-					+ "\nColor: " + color + "\nWarranty: " + warranty + "\nCar rating: " + carrating 
-					+ "\nAutomated negotiation: " + !isNegotiatable;
+		moreDetails = "Transmission: " + transmission + "\nFuel type: " + fuelType + "\nBody type: " + bodyType
+				+ "\nColor: " + color + "\nWarranty: " + warranty + "\nCar rating: " + carrating
+				+ "\nAutomated negotiation: " + !isNegotiatable;
 		return moreDetails;
 	}
 
@@ -195,5 +206,5 @@ public class Car {
 				+ ", carStatus=" + carStatus + ", carrating=" + carrating + ", manufactureYear=" + manufactureYear
 				+ ", picturePath=" + picturePath + "]";
 	}
-	
+
 }

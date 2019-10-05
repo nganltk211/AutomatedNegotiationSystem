@@ -11,6 +11,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.Car;
 
+/**
+ * A Controller class of NegotiationBotGUI. The logic of GUI-Elements will be defined in
+ * this class.
+ */
 public class NegotiationBotGUIController {
 
 	@FXML
@@ -33,14 +37,15 @@ public class NegotiationBotGUIController {
 	private String opponentAgentName; // name of opponent agent
 	private Car negotiatedCar;
 
+	// empty constructor
 	public NegotiationBotGUIController() {
 	}
 
-	@FXML
-	public void initialize() {
-
-	}
-
+	/**
+	 * Event Listener on "Accept" button.
+	 * A behavior for accepting an offer from the other agent will be executed
+	 * @param event
+	 */
 	public void buttonAcceptClick(ActionEvent event) {
 		if (agent instanceof DealerAgent) {
 			DealerAgent dag = (DealerAgent) agent;
@@ -53,6 +58,11 @@ public class NegotiationBotGUIController {
 		}
 	}
 
+	/**
+	 * Event Listener on "Reject" button.
+	 * Rejects an offer from the other agent and shows GUI-Element for making a counter-offer
+	 * @param event
+	 */
 	public void buttonRejectClick(ActionEvent event) {
 		lb_price.setVisible(true);
 		lb_newoffer.setVisible(true);
@@ -60,6 +70,11 @@ public class NegotiationBotGUIController {
 		btn_send.setVisible(true);
 	}
 
+	/**
+	 * Event Listener on "Send" button.
+	 * Send a counter-offer to the other agent
+	 * @param event
+	 */
 	public void buttonSendClick(ActionEvent event) {
 		if (agent instanceof DealerAgent) {
 			DealerAgent dag = (DealerAgent) agent;
