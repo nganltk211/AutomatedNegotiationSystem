@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gui.DealerGUI;
 import gui.NegotiationBotGUI;
+import gui.NoAgreementGUI;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -375,6 +376,11 @@ public class DealerAgent extends Agent {
 	 */
 	public void endTheNegotiationBecauseOfOutOfTime() {
 		System.out.println("No Agreement!");
+		new Thread(() -> {
+			Platform.runLater(() -> {
+				NoAgreementGUI guiDealer = new NoAgreementGUI(this);
+			});
+		}).start();
 	}
 
 }

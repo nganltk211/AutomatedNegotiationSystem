@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gui.BuyerGUI;
 import gui.CarListToBuyerGUI;
 import gui.NegotiationBotGUI;
+import gui.NoAgreementGUI;
 import gui.NoOffersGUI;
 import jade.core.AID;
 import jade.core.Agent;
@@ -406,6 +407,11 @@ public class BuyerAgent extends Agent {
 	 */
 	public void endTheNegotiationBecauseOfOutOfTime() {
 		System.out.println("No Agreement!");
+		new Thread(() -> {
+			Platform.runLater(() -> {
+				NoAgreementGUI guiBuyer = new NoAgreementGUI(this);
+			});
+		}).start();
 	}
 
 	/**
