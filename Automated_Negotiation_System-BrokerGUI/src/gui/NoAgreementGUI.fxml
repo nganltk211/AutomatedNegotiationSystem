@@ -17,7 +17,7 @@
     </Label>
     <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="14.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
       <image>
-        <Image url="file:/D:/Studium/5.%20Semester/Intelligent%20Systems/AutomatedNegotiationSystem/Automated_Negotiation_System-BrokerGUI/image/no_agreement.jpg" />
+        <Image url="@../../image/no_agreement.jpg" />
       </image>
     </ImageView>
   </children>
