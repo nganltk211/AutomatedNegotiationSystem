@@ -1,6 +1,7 @@
 package agents;
 
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -9,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gui.DealerGUI;
 import gui.NegotiationBotGUI;
-import gui.NoAgreementGUI;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -43,7 +43,7 @@ public class DealerAgent extends Agent {
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hallo! Dealer-agent " + getAID().getName() + " is ready.");
-
+		lastOfferList = new Hashtable<>();
 		// starts the DealerGUI
 		new Thread(() -> {
 			Platform.runLater(() -> {
@@ -417,7 +417,15 @@ public class DealerAgent extends Agent {
 				 }
 			 }
 			 System.out.println("Dealer: Best buyer: " + bestBuyer + " with offer: " + bestOffer);
-			 acceptOffer(bestBuyer,negotiatedCar,bestOffer);
+			 // send accept message to the best buyer
+			 acceptOffer(bestBuyer,negotiatedCar,bestOffer);	
+			 
+			// remove the best buyer from the list
+			 lastOfferList.remove(bestBuyer, bestOffer); 
+			 // send reject message to remaining buyers
+			 for (Entry<String, Double> element : lastOfferList.entrySet()) {
+				 reachNoAgreement(element.getKey());
+			 }
 			 lastOfferList.clear();
 		}	
 	}
