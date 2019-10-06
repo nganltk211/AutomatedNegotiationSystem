@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gui.BuyerGUI;
 import gui.CarListToBuyerGUI;
 import gui.NegotiationBotGUI;
+import gui.NoOffersGUI;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -149,6 +150,11 @@ public class BuyerAgent extends Agent {
 				case ACLMessage.REFUSE:
 					// When the broker find no matching car
 					System.out.println(content);
+					new Thread(() -> {
+						Platform.runLater(() -> {
+							NoOffersGUI noOffer = new NoOffersGUI(myAgent);
+						});
+					}).start();
 				}
 			} else {
 				block();
