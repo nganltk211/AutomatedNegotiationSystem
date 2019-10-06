@@ -99,7 +99,7 @@ public class BrokerAgent extends Agent {
 					String jsonInString = o.writeValueAsString(catalog);
 					jsonDB.clearFile();
 					jsonDB.writeToFile(jsonInString);
-					System.out.println("Broker: Broker cataloge: \n" + catalog);
+					//System.out.println("Broker: Broker cataloge: \n" + catalog);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}								
@@ -219,7 +219,7 @@ public class BrokerAgent extends Agent {
 					m.setCar(choosenCar);
 					m.addToBuyerList(msg.getSender().getName(), Double.parseDouble(firstOfferPrice));
 					// Send message (chosen car, first offer price, name of the buyer agent) to the dealer, who offer the chosen car
-					if (m.getBuyerList().size() == 3) {
+					if (m.getBuyerList().size() == 2) {
 						ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
 						mess.addReceiver(AgentSupport.findAgentWithName(myAgent, choosenCar.getAgent()));
 						mess.setContent(o.writeValueAsString(m)); // chosen car

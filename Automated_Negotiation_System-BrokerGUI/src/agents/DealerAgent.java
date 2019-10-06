@@ -269,7 +269,6 @@ public class DealerAgent extends Agent {
 						} else {
 							// when reaching the deadline
 							endTheNegotiationBecauseOfOutOfTime(buyerName);
-							//step = 1;
 							// Remove agent from negotiation list
 							//agentManager.terminateSession(buyerName);
 						}
@@ -304,6 +303,8 @@ public class DealerAgent extends Agent {
 						System.out.println("\nEnd of the negotiation : ");
 						System.out.println("Sold car: " + negotiatedCar);
 						System.out.println("Sold price: " + offerPrice);
+						
+						confirmSell(negotiatedCar, offerPrice); // confirm with the broker
 					} else {
 						findTheBestOffer(msg.getSender().getName(), negotiatedCar, offerPrice);
 					}
@@ -426,7 +427,6 @@ public class DealerAgent extends Agent {
 			 
 			// remove the best buyer from the list
 			 lastOfferList.remove(bestBuyer, bestOffer); 
-			 System.out.println(lastOfferList.size());
 			 // send reject message to remaining buyers
 			 for (Entry<String, Double> element : lastOfferList.entrySet()) {
 				 reachNoAgreement(element.getKey());
