@@ -300,9 +300,13 @@ public class DealerAgent extends Agent {
 				try {
 					Car negotiatedCar = o.readValue(content, Car.class);
 					double offerPrice = Double.parseDouble(msg.getReplyWith());
-					System.out.println("\nEnd of the negotiation : ");
-					System.out.println("Sold car: " + negotiatedCar);
-					System.out.println("Sold price: " + offerPrice);
+					if (!multiple) {
+						System.out.println("\nEnd of the negotiation : ");
+						System.out.println("Sold car: " + negotiatedCar);
+						System.out.println("Sold price: " + offerPrice);
+					} else {
+						findTheBestOffer(msg.getSender().getName(), negotiatedCar, offerPrice);
+					}
 
 				} catch (IOException e) {
 					System.err.println("Problem by converting a json-format to an object");
@@ -387,7 +391,7 @@ public class DealerAgent extends Agent {
 			@Override
 			public void action() {
 				ACLMessage mess = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
-				System.out.println(myAgent.getName() + ": Accept offer from the buyer: " + price);
+				System.out.println(myAgent.getName() + ": Accept offer from the buyer: " + opponentAgentName + " at price: " + price);
 				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, opponentAgentName));
 				String jsonInString;
 				try {
@@ -422,6 +426,7 @@ public class DealerAgent extends Agent {
 			 
 			// remove the best buyer from the list
 			 lastOfferList.remove(bestBuyer, bestOffer); 
+			 System.out.println(lastOfferList.size());
 			 // send reject message to remaining buyers
 			 for (Entry<String, Double> element : lastOfferList.entrySet()) {
 				 reachNoAgreement(element.getKey());

@@ -104,6 +104,7 @@ public class BuyerAgent extends Agent {
 		addBehaviour(new OfferFromBroker());
 		addBehaviour(nd);
 		addBehaviour(new EndTheNegotiation());
+		addBehaviour(new NoAgreementFromDealer());
 	}
 	
 	/**
@@ -368,7 +369,7 @@ public class BuyerAgent extends Agent {
 					mess.setReplyWith(String.valueOf(price));
 					mess.setConversationId("car-negotiation");
 					myAgent.send(mess);
-					confirmSell(negotiatedCar, price); //Confirm offer with broker
+					//confirmSell(negotiatedCar, price); //Confirm offer with broker
 				} catch (JsonProcessingException e) {
 					System.err.println("Problem by converting an object o json-format");
 				}
