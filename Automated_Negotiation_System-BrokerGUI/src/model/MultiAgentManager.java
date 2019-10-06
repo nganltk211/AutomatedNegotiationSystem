@@ -2,6 +2,9 @@ package model;
 
 import java.util.ArrayList;
 
+/*
+ MultiAgent negotiation manager
+ */
 
 public class MultiAgentManager {
 	
@@ -11,14 +14,15 @@ public class MultiAgentManager {
 		negotiationList = new ArrayList<Negotiation>();
 	}
 	
-	public int addSession(int carID, String buyer, int steps)
+	//Add Negotiation to the list 
+	public void addNegotiation(int carID, String buyer, int steps)
 	{
 		Negotiation negotiation = new Negotiation(carID, buyer, steps);
 		negotiationList.add(negotiation);
-		return sessionID;
 	}
 	
-	public void incrimentSteps(String buyer) {
+	//This function increment buyers steps
+	public void incrementSteps(String buyer) {
 		
 		for(Negotiation i : negotiationList) {
 			
@@ -30,6 +34,7 @@ public class MultiAgentManager {
 		}
 	}
 	
+	//Remove buyer by passing buyer name
 	public void terminateSession(String buyer) {
 		
 		int length = negotiationList.size();
@@ -46,6 +51,7 @@ public class MultiAgentManager {
 		
 	}
 	
+	//Detect MultiAgent negotiation 
 	public boolean isMultiAgent()
 	{
 		boolean condition = false;
@@ -60,16 +66,22 @@ public class MultiAgentManager {
 		return condition;
 	}
 	
+	//Get all MultiAgents in negotiation
 	public ArrayList<ArrayList<String>> getMultiAgents() {
 		
 		ArrayList<ArrayList<String> > aidList = new ArrayList<ArrayList<String> >();
+		ArrayList<Negotiation> tempList = new ArrayList<Negotiation>(negotiationList);
 		
 		for(Negotiation i : negotiationList) {
 			ArrayList<String> temp = new ArrayList<String>();
 			
-			for(Negotiation j : negotiationList) {
-				if(i.getCarId() == j.getCarId()) {
-						temp.add(j.getBuyer());
+			int length = tempList.size();
+			
+			for(int j = 0; j < length; j++) {
+				
+				if(i.getCarId() == tempList.get(j).getCarId()) {
+						temp.add(tempList.get(j).getBuyer());
+						tempList.remove(j);
 				}
 			}
 			aidList.add(temp);

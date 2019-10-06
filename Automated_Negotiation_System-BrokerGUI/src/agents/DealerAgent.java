@@ -20,7 +20,6 @@ import jade.lang.acl.MessageTemplate;
 import javafx.application.Platform;
 import model.Car;
 import model.CarList;
-import model.MultiAgentManager;
 
 /**
  * Class as representation of an dealer agent
@@ -30,7 +29,6 @@ public class DealerAgent extends Agent {
 	private static final long serialVersionUID = -8414132078026686821L;
 	private AID brokerAgent;
 	private ObjectMapper o = new ObjectMapper();
-	private MultiAgentManager agentManager = new MultiAgentManager();
 	private NegotiationWithBuyer nb;
 
 	protected void setup() {
@@ -154,7 +152,6 @@ public class DealerAgent extends Agent {
 			negotiatedCar = car;
 			this.offerPrice = firstOfferPrice;
 			//Add this session in to the MultiAgent management list
-			agentManager.addSession(negotiatedCar.getCarId(), buyerAgentName, 0);
 		}
 
 		@Override
@@ -237,8 +234,6 @@ public class DealerAgent extends Agent {
 								// accept the offer from the buyer
 								acceptOffer(buyerName, messObject, offerPrice);
 								step = 1;
-								//Remove agent from multiAgent Management list
-								agentManager.terminateSession(buyerName);
 							} else {
 								// make a counter-offer to the buyer
 								makeACounterOffer(buyerName, messObject, nextPrice);
@@ -247,8 +242,6 @@ public class DealerAgent extends Agent {
 						} else {
 							// when reaching the deadline
 							endTheNegotiationBecauseOfOutOfTime();
-							//Remove agent from multiAgent Management list
-							agentManager.terminateSession(buyerName);
 							step = 1;
 						}
 					}
