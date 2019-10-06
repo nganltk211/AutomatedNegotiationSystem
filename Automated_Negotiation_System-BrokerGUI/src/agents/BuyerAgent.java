@@ -277,7 +277,7 @@ public class BuyerAgent extends Agent {
 						}
 					} else {
 						step = 0;
-						endTheNegotiationBecauseOfOutOfTime();
+						endTheNegotiationWithoutAgreement();
 					}
 				}
 			} else {
@@ -402,10 +402,28 @@ public class BuyerAgent extends Agent {
 		});
 	}
 
+	private class NoAgreementFromDealer extends CyclicBehaviour {
+
+		@Override
+		public void action() {
+			// Define template of the received message, which need to be matched to the sent
+			// message from the dealer
+			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation-refuse"),
+					MessageTemplate.MatchPerformative(ACLMessage.REFUSE));
+			ACLMessage msg = myAgent.receive(mt);
+			if (msg != null) {
+				String content = msg.getContent();
+				endTheNegotiationWithoutAgreement();
+			} else {
+				block();
+			}
+		}
+	}
+	
 	/**
 	 * Method for ending the negotiation because of out of time.
 	 */
-	public void endTheNegotiationBecauseOfOutOfTime() {
+	public void endTheNegotiationWithoutAgreement() {
 		System.out.println("No Agreement!");
 		new Thread(() -> {
 			Platform.runLater(() -> {
