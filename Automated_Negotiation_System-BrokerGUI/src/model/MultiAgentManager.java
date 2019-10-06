@@ -15,7 +15,7 @@ public class MultiAgentManager {
 	}
 	
 	//Add Negotiation to the list 
-	public void addNegotiation(int carID, String buyer, int steps)
+	public void addSession(int carID, String buyer, int steps)
 	{
 		Negotiation negotiation = new Negotiation(carID, buyer, steps);
 		negotiationList.add(negotiation);
