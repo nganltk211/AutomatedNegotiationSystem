@@ -23,7 +23,7 @@ import model.MultipleMessage;
 /**
  * Class as representation of an broker-agent
  */
-public class BrokerAgent extends Agent {
+public class BrokerAgent2 extends Agent {
 
 	private static final long serialVersionUID = -1539612606764155406L;
 	private ObjectMapper o = new ObjectMapper(); // object supporting converting object to json-form
@@ -31,6 +31,7 @@ public class BrokerAgent extends Agent {
 	private JsonIO jsonDB = new JsonIO("./DataBase/JsonDB.txt");
 	private static final double COMMISION = 100; // fix-commission for each successful negotiation
 	private double receivedCommision; // broker's commission from successful negotiations 
+	private int counter = 0;
 	
 	protected void setup() {
 		// Printout a welcome message
@@ -216,17 +217,20 @@ public class BrokerAgent extends Agent {
 				try {
 					Car choosenCar = o.readValue(choosenCarJson, Car.class);
 					System.out.println(choosenCar + "\n");
+					//MultipleMessage m = new MultipleMessage();
 					m.setCar(choosenCar);
 					m.addToBuyerList(msg.getSender().getName(), Double.parseDouble(firstOfferPrice));
+					
 					// Send message (chosen car, first offer price, name of the buyer agent) to the dealer, who offer the chosen car
 					if (m.getBuyerList().size() == 3) {
 						ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
 						mess.addReceiver(AgentSupport.findAgentWithName(myAgent, choosenCar.getAgent()));
 						mess.setContent(o.writeValueAsString(m)); // chosen car
 						mess.setConversationId("car-trade-broker-seller");
+						mess.setReplyWith("true"); // name of the buyer.
 						myAgent.send(mess);
 						m = new MultipleMessage(); 
-					}	
+					}		
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
