@@ -402,6 +402,9 @@ public class BuyerAgent extends Agent {
 		});
 	}
 
+	/**
+	 * This behavior is for receiving refuse message from the dealer in case of no agreement
+	 */
 	private class NoAgreementFromDealer extends CyclicBehaviour {
 
 		@Override

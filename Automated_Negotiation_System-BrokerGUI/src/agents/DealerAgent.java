@@ -371,6 +371,10 @@ public class DealerAgent extends Agent {
 		});
 	}
 
+	/**
+	 * Behavior to send a refuse request to the buyer in case no agreement is reached
+	 * @param opponentAgentName: buyer agent name
+	 */
 	public void reachNoAgreement(String opponentAgentName) {
 		addBehaviour(new OneShotBehaviour() {
 			@Override
