@@ -58,6 +58,9 @@ public class MultiAgentManager {
 		for(Negotiation i : negotiationList) {
 			
 			for(Negotiation j : negotiationList) {
+				if(i == j) {
+					continue;
+				}
 				if(i.getCarId() == j.getCarId()) {
 					condition = true;
 				}
