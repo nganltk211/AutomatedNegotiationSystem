@@ -151,7 +151,6 @@ public class DealerAgent extends Agent {
 			buyerAgentName = opponentAgentName;
 			negotiatedCar = car;
 			this.offerPrice = firstOfferPrice;
-			//Add this session in to the MultiAgent management list
 		}
 
 		@Override
