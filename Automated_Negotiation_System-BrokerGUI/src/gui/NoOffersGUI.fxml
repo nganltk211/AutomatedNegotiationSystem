@@ -10,7 +10,7 @@
   <children>
     <ImageView fitHeight="267.2000244140625" fitWidth="445.3333740234375" focusTraversable="false" layoutX="0.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true">
       <image>
-        <Image url="file:/D:/Studium/5.%20Semester/Intelligent%20Systems/AutomatedNegotiationSystem/Automated_Negotiation_System-BrokerGUI/image/no_offers.jpg" />
+        <Image url="@../../image/no_offers.jpg" backgroundLoading="true" />
       </image>
     </ImageView>
   </children>
