@@ -22,13 +22,12 @@ public class MultiAgentManager {
 	}
 	
 	//This function increment buyers steps
-	public void incrementSteps(String buyer) {
+	public void incrementSteps(String buyer, int steps) {
 		
 		for(Negotiation i : negotiationList) {
 			
 			if(i.getBuyer().equals(buyer)) {
-				int s = i.getSteps();
-				i.setSteps(s++);
+				i.setSteps(steps);
 				break;
 			}
 		}
