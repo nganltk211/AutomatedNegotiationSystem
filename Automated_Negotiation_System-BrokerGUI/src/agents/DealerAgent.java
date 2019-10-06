@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gui.DealerGUI;
 import gui.NegotiationBotGUI;
+import gui.NoAgreementGUI;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -227,9 +228,9 @@ public class DealerAgent extends Agent {
 					} else {
 						// for automated Negotiation: receive offer from the buyer and decide to accept
 						// or make a counter-offer
-						String buyerName = null;
-						if (step <= messObject.getSteps()) {
-							buyerName = msg.getSender().getName();
+
+						String buyerName = msg.getSender().getName();
+						if (step <= messObject.getSteps()) {		
 							double offerPrice = Double.parseDouble(msg.getReplyWith());
 							System.out.println("Dealer: Receive offer from the buyer: " + offerPrice);
 							int nextPrice = Algorithms.offer(messObject.getMaxprice(), messObject.getMinprice(),
@@ -249,7 +250,7 @@ public class DealerAgent extends Agent {
 							}
 						} else {
 							// when reaching the deadline
-							endTheNegotiationBecauseOfOutOfTime();
+							endTheNegotiationBecauseOfOutOfTime(buyerName);
 							step = 1;
 							//Remove agent from negotiation list
 							agentManager.terminateSession(buyerName);
@@ -382,10 +383,28 @@ public class DealerAgent extends Agent {
 	}
 
 	/**
+	 * Behavior to send a refuse request to the buyer in case no agreement is reached
+	 * @param opponentAgentName: buyer agent name
+	 */
+	public void reachNoAgreement(String opponentAgentName) {
+		addBehaviour(new OneShotBehaviour() {
+			@Override
+			public void action() {
+				ACLMessage mess = new ACLMessage(ACLMessage.REFUSE);
+				System.out.println(myAgent.getName() + ": Can not offer the car to " + opponentAgentName);
+				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, opponentAgentName));
+				mess.setContent("No Agreement");
+				mess.setConversationId("car-negotiation-refuse");
+				myAgent.send(mess);
+			}
+		});
+	}
+		
+	/**
 	 * Method for ending the negotiation because of out of time.
 	 */
-	public void endTheNegotiationBecauseOfOutOfTime() {
-		System.out.println("No Agreement!");
+	public void endTheNegotiationBecauseOfOutOfTime(String buyerName) {
+		reachNoAgreement(buyerName);
 	}
 
 }
