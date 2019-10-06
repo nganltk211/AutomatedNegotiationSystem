@@ -29,7 +29,6 @@ public class DealerAgent extends Agent {
 	private static final long serialVersionUID = -8414132078026686821L;
 	private AID brokerAgent;
 	private ObjectMapper o = new ObjectMapper();
-
 	private NegotiationWithBuyer nb;
 
 	protected void setup() {
@@ -152,6 +151,7 @@ public class DealerAgent extends Agent {
 			buyerAgentName = opponentAgentName;
 			negotiatedCar = car;
 			this.offerPrice = firstOfferPrice;
+			//Add this session in to the MultiAgent management list
 		}
 
 		@Override
@@ -223,8 +223,9 @@ public class DealerAgent extends Agent {
 					} else {
 						// for automated Negotiation: receive offer from the buyer and decide to accept
 						// or make a counter-offer
+						String buyerName = null;
 						if (step <= messObject.getSteps()) {
-							String buyerName = msg.getSender().getName();
+							buyerName = msg.getSender().getName();
 							double offerPrice = Double.parseDouble(msg.getReplyWith());
 							System.out.println("Dealer: Receive offer from the buyer: " + offerPrice);
 							int nextPrice = Algorithms.offer(messObject.getMaxprice(), messObject.getMinprice(),
