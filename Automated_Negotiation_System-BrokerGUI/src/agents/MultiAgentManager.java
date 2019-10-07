@@ -53,12 +53,15 @@ public class MultiAgentManager {
 	}
 	public void removeCarFromList(Car car)
 	{
-		for(MultipleMessage m : negotiationList)
-		{
-			if(car.getCarId() == m.getCar().getCarId())
-			{
-				negotiationList.remove(m);
-			}
+		for (Iterator<MultipleMessage> iterator = negotiationList.iterator(); iterator.hasNext();) {
+			MultipleMessage message = iterator.next();
+		    if(!message.getBuyerList().isEmpty()) {
+		    	if(car.getCarId() == message.getCar().getCarId())
+				{
+		    		iterator.remove();
+				}
+     
+		    }
 		}
 		
 	}

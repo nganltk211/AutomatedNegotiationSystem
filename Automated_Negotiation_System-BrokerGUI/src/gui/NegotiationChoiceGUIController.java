@@ -99,6 +99,8 @@ public class NegotiationChoiceGUIController {
 		validationLabel.setVisible(false);
 		maxPriceFromBuyer.setVisible(false);
 		maxprice_buyer.setVisible(false);
+		pricevalidationLabel.setText("");
+		validationLabel.setText("");
 	}
 
 	/**
@@ -148,11 +150,15 @@ public class NegotiationChoiceGUIController {
 		if (price) {
 			isValidate = true;
 		}
-
+		try {
 		if (Double.parseDouble(PricetoEnter.getText()) < 1000) {
 			pricevalidationLabel.setText("Price can't be less than 1000");
 			isValidate = false;
+		}}
+		catch(NumberFormatException e) {
+			pricevalidationLabel.setText("Please Enter Number Value");
 		}
+		
 		if (rb_automated.isSelected()) {
 			if (!beeta && !steps) {
 				steps = FormValidation.textFieldNotEmpty(negotiationSteps, validationLabel,
@@ -160,12 +166,18 @@ public class NegotiationChoiceGUIController {
 
 				isValidate = false;
 			} else {
+				try {
 				if (Double.parseDouble(BeetaValue.getText()) < 1) {
 					validationLabel.setText("Format Beeta > 1");
 					isValidate = false;
 				}
+				}catch(NumberFormatException e)
+				{
+					validationLabel.setText("Format Beeta > 1");
+				}
 				isValidate = true;
 			}
+				
 		}
 
 		return isValidate;
