@@ -75,6 +75,7 @@ public class DealerAgent extends Agent {
 		nb = new NegotiationWithBuyer();
 		addBehaviour(nb);
 		addBehaviour(new EndTheNegotiation());
+		addBehaviour(new GetRefuseMessageFromTheBuyer());
 	}
 
 	/**
@@ -268,7 +269,8 @@ public class DealerAgent extends Agent {
 							}
 						} else {
 							// when reaching the deadline
-							endTheNegotiationBecauseOfOutOfTime(buyerName);
+							endTheNegotiationBecauseOfOutOfStep(buyerName);
+							findTheBestOffer(buyerName, messObject, 0.0); // add this buyer to the list
 							// Remove agent from negotiation list
 							//agentManager.terminateSession(buyerName);
 						}
@@ -457,9 +459,36 @@ public class DealerAgent extends Agent {
 	}
 
 	/**
+	 * This behavior is for receiving refuse message from the dealer in case of no agreement
+	 */
+	private class GetRefuseMessageFromTheBuyer extends CyclicBehaviour {
+
+		@Override
+		public void action() {
+			// Define template of the received message, which need to be matched to the sent
+			// message from the dealer
+			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation-refuse"),
+					MessageTemplate.MatchPerformative(ACLMessage.REFUSE));
+			ACLMessage msg = myAgent.receive(mt);
+			if (msg != null) {
+				String content = msg.getContent();
+				try {
+					Car negotiatedCar = o.readValue(content, Car.class);
+					findTheBestOffer(msg.getSender().getName(), negotiatedCar, 0.0);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+			} else {
+				block();
+			}
+		}
+	}
+	
+	/**
 	 * Method for ending the negotiation because of out of time.
 	 */
-	public void endTheNegotiationBecauseOfOutOfTime(String buyerName) {
+	public void endTheNegotiationBecauseOfOutOfStep(String buyerName) {
 		reachNoAgreement(buyerName);
 	}
 
