@@ -23,10 +23,12 @@ public class BrokerGUIController {
 	private Button buyer;
 	@FXML
 	private Button dealer;
-
+	@FXML
+	private Button brokerWindow;
 	private int counterBuyer; // uses to define buyer agent name
 	private int counterDealer; // uses to define dealer agent name
 	private static ContainerController mainCtrl; // JADE Main Container
+	private AgentController brokerAgentCtrl; 
 
 	/**
 	 * Constructor of the class. A broker agent will be created and started.
@@ -59,10 +61,10 @@ public class BrokerGUIController {
 
 		// Create and start an agent of class BrokerAgent
 		System.out.println("Starting up a BrokerAgent...");
-		AgentController agentCtrl;
+		
 		try {
-			agentCtrl = mainCtrl.createNewAgent("BrokerAgent", BrokerAgent.class.getName(), new Object[0]);
-			agentCtrl.start();
+			brokerAgentCtrl = mainCtrl.createNewAgent("BrokerAgent", BrokerAgent.class.getName(), new Object[0]);
+			brokerAgentCtrl.start();
 		} catch (StaleProxyException e) {
 			System.err.println("Problem by creating a BrokerAgent");
 		}
@@ -106,6 +108,12 @@ public class BrokerGUIController {
 		} catch (StaleProxyException e) {
 			System.err.println("Problem by creating a BuyerAgent");
 		}
+	}
+	
+	public void onBrokerWindow(ActionEvent event) {
+		BrokerMatchingList window = new BrokerMatchingList(brokerAgentCtrl);
+		
+
 	}
 
 }

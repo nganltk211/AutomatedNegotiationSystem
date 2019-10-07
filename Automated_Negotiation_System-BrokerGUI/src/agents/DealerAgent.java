@@ -263,6 +263,7 @@ public class DealerAgent extends Agent {
 								//agentManager.terminateSession(buyerName);
 							} else {
 								// make a counter-offer to the buyer
+
 								makeACounterOffer(buyerName, messObject, nextPrice, stepD);
 								// Update buyer agent steps
 								//agentManager.incrementSteps(buyerName, step);
