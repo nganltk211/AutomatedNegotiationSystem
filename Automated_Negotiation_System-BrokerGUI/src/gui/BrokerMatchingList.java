@@ -19,6 +19,9 @@ public class BrokerMatchingList extends Stage {
 		loader = new FXMLLoader(getClass().getResource("BrokerMatchingList.fxml"));
 		try {
 			window = loader.load();
+			BrokerMatchingListController controller = loader.<BrokerMatchingListController>getController();
+			//System.out.println(controller);
+			controller.setController(agentCtrl);
 		} catch (IOException e) {
 			System.err.println("Error by loading fxml-File");
 		}

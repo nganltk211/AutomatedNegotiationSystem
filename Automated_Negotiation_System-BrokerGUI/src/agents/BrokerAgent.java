@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.JsonIO;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -23,7 +24,7 @@ import model.MultipleMessage;
 /**
  * Class as representation of an broker-agent
  */
-public class BrokerAgent extends Agent {
+public class BrokerAgent extends Agent implements BrokerAgentInterface{
 
 	private static final long serialVersionUID = -1539612606764155406L;
 	private ObjectMapper o = new ObjectMapper(); // object supporting converting object to json-form
@@ -31,13 +32,17 @@ public class BrokerAgent extends Agent {
 	private JsonIO jsonDB = new JsonIO("./DataBase/JsonDB.txt");
 	private static final double COMMISION = 100; // fix-commission for each successful negotiation
 	private double receivedCommision; // broker's commission from successful negotiations 
+	private MultiAgentManager buyerList;
 	
-	
+	public BrokerAgent() {
+		registerO2AInterface(BrokerAgentInterface.class, this);
+	}
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hallo! Broker-agent " + getAID().getName() + " is ready.");
 		jsonDB.clearFile(); // clear the data in file when restarting.
 		//catalog = jsonDB.readFile();
+		buyerList = new MultiAgentManager();
 		
 		// Register the car-broker service in the yellow pages
 		DFAgentDescription dfd = new DFAgentDescription();
@@ -100,6 +105,7 @@ public class BrokerAgent extends Agent {
 					String jsonInString = o.writeValueAsString(catalog);
 					jsonDB.clearFile();
 					jsonDB.writeToFile(jsonInString);
+					buyerList.removeCarFromList(negotiatedCar);
 					//System.out.println("Broker: Broker cataloge: \n" + catalog);
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -200,34 +206,27 @@ public class BrokerAgent extends Agent {
 		private MultipleMessage m;
 		
 		public RequestFromBuyersToConnectToDealer() {
-			m = new MultipleMessage();
+			m = new MultipleMessage(null);
 		}
 		
 		@Override
 		public void action() {
 			// MessageTemplate for the Conversation between buyer and broker 
 			// (the broker receive a request from the buyer to connect with a dealer)
+			
 			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-trade-broker-buyer"),
 					MessageTemplate.MatchPerformative(ACLMessage.INFORM));
 			ACLMessage msg = myAgent.receive(mt); // Receive message (chosen car and first offer) from the buyer
 			if (msg != null) {
+				String buyerName = msg.getSender().getName();
 				System.out.println("Broker: Receive a choosen car from buyer " + msg.getSender().getName());
 				String choosenCarJson = msg.getContent();
 				String firstOfferPrice = msg.getReplyWith();
 				try {
 					Car choosenCar = o.readValue(choosenCarJson, Car.class);
 					System.out.println(choosenCar + "\n");
-					m.setCar(choosenCar);
-					m.addToBuyerList(msg.getSender().getName(), Double.parseDouble(firstOfferPrice));
-					// Send message (chosen car, first offer price, name of the buyer agent) to the dealer, who offer the chosen car
-					if (m.getBuyerList().size() == 3) {
-						ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
-						mess.addReceiver(AgentSupport.findAgentWithName(myAgent, choosenCar.getAgent()));
-						mess.setContent(o.writeValueAsString(m)); // chosen car
-						mess.setConversationId("car-trade-broker-seller");
-						myAgent.send(mess);
-						m = new MultipleMessage(); 
-					}	
+					buyerList.addBuyer(choosenCar,buyerName, Double.parseDouble(firstOfferPrice));
+					//System.out.println(buyerList + "\n");	
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -280,5 +279,35 @@ public class BrokerAgent extends Agent {
 		}
 		
 		return endList;
+	}
+
+
+	// Send message (chosen car, first offer price, name of the buyer agent) to the dealer, who offer the chosen car
+	@Override
+	public void sendBuyerListDataToDealer(MultipleMessage message) {
+		addBehaviour(new OneShotBehaviour() {
+
+			@Override
+			public void action() {
+				try {				
+					ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
+					mess.addReceiver(AgentSupport.findAgentWithName(myAgent, message.getCar().getAgent()));
+					mess.setContent(o.writeValueAsString(message));
+					mess.setConversationId("car-trade-broker-seller");
+					myAgent.send(mess);
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}		
+			}	
+		});
+	}
+
+	@Override
+	public MultiAgentManager getMultiAgentManager() {
+		return buyerList;
+	}
+	@Override
+	public double getCommision() {
+		return receivedCommision;
 	}
 }

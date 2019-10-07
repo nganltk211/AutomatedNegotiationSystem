@@ -111,6 +111,7 @@ public class BrokerGUIController {
 	}
 	
 	public void onBrokerWindow(ActionEvent event) {
+		
 		BrokerMatchingList window = new BrokerMatchingList(brokerAgentCtrl);
 		
 

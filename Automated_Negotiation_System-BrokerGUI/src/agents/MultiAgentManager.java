@@ -1,6 +1,9 @@
-package model;
+package agents;
 
 import java.util.ArrayList;
+
+import model.Car;
+import model.MultipleMessage;
 
 /*
  MultiAgent negotiation manager
@@ -8,20 +11,60 @@ import java.util.ArrayList;
 
 public class MultiAgentManager {
 	
-	ArrayList<BrookerStorage> negotiationList = null;
+	ArrayList<MultipleMessage> negotiationList = null;
 	
 	public MultiAgentManager() {
-		negotiationList = new ArrayList<BrookerStorage>();
+		negotiationList = new ArrayList<MultipleMessage>();
 	}
 	
 	//Add Negotiation to the list 
-	public void addSession(int carID, String buyer, int steps)
+	public void addBuyer(Car car, String buyer, double firstOffer)
 	{
-		//Negotiation negotiation = new Negotiation(carID, buyer, steps);
-		//negotiationList.add(negotiation);
-		//go through that list
-		//
+		boolean isCarinList = false;
+		//MultipleMessage buyerList = new MultipleMessage();
+		for(MultipleMessage m : negotiationList)
+		{
+			if(car.getCarId() == m.getCar().getCarId())
+			{
+				//add only buyer to multiple message list
+				m.addToBuyerList(buyer, firstOffer);
+				//make boolean to true
+				isCarinList = true;
+			}
+		}
+		if(!isCarinList)
+		{
+			// add whole list to buyer if there is no same car in the list
+			MultipleMessage buyerList = new MultipleMessage(car);
+			buyerList.addToBuyerList(buyer, firstOffer);
+			negotiationList.add(buyerList);
+		}
+	
 	}
+
+	@Override
+	public String toString() {
+		return "MultiAgentManager [negotiationList=" + negotiationList + "]";
+	}
+
+	public ArrayList<MultipleMessage> getNegotiationList() {
+		return negotiationList;
+	}
+	public void removeCarFromList(Car car)
+	{
+		for(MultipleMessage m : negotiationList)
+		{
+			if(car.getCarId() == m.getCar().getCarId())
+			{
+				negotiationList.remove(m);
+			}
+		}
+		
+	}
+	
+
+	
+}
 	
 	//This function increment buyers steps
 	/*public void incrementSteps(String buyer, int steps) {
@@ -33,7 +76,7 @@ public class MultiAgentManager {
 				break;
 			}
 		}
-	}*/
+	}
 	
 	//Remove buyer by passing buyer name
 	public void terminateSession(String buyer) {
@@ -62,16 +105,16 @@ public class MultiAgentManager {
 				if(i == j) {
 					continue;
 				}
-				/*if(i.getCarId() == j.getCarId()) {
+				if(i.getCarId() == j.getCarId()) {
 					condition = true;
-				}*/
+				}
 			}
 		}
 		return condition;
 	}
 	
 	//Get all MultiAgents in negotiation
-/*	public ArrayList<ArrayList<String>> getMultiAgents() {
+	public ArrayList<ArrayList<String>> getMultiAgents() {
 		
 		ArrayList<ArrayList<String> > aidList = new ArrayList<ArrayList<String> >();
 		ArrayList<Negotiation> tempList = new ArrayList<Negotiation>(negotiationList);
@@ -94,4 +137,4 @@ public class MultiAgentManager {
 		return aidList;
 	}*/
 	
-}
+

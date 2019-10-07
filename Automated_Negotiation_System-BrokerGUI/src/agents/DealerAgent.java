@@ -23,7 +23,6 @@ import jade.lang.acl.MessageTemplate;
 import javafx.application.Platform;
 import model.Car;
 import model.CarList;
-import model.MultiAgentManager;
 import model.MultipleMessage;
 
 /**

@@ -1,13 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<TableView fx:id="brokerWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1">
-  <columns>
-      <TableColumn fx:id="car_id_coloumn" prefWidth="75.0" text="Car id" />
-    <TableColumn fx:id="d_Name_coloumn" prefWidth="102.0" text="Dealer Names" />
-    <TableColumn fx:id="b_Name_column" prefWidth="187.0" text="Buyer Names" />
-      <TableColumn fx:id="descripttion" prefWidth="235.0" text="Description" />
-  </columns>
-</TableView>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TableView fx:id="brokerWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" fx:controller = "gui.BrokerMatchingListController">
+        <columns>
+            <TableColumn fx:id="car_id_coloumn" prefWidth="75.0" text="Car id" />
+          <TableColumn fx:id="d_Name_coloumn" prefWidth="102.0" text="Dealer Names" />
+          <TableColumn fx:id="b_Name_column" prefWidth="187.0" text="Buyer Names" />
+            <TableColumn fx:id="descripttion" prefWidth="235.0" text="Description" />
+        </columns>
+      </TableView>
+      <HBox prefHeight="35.0" prefWidth="600.0">
+         <children>
+            <Label text="Broker Comission : ">
+               <font>
+                  <Font name="Bodoni MT Bold Italic" size="17.0" />
+               </font>
+            </Label>
+            <Label fx:id="commision" text="0">
+               <font>
+                  <Font name="Bodoni MT Bold Italic" size="20.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+   </children>
+</VBox>
