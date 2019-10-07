@@ -78,11 +78,11 @@ public class NegotiationBotGUIController {
 	public void buttonSendClick(ActionEvent event) {
 		if (agent instanceof DealerAgent) {
 			DealerAgent dag = (DealerAgent) agent;
-			dag.makeACounterOffer(opponentAgentName, negotiatedCar, Double.valueOf(counteroffer_price.getText()));
+			dag.makeACounterOffer(opponentAgentName, negotiatedCar, Double.valueOf(counteroffer_price.getText()),0);
 			((Node) (event.getSource())).getScene().getWindow().hide();			
 		} else {
 			BuyerAgent bag = (BuyerAgent) agent;
-			bag.makeACounterOffer(opponentAgentName, negotiatedCar, Double.valueOf(counteroffer_price.getText()));
+			bag.makeACounterOffer(opponentAgentName, negotiatedCar, Double.valueOf(counteroffer_price.getText()),"0");
 			((Node) (event.getSource())).getScene().getWindow().hide();
 		}
 	}

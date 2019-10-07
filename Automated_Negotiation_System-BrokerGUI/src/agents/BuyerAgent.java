@@ -104,6 +104,7 @@ public class BuyerAgent extends Agent {
 		addBehaviour(new OfferFromBroker());
 		addBehaviour(nd);
 		addBehaviour(new EndTheNegotiation());
+		addBehaviour(new NoAgreementFromDealer());
 	}
 	
 	/**
@@ -256,29 +257,32 @@ public class BuyerAgent extends Agent {
 					}
 				} else {
 					// for automated Negotiation: AI part
-					if (step <= maxStep) {
-						String content = msg.getContent();
-						try {
-							Car messObject = o.readValue(content, Car.class);
-							String dealerName = msg.getSender().getName();
-							double offerPrice = Double.parseDouble(msg.getReplyWith());
-							System.err.println("Buyer: Receive offer from the dealer: " + offerPrice);
-							//calculate the next offer
-							int nextPrice = Algorithms.offer(intialPrice,reservationPrice, step, maxStep, beetaValue);
-							if (nextPrice >= offerPrice) {
-								step = 0;
-								acceptOffer(dealerName, messObject, offerPrice);
-							} else {
-								makeACounterOffer(dealerName, messObject, nextPrice);
-								step++;
-							}
-						} catch (IOException e) {
-							e.printStackTrace();
+					String dealerName = msg.getSender().getName();
+					String content = msg.getContent();
+					Car messObject = null;
+					try {
+						messObject = o.readValue(content, Car.class);
+						double offerPrice = Double.parseDouble(msg.getReplyWith());
+						if (step <= maxStep) {
+								String dealerTimeStep = msg.getInReplyTo();
+								System.err.println("Buyer: Receive offer from the dealer: " + offerPrice);
+								//calculate the next offer
+								int nextPrice = Algorithms.offer(intialPrice,reservationPrice, step, maxStep, beetaValue);
+								if (nextPrice >= offerPrice) {
+									step = 0;
+									acceptOffer(dealerName, messObject, offerPrice);
+								} else {
+									makeACounterOffer(dealerName, messObject, nextPrice,dealerTimeStep);
+									step++;
+								}
+						} else {
+							step = 0;
+							endTheNegotiationWithoutAgreement();
+							sendRefuseToTheDealer(dealerName, messObject, 0.0);
 						}
-					} else {
-						step = 0;
-						endTheNegotiationWithoutAgreement();
-					}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}								
 				}
 			} else {
 				block();
@@ -324,7 +328,7 @@ public class BuyerAgent extends Agent {
 	 * @param price:
 	 *            offer-price
 	 */
-	public void makeACounterOffer(String opponentAgentName, Car negotiatedCar, double price) {
+	public void makeACounterOffer(String opponentAgentName, Car negotiatedCar, double price, String dealerTimeStep) {
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
@@ -338,6 +342,7 @@ public class BuyerAgent extends Agent {
 					mess.setContent(jsonInString);
 					mess.setReplyWith(String.valueOf(price));
 					mess.setConversationId("car-negotiation");
+					mess.setInReplyTo(dealerTimeStep);
 					myAgent.send(mess);
 				} catch (JsonProcessingException e) {
 					System.err.println("Problem by converting an object o json-format");				}
@@ -366,7 +371,7 @@ public class BuyerAgent extends Agent {
 					mess.setReplyWith(String.valueOf(price));
 					mess.setConversationId("car-negotiation");
 					myAgent.send(mess);
-					confirmSell(negotiatedCar, price); //Confirm offer with broker
+					//confirmSell(negotiatedCar, price); //Confirm offer with broker
 				} catch (JsonProcessingException e) {
 					System.err.println("Problem by converting an object o json-format");
 				}
@@ -423,6 +428,25 @@ public class BuyerAgent extends Agent {
 		}
 	}
 	
+	
+	public void sendRefuseToTheDealer(String dealerName, Car negotiatedCar, double price) {
+		addBehaviour(new OneShotBehaviour() {
+			@Override
+			public void action() {
+				ACLMessage mess = new ACLMessage(ACLMessage.REFUSE);
+				System.err.println(myAgent.getName() + ": Refuse Agreement \n");
+				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, dealerName));
+				String jsonInString;
+				try {
+					jsonInString = o.writeValueAsString(negotiatedCar);
+					mess.setContent(jsonInString);
+					mess.setConversationId("car-negotiation-refuse");
+					myAgent.send(mess);
+				} catch (JsonProcessingException e) {
+					System.err.println("Problem by converting an object o json-format");				}
+			}
+		});
+	}
 	/**
 	 * Method for ending the negotiation because of out of time.
 	 */

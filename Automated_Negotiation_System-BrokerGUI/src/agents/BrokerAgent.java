@@ -18,6 +18,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import model.Car;
 import model.CarList;
+import model.MultipleMessage;
 
 /**
  * Class as representation of an broker-agent
@@ -98,7 +99,7 @@ public class BrokerAgent extends Agent {
 					String jsonInString = o.writeValueAsString(catalog);
 					jsonDB.clearFile();
 					jsonDB.writeToFile(jsonInString);
-					System.out.println("Broker: Broker cataloge: \n" + catalog);
+					//System.out.println("Broker: Broker cataloge: \n" + catalog);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}								
@@ -195,6 +196,12 @@ public class BrokerAgent extends Agent {
 	 */
 	private class RequestFromBuyersToConnectToDealer extends CyclicBehaviour {
 
+		private MultipleMessage m;
+		
+		public RequestFromBuyersToConnectToDealer() {
+			m = new MultipleMessage();
+		}
+		
 		@Override
 		public void action() {
 			// MessageTemplate for the Conversation between buyer and broker 
@@ -209,14 +216,17 @@ public class BrokerAgent extends Agent {
 				try {
 					Car choosenCar = o.readValue(choosenCarJson, Car.class);
 					System.out.println(choosenCar + "\n");
+					m.setCar(choosenCar);
+					m.addToBuyerList(msg.getSender().getName(), Double.parseDouble(firstOfferPrice));
 					// Send message (chosen car, first offer price, name of the buyer agent) to the dealer, who offer the chosen car
-					ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
-					mess.addReceiver(AgentSupport.findAgentWithName(myAgent, choosenCar.getAgent()));
-					mess.setContent(choosenCarJson); // chosen car
-					mess.setConversationId("car-trade-broker-seller");
-					mess.setReplyWith(msg.getSender().getName()); // name of the buyer.
-					mess.setInReplyTo(firstOfferPrice); // first offer price
-					myAgent.send(mess);
+					if (m.getBuyerList().size() == 3) {
+						ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
+						mess.addReceiver(AgentSupport.findAgentWithName(myAgent, choosenCar.getAgent()));
+						mess.setContent(o.writeValueAsString(m)); // chosen car
+						mess.setConversationId("car-trade-broker-seller");
+						myAgent.send(mess);
+						m = new MultipleMessage(); 
+					}	
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
