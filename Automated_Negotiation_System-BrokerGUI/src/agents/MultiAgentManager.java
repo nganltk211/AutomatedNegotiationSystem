@@ -1,6 +1,7 @@
 package agents;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import model.Car;
 import model.MultipleMessage;

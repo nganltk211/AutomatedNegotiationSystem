@@ -22,6 +22,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 import model.Car;
 import model.MultipleMessage;
+import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -97,6 +98,8 @@ public class BrokerMatchingListController implements Initializable {
 					public void handle(ActionEvent event) {
 						MultipleMessage message = row.getItem();
 						o2a.sendBuyerListDataToDealer(message);
+						commision.getScene().getWindow().hide();
+						
 					}
 				});
 				contextMenu.getItems().add(editMenuItem);

@@ -8,9 +8,9 @@
 <?import javafx.scene.text.Font?>
 
 
-<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller = "gui.BrokerMatchingListController">
    <children>
-      <TableView fx:id="brokerWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" fx:controller = "gui.BrokerMatchingListController">
+      <TableView fx:id="brokerWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" >
         <columns>
             <TableColumn fx:id="car_id_coloumn" prefWidth="75.0" text="Car id" />
           <TableColumn fx:id="d_Name_coloumn" prefWidth="102.0" text="Dealer Names" />
