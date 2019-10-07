@@ -8,21 +8,23 @@ import java.util.ArrayList;
 
 public class MultiAgentManager {
 	
-	ArrayList<Negotiation> negotiationList = null;
+	ArrayList<BrookerStorage> negotiationList = null;
 	
 	public MultiAgentManager() {
-		negotiationList = new ArrayList<Negotiation>();
+		negotiationList = new ArrayList<BrookerStorage>();
 	}
 	
 	//Add Negotiation to the list 
 	public void addSession(int carID, String buyer, int steps)
 	{
-		Negotiation negotiation = new Negotiation(carID, buyer, steps);
-		negotiationList.add(negotiation);
+		//Negotiation negotiation = new Negotiation(carID, buyer, steps);
+		//negotiationList.add(negotiation);
+		//go through that list
+		//
 	}
 	
 	//This function increment buyers steps
-	public void incrementSteps(String buyer, int steps) {
+	/*public void incrementSteps(String buyer, int steps) {
 		
 		for(Negotiation i : negotiationList) {
 			
@@ -31,7 +33,7 @@ public class MultiAgentManager {
 				break;
 			}
 		}
-	}
+	}*/
 	
 	//Remove buyer by passing buyer name
 	public void terminateSession(String buyer) {
@@ -54,22 +56,22 @@ public class MultiAgentManager {
 	public boolean isMultiAgent()
 	{
 		boolean condition = false;
-		for(Negotiation i : negotiationList) {
+		for(BrookerStorage i : negotiationList) {
 			
-			for(Negotiation j : negotiationList) {
+			for(BrookerStorage j : negotiationList) {
 				if(i == j) {
 					continue;
 				}
-				if(i.getCarId() == j.getCarId()) {
+				/*if(i.getCarId() == j.getCarId()) {
 					condition = true;
-				}
+				}*/
 			}
 		}
 		return condition;
 	}
 	
 	//Get all MultiAgents in negotiation
-	public ArrayList<ArrayList<String>> getMultiAgents() {
+/*	public ArrayList<ArrayList<String>> getMultiAgents() {
 		
 		ArrayList<ArrayList<String> > aidList = new ArrayList<ArrayList<String> >();
 		ArrayList<Negotiation> tempList = new ArrayList<Negotiation>(negotiationList);
@@ -90,6 +92,6 @@ public class MultiAgentManager {
 		}
 		
 		return aidList;
-	}
+	}*/
 	
 }
