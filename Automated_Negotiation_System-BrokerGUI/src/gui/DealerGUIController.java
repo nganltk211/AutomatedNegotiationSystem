@@ -523,7 +523,7 @@ public class DealerGUIController implements Initializable {
 		car2.setModel("Camry");
 		car2.setMaxprice(19100);
 		car2.setMinprice(16900);
-		car2.setColor("Blue");
+		car2.setColor("Silver");
 		car2.setFuelType("Gas");
 		car2.setBodyType("Sedan");
 		car2.setCarrating(4);
@@ -534,8 +534,28 @@ public class DealerGUIController implements Initializable {
 		car2.setWarranty(0);
 		car2.setNegotiatable(true);
 		
+		Car car3 = new Car(++carCounter);
+		car3.setAgent(dealerAgent.getName());
+		car3.setManufacture("Audi");
+		car3.setModel("A4");
+		car3.setMaxprice(23000);
+		car3.setMinprice(21000);
+		car3.setColor("Blue");
+		car3.setFuelType("Gas");
+		car3.setBodyType("SUV");
+		car3.setCarrating(4);
+		car3.setKm(7000);
+		car3.setManufactureYear("2017");
+		car3.setPicturePath("./image/auto3.jpg");
+		car3.setTransmission("AMT");
+		car3.setWarranty(0);
+		car3.setNegotiatable(false);
+		car3.setBeeta(0.7);
+		car3.setSteps(15);
+		
 		listOfCars.add(car1);
 		listOfCars.add(car2);
+		listOfCars.add(car3);
 		updateTable();
 	}
 	

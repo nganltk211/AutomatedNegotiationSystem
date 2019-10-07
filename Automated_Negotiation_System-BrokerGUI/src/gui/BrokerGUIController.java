@@ -110,11 +110,13 @@ public class BrokerGUIController {
 		}
 	}
 	
-	public void onBrokerWindow(ActionEvent event) {
-		
+	/**
+	 * Sets event for the "Broker Window" button.
+	 * @param event
+	 */
+	public void onBrokerWindow(ActionEvent event) {	
+		// shows BrokerMatchingList GUI
 		BrokerMatchingList window = new BrokerMatchingList(brokerAgentCtrl);
-		
-
 	}
 
 }

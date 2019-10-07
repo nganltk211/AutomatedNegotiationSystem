@@ -1,5 +1,6 @@
-package gui;
+package application;
 
+import gui.BrokerGUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

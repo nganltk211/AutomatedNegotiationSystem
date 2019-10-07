@@ -141,6 +141,7 @@ public class NegotiationChoiceGUIController {
 
 	/**
 	 * Method to check the validation of elements on GUI
+	 * 
 	 * @return true if validate
 	 */
 	private boolean validation() {
@@ -151,14 +152,14 @@ public class NegotiationChoiceGUIController {
 			isValidate = true;
 		}
 		try {
-		if (Double.parseDouble(PricetoEnter.getText()) < 1000) {
-			pricevalidationLabel.setText("Price can't be less than 1000");
-			isValidate = false;
-		}}
-		catch(NumberFormatException e) {
+			if (Double.parseDouble(PricetoEnter.getText()) < 1000) {
+				pricevalidationLabel.setText("Price can't be less than 1000");
+				isValidate = false;
+			}
+		} catch (NumberFormatException e) {
 			pricevalidationLabel.setText("Please Enter Number Value");
 		}
-		
+
 		if (rb_automated.isSelected()) {
 			if (!beeta && !steps) {
 				steps = FormValidation.textFieldNotEmpty(negotiationSteps, validationLabel,
@@ -167,24 +168,24 @@ public class NegotiationChoiceGUIController {
 				isValidate = false;
 			} else {
 				try {
-				if (Double.parseDouble(BeetaValue.getText()) < 1) {
-					validationLabel.setText("Format Beeta > 1");
-					isValidate = false;
-				}
-				}catch(NumberFormatException e)
-				{
+					if (Double.parseDouble(BeetaValue.getText()) < 1) {
+						validationLabel.setText("Format Beeta > 1");
+						isValidate = false;
+					}
+				} catch (NumberFormatException e) {
 					validationLabel.setText("Format Beeta > 1");
 				}
 				isValidate = true;
 			}
-				
+
 		}
 
 		return isValidate;
 	}
 
 	/**
-	 * Event Listener on "Start" button to start a negotiation with a dealer 
+	 * Event Listener on "Start" button to start a negotiation with a dealer
+	 * 
 	 * @param event
 	 * @throws IOException
 	 */
@@ -193,32 +194,27 @@ public class NegotiationChoiceGUIController {
 		if (isValidate) {
 			try {
 				bag.setIntialPrice(Double.parseDouble(PricetoEnter.getText()));
-
+				if (rb_manual.isSelected()) {
+					bag.setNegotiationManual(true);
+					// sends a negotiation request to the broker agent
+					bag.sendBackTheChoosenCarsToTheBroker(negotiatedCar, Double.parseDouble(PricetoEnter.getText()));
+					((Node) (event.getSource())).getScene().getWindow().hide();
+				} else {
+					bag.setNegotiationManual(false);
+					try {
+						bag.setBeetavalue(Double.parseDouble(BeetaValue.getText()));
+						bag.setMaxStep(Integer.parseInt(negotiationSteps.getText()));
+						// sends a negotiation request to the broker agent
+						bag.sendBackTheChoosenCarsToTheBroker(negotiatedCar,
+								Double.parseDouble(PricetoEnter.getText()));
+						((Node) (event.getSource())).getScene().getWindow().hide();
+					} catch (NumberFormatException e) {
+						validationLabel.setText("Please enter a number");
+					}
+				}
 			} catch (NumberFormatException e) {
 				pricevalidationLabel.setText("Please enter a number");
 			}
-
-			if (rb_manual.isSelected()) {
-				bag.setNegotiationManual(true);
-			} else {
-				bag.setNegotiationManual(false);
-				try {
-					bag.setBeetavalue(Double.parseDouble(BeetaValue.getText()));
-
-				} catch (NumberFormatException e) {
-					validationLabel.setText("Please enter a number");
-				}
-				try {
-					bag.setMaxStep(Integer.parseInt(negotiationSteps.getText()));
-
-				} catch (NumberFormatException e) {
-					validationLabel.setText("Please enter a number");
-				}
-
-			}
-			// sends a negotiation request to the broker agent
-			bag.sendBackTheChoosenCarsToTheBroker(negotiatedCar, Double.parseDouble(PricetoEnter.getText()));
-			((Node) (event.getSource())).getScene().getWindow().hide();
 		}
 
 	}
@@ -229,7 +225,7 @@ public class NegotiationChoiceGUIController {
 
 	public void setNegotiatedCar(Car car) {
 		this.negotiatedCar = car;
-		setCarDetails(); 
+		setCarDetails();
 	}
 
 	/**
