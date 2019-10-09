@@ -39,7 +39,7 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 	}
 	protected void setup() {
 		// Printout a welcome message
-		System.out.println("Hallo! Broker-agent " + getAID().getName() + " is ready.");
+		System.out.println("Hello! Broker-agent " + getAID().getName() + " is ready.");
 		jsonDB.clearFile(); // clear the data in file when restarting.
 		//catalog = jsonDB.readFile();
 		multiAgentMng = new MultiAgentManager();
@@ -276,7 +276,7 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 	}
 	
 	/**
-	 * Method for sending a list of interested in a same car buyer to the dealer
+	 * Method for sending a list of interested in a same car buyers to a dealer
 	 * (this method will be call when the broker click the menu item "Send request")
 	 */
 	@Override

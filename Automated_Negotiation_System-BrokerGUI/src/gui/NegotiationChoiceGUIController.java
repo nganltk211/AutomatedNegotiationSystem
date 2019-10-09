@@ -106,7 +106,7 @@ public class NegotiationChoiceGUIController {
 	/**
 	 * sets event for the (manual/automated) radio buttons on this GUI.
 	 */
-	public void radiobuttonChangeValue() {
+	private void radiobuttonChangeValue() {
 		group.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
 			@Override
 			public void changed(ObservableValue<? extends Toggle> ov, Toggle oldToggle, Toggle newToggle) {

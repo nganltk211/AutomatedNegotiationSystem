@@ -7,10 +7,11 @@ import model.Car;
 import model.MultipleMessage;
 
 /**
- * MultiAgent negotiation manager
+ * MultiAgent negotiation manager for storing and handling requests from many buyers for a same car. 
  */
 public class MultiAgentManager {
 
+	// list storing requested cars with his interested buyers
 	private ArrayList<MultipleMessage> negotiationList = null;
 
 	public MultiAgentManager() {

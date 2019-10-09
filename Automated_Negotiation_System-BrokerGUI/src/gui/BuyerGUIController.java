@@ -48,7 +48,7 @@ public class BuyerGUIController implements Initializable {
 
 	private BuyerAgent buyerAgent;
 
-	// empty contructor
+	// empty constructor
 	public BuyerGUIController() {
 	}
 
@@ -139,7 +139,6 @@ public class BuyerGUIController implements Initializable {
 		model_id.setPromptText("No Select");
 	}
 
-	
 	/**
 	 * Sets data for car model combobox on GUI
 	 */

@@ -20,9 +20,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
-import model.Car;
 import model.MultipleMessage;
-import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -74,7 +72,7 @@ public class BrokerMatchingListController implements Initializable {
 	/**
 	 * Method for filling the table with data from broker agent
 	 */
-	public void setBuyerListData() {
+	private void setBuyerListData() {
 		ArrayList<MultipleMessage> buyerList = carListofBuyerInterest.getNegotiationList();
 		ObservableList<MultipleMessage> obList = FXCollections.observableArrayList(buyerList);
 
@@ -91,7 +89,7 @@ public class BrokerMatchingListController implements Initializable {
 	/**
 	 * Method for adding menu item "Send request" to each row of the table and setting event handler on it 
 	 */
-	public void setTableMenu() {
+	private void setTableMenu() {
 		brokerWindow.setRowFactory(new Callback<TableView<MultipleMessage>, TableRow<MultipleMessage>>() {
 			@Override
 			public TableRow<MultipleMessage> call(TableView<MultipleMessage> tableView) {

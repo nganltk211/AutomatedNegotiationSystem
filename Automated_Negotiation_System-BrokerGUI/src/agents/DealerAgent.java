@@ -34,12 +34,12 @@ public class DealerAgent extends Agent {
 	private AID brokerAgent;
 	private ObjectMapper o = new ObjectMapper(); // for converting in json-format
 	private Map<String, Double> lastOfferList; // list to store the buyer name with his lastOffer
-	private int maxOffer; // number of buyer, who want to buy a same car
+	private int numberOfBuyers; // number of buyer, who want to buy a same car
 	private boolean multiple = false; // true if more than one buyer want to negotiate a car
 	
 	protected void setup() {
 		// Printout a welcome message
-		System.out.println("Hallo! Dealer-agent " + getAID().getName() + " is ready.");
+		System.out.println("Hello! Dealer-agent " + getAID().getName() + " is ready.");
 		lastOfferList = new Hashtable<>();
 		// starts the DealerGUI
 		new Thread(() -> {
@@ -137,8 +137,8 @@ public class DealerAgent extends Agent {
 				try {
 					messg = o.readValue(content, MultipleMessage.class);
 					Map<String, Double> buyerList = messg.getBuyerList();
-					maxOffer = buyerList.keySet().size(); // number of interested buyers
-					if (maxOffer > 1) {
+					numberOfBuyers = buyerList.keySet().size(); // number of interested buyers
+					if (numberOfBuyers > 1) {
 						multiple = true;
 					}
 					Car choosenCars = messg.getCar();
@@ -405,7 +405,7 @@ public class DealerAgent extends Agent {
 	public void findTheBestOffer(String opponentAgentName, Car negotiatedCar, double price) {
 		lastOfferList.put(opponentAgentName, price); // add to the list
 		// when all best offers of each buyer are calculated
-		if (lastOfferList.size() == maxOffer) {			 
+		if (lastOfferList.size() == numberOfBuyers) {			 
 			 Map.Entry<String, Double> entry = lastOfferList.entrySet().iterator().next();
 			 String bestBuyer= entry.getKey();
 			 double bestOffer= entry.getValue();

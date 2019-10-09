@@ -124,11 +124,11 @@ public class DealerGUIController implements Initializable {
 	private TableView<Car> tableViewID;
 	@FXML
 	private ImageView helpMenu;
+	
 	private CarList listOfCars;
 	private int carCounter;
 	private DealerAgent dealerAgent;
 	private ToggleGroup group;
-
 	private boolean isvalidate = false;
 
 	public DealerGUIController() {
@@ -493,7 +493,7 @@ public class DealerGUIController implements Initializable {
 	}
 
 	/**
-	 * Event Listener on "Load Sample Date" button to load a prepared list of cars.
+	 * Event Listener on "Load Sample Data" button to load a prepared list of cars.
 	 * This is for the testing purpose
 	 * @param event
 	 */

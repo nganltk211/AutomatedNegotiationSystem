@@ -72,7 +72,7 @@ public class BuyerAgent extends Agent {
 	
 	protected void setup() {
 		// Printout a welcome message
-		System.out.println("Hallo! Buyer-agent " + getAID().getName() + " is ready.");
+		System.out.println("Hello! Buyer-agent " + getAID().getName() + " is ready.");
 
 		// starts the BuyerGUI
 		new Thread(() -> {
