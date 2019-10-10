@@ -3,8 +3,10 @@ package gui;
 import java.io.IOException;
 
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /**
@@ -27,6 +29,9 @@ public class BrokerGUI extends Stage {
 			System.err.println("Error by loading fxml-File");
 		}
 		this.setTitle("Broker Agent");
+		Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();		 
+		this.setX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth()/2 - 250);
+		this.setY(primaryScreenBounds.getMinY() + 100);
 		Scene scene = new Scene(window);
 		this.setScene(scene);
 		this.show(); //shows the window

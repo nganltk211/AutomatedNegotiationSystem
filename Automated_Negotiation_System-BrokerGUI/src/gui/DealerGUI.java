@@ -4,8 +4,10 @@ import java.io.IOException;
 
 import agents.DealerAgent;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /**
@@ -30,6 +32,9 @@ public class DealerGUI extends Stage{
 			System.err.println("Error by loading fxml-File");
 		}
 		this.setTitle(dealerAgent.getName());
+		Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();		 
+		this.setX(primaryScreenBounds.getMinX());
+		this.setY(primaryScreenBounds.getMinY());
 		Scene scene = new Scene(window);
 		this.setScene(scene);
 		this.show();
