@@ -410,6 +410,38 @@ public class DealerAgent extends Agent {
 			}
 		});
 	}
+	
+	private class ReceiveLogsFromBuyer extends CyclicBehaviour {
+
+		@Override
+		public void action() {
+			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
+					MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL));
+			ACLMessage msg = myAgent.receive(mt);
+
+			if (msg != null) {
+				String content = msg.getContent();
+				try {
+					Car negotiatedCar = o.readValue(content, Car.class);
+					double offerPrice = Double.parseDouble(msg.getReplyWith());
+					if (!multiple) {
+						System.out.println("\nEnd of the negotiation : ");
+						System.out.println("Sold car: " + negotiatedCar);
+						System.out.println("Sold price: " + offerPrice);
+						
+						confirmSell(negotiatedCar, offerPrice); // confirm with the broker
+					} else {
+						findTheBestOffer(msg.getSender().getName(), negotiatedCar, offerPrice);
+					}
+
+				} catch (IOException e) {
+					System.err.println("Problem by converting a json-format to an object");
+				}
+			} else {
+				block();
+			}
+		}
+	}
 
 	public void findTheBestOffer(String opponentAgentName, Car negotiatedCar, double price) {
 		lastOfferList.put(opponentAgentName, price);
