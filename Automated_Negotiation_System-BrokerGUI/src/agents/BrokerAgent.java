@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gui.DealerGUI;
+import gui.OfferConfirmationGUI;
 import io.JsonIO;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -17,9 +19,12 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import javafx.application.Platform;
 import model.Car;
 import model.CarList;
+import model.Log;
 import model.MultipleMessage;
+import model.Negotiation;
 
 /**
  * Class as representation of an broker-agent
@@ -30,6 +35,7 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 	private ObjectMapper o = new ObjectMapper(); // object supporting converting object to json-form
 	private CarList catalog = new CarList(); // broker's catalog
 	private JsonIO jsonDB = new JsonIO("./DataBase/JsonDB.txt");
+	private JsonIO negotiationDB = new JsonIO("./DataBase/NegotiatioDB.txt");
 	private static final double COMMISION = 100; // fix-commission for each successful negotiation
 	private double receivedCommision; // broker's commission from successful negotiations 
 	private MultiAgentManager buyerList;
@@ -92,8 +98,31 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 					double offerPrice = Double.parseDouble(msg0.getReplyWith());
 					receivedCommision += COMMISION;
 					System.out.println("\nBroker confirm !!! " + agentName + " confirm sell at price: " + offerPrice + "\nBroker Commision: " + receivedCommision);
+					final double offer = offerPrice;
 					offerPrice -= COMMISION;
 					System.out.println("Price of the car after eliminating Broker commission: " + offerPrice);
+					
+					System.out.println("Test 1 constent :" + offer);
+					
+					negotiationDB.openFileReader();
+					Negotiation session = o.readValue(negotiationDB.readLine(), Negotiation.class);
+					negotiationDB.closeFileReader();
+					
+//					System.out.println(session.getBuyerName());
+//					for(Log x : session.getBuyerlog()) {
+//						System.out.println(x.getStep() + " " + x.getBeeta() + " " + x.getOffer());
+//					}
+//					
+//					System.out.println(session.setDealerName());
+//					for(Log x : session.getDealerlog()) {
+//						System.out.println(x.getStep() + " " + x.getBeeta() + " " + x.getOffer());
+//					}
+					
+					new Thread(() -> {
+						Platform.runLater(() -> {
+							OfferConfirmationGUI confirm = new OfferConfirmationGUI(offer, session);
+						});
+					}).start();
 					
 					//Update JsonDB/CarList
 					for(Car c : catalog) {

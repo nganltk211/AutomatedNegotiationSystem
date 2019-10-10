@@ -51,7 +51,7 @@ public class JsonIO {
 	 * Method to open a file for reading purpose
 	 * @return true if opening a file is successful
 	 */
-	private boolean openFileReader() {
+	public boolean openFileReader() {
 		try {
 			try {
 				jsonReader = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"));
@@ -69,7 +69,7 @@ public class JsonIO {
 	/**
 	 * Method to open a text file writer.
 	 */
-	private void openFileWriter() {
+	public void openFileWriter() {
 		try {
 			jsonWriter = new FileWriter(path);
 		} catch (IOException e) {
@@ -80,7 +80,7 @@ public class JsonIO {
 	/**
 	 * Method to close the text file reader.
 	 */
-	private void closeFileReader() {
+	public void closeFileReader() {
 		try {
 			jsonReader.close();
 		} catch (IOException e) {
@@ -91,7 +91,7 @@ public class JsonIO {
 	/**
 	 * Method to close the text file writer.
 	 */
-	private void closeFileWriter() {
+	public void closeFileWriter() {
 		try {
 			jsonWriter.close();
 		} catch (IOException e) {
@@ -104,7 +104,7 @@ public class JsonIO {
 	 * 
 	 * @return context of the line.
 	 */
-	private String readLine() {
+	public String readLine() {
 		String line = null;
 
 		try {
@@ -119,7 +119,7 @@ public class JsonIO {
 	 * Method to append a line in a file
 	 * @param line
 	 */
-	private void writeLine(String line) {
+	public void writeLine(String line) {
 
 		try {
 			jsonWriter.append(line);
