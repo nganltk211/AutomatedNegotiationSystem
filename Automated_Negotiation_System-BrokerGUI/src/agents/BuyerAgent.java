@@ -34,7 +34,7 @@ public class BuyerAgent extends Agent {
 	private boolean manualNegotiation; // true if the negotiation is manual
 	private double intialPrice; // min price
 	private double reservationPrice; // max price
-	private int maxStep; // dealine : max time step
+	private int maxStep; // deadline : max time step
 	private double beetaValue; // beetaValue using time dependent tactics
 	private NegotiationWithDealer nd;
 	

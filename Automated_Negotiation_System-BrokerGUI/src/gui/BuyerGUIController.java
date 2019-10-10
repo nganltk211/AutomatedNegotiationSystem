@@ -3,7 +3,6 @@ package gui;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import model.Car;
-import model.FormValidation;
 import javafx.scene.text.Text;
 import javafx.scene.control.Button;
 

@@ -37,6 +37,7 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 	public BrokerAgent() {
 		registerO2AInterface(BrokerAgentInterface.class, this);
 	}
+	
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hello! Broker-agent " + getAID().getName() + " is ready.");

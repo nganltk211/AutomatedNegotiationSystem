@@ -15,7 +15,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import model.Car;
-import model.FormValidation;
 
 /**
  * A Controller class of NegotiationChoiceGUI. The logic of GUI-Elements will be

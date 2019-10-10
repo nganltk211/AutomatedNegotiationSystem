@@ -29,7 +29,6 @@ import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import model.Car;
 import model.CarList;
-import model.FormValidation;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
