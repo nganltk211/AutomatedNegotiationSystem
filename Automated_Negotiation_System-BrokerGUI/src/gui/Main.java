@@ -14,6 +14,7 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
-		primaryStage = new BrokerGUI();
+		//primaryStage = new BrokerGUI();
+		primaryStage = new OfferConfirmationGUI(1000);
 	}
 }

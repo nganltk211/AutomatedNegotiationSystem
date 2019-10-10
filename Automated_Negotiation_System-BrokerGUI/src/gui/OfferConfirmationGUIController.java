@@ -15,7 +15,7 @@ public class OfferConfirmationGUIController {
     @FXML
     private Label acceptedPrice;
     
-    private Negotiation Session;
+    private Negotiation session;
     
     public void setOffer(double price) {
     	acceptedPrice.setText(String.valueOf(price));
@@ -23,6 +23,7 @@ public class OfferConfirmationGUIController {
     
     @FXML
     public void viewLineChart(ActionEvent event) {
-    	
+    	System.out.println("Test Chart ");
+    	LineChartGUI gui = new LineChartGUI(this.session);
     }
 }
