@@ -31,7 +31,7 @@ public class OfferConfirmationGUIController {
     
     @FXML
     public void viewLineChart(ActionEvent event) {
-    	System.out.println("Test Chart ");
+    	//System.out.println("Test Chart ");
     	LineChartGUI gui = new LineChartGUI(this.session);
     }
 }
