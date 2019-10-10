@@ -4,18 +4,15 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/**
+ * Class as representation for message used in multiple negotiation
+ */
 public class MultipleMessage {
 
 	private Car car;
-	private Map<String, Double> buyerList;
-	
+	private Map<String, Double> buyerList; // a map containing buyer name with his last offer	
 	private String buyerListString;
 	
-	@Override
-	public String toString() {
-		return "MultipleMessage [car=" + car + ", buyerList=" + buyerList + "]";
-	}
-
 	public MultipleMessage() {		
 	}
 	
@@ -50,7 +47,6 @@ public class MultipleMessage {
 		{
 			newList += element.getKey() + " " + element.getValue() + "\n";
 		}
-		return newList;
-		
+		return newList;		
 	}
 }

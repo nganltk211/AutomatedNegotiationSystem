@@ -1,7 +1,6 @@
 package io;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -23,12 +22,12 @@ public class FileIO {
 	protected BufferedReader csvReader= null;
 	protected FileWriter csvWriter = null;
 	private String path;
+	
 	/**
 	 * Method to open a text file.
 	 * @param path : File path.
 	 * @return true, if successful.
 	 */
-	
 	public FileIO(String setpath){
 		path = setpath;
 	}

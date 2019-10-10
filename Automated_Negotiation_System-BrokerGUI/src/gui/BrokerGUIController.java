@@ -56,7 +56,7 @@ public class BrokerGUIController {
 		// port 8888
 		System.out.println("Launching the platform Main Container...");
 		Profile pMain = new ProfileImpl(null, 8888, null);
-		pMain.setParameter(Profile.GUI, "true");
+		//pMain.setParameter(Profile.GUI, "true");
 		mainCtrl = rt.createMainContainer(pMain);
 
 		// Create and start an agent of class BrokerAgent
@@ -110,11 +110,13 @@ public class BrokerGUIController {
 		}
 	}
 	
-	public void onBrokerWindow(ActionEvent event) {
-		
+	/**
+	 * Sets event for the "Broker Window" button.
+	 * @param event
+	 */
+	public void onBrokerWindow(ActionEvent event) {	
+		// shows BrokerMatchingList GUI
 		BrokerMatchingList window = new BrokerMatchingList(brokerAgentCtrl);
-		
-
 	}
 
 }

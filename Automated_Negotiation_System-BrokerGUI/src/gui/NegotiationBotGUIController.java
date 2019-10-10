@@ -23,7 +23,9 @@ public class NegotiationBotGUIController {
 	private Label lb_newoffer;
 	@FXML
 	private Label lb_price;
-
+	@FXML
+	private Label label_offerSender;
+	
 	@FXML
 	private Button btn_accept;
 	@FXML
@@ -101,5 +103,6 @@ public class NegotiationBotGUIController {
 
 	public void setPrice(double price) {
 		offer_price.setText(String.valueOf(price));
+		label_offerSender.setText("Offer from " + opponentAgentName);
 	}
 }

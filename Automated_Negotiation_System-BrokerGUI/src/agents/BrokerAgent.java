@@ -38,17 +38,18 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 	private JsonIO negotiationDB = new JsonIO("./DataBase/NegotiatioDB.txt");
 	private static final double COMMISION = 100; // fix-commission for each successful negotiation
 	private double receivedCommision; // broker's commission from successful negotiations 
-	private MultiAgentManager buyerList;
+	private MultiAgentManager multiAgentMng; // deals with request from many buyers for a same car
 	
 	public BrokerAgent() {
 		registerO2AInterface(BrokerAgentInterface.class, this);
 	}
+	
 	protected void setup() {
 		// Printout a welcome message
-		System.out.println("Hallo! Broker-agent " + getAID().getName() + " is ready.");
+		System.out.println("Hello! Broker-agent " + getAID().getName() + " is ready.");
 		jsonDB.clearFile(); // clear the data in file when restarting.
 		//catalog = jsonDB.readFile();
-		buyerList = new MultiAgentManager();
+		multiAgentMng = new MultiAgentManager();
 		
 		// Register the car-broker service in the yellow pages
 		DFAgentDescription dfd = new DFAgentDescription();
@@ -134,8 +135,8 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 					String jsonInString = o.writeValueAsString(catalog);
 					jsonDB.clearFile();
 					jsonDB.writeToFile(jsonInString);
-					buyerList.removeCarFromList(negotiatedCar);
-					//System.out.println("Broker: Broker cataloge: \n" + catalog);
+					multiAgentMng.removeCarFromList(negotiatedCar); // remove the car from controlling list
+
 				} catch (IOException e) {
 					e.printStackTrace();
 				}								
@@ -231,12 +232,6 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 	 * This behavior of the broker agent is for connecting the buyer with dealer.
 	 */
 	private class RequestFromBuyersToConnectToDealer extends CyclicBehaviour {
-
-		private MultipleMessage m;
-		
-		public RequestFromBuyersToConnectToDealer() {
-			m = new MultipleMessage(null);
-		}
 		
 		@Override
 		public void action() {
@@ -254,8 +249,8 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 				try {
 					Car choosenCar = o.readValue(choosenCarJson, Car.class);
 					System.out.println(choosenCar + "\n");
-					buyerList.addBuyer(choosenCar,buyerName, Double.parseDouble(firstOfferPrice));
-					//System.out.println(buyerList + "\n");	
+					// adds a car with interested buyer to the controlling list
+					multiAgentMng.addBuyer(choosenCar,buyerName, Double.parseDouble(firstOfferPrice));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -309,16 +304,18 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 		
 		return endList;
 	}
-
-
-	// Send message (chosen car, first offer price, name of the buyer agent) to the dealer, who offer the chosen car
+	
+	/**
+	 * Method for sending a list of interested in a same car buyers to a dealer
+	 * (this method will be call when the broker click the menu item "Send request")
+	 */
 	@Override
 	public void sendBuyerListDataToDealer(MultipleMessage message) {
 		addBehaviour(new OneShotBehaviour() {
-
 			@Override
 			public void action() {
-				try {				
+				try {		
+					// Send message (chosen car, first offer price, name of the buyer agent) to the dealer, who offer the chosen car
 					ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
 					mess.addReceiver(AgentSupport.findAgentWithName(myAgent, message.getCar().getAgent()));
 					mess.setContent(o.writeValueAsString(message));
@@ -333,8 +330,9 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 
 	@Override
 	public MultiAgentManager getMultiAgentManager() {
-		return buyerList;
+		return multiAgentMng;
 	}
+	
 	@Override
 	public double getCommision() {
 		return receivedCommision;

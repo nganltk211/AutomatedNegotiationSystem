@@ -32,16 +32,14 @@ public class DealerAgent extends Agent {
 
 	private static final long serialVersionUID = -8414132078026686821L;
 	private AID brokerAgent;
-	private ObjectMapper o = new ObjectMapper();
-	private NegotiationWithBuyer nb;
-	private MultiAgentManager agentManager = new MultiAgentManager();
-	private Map<String, Double> lastOfferList;
-	private int maxOffer;
-	private boolean multiple = false;
+	private ObjectMapper o = new ObjectMapper(); // for converting in json-format
+	private Map<String, Double> lastOfferList; // list to store the buyer name with his lastOffer
+	private int numberOfBuyers; // number of buyer, who want to buy a same car
+	private boolean multiple = false; // true if more than one buyer want to negotiate a car
 	
 	protected void setup() {
 		// Printout a welcome message
-		System.out.println("Hallo! Dealer-agent " + getAID().getName() + " is ready.");
+		System.out.println("Hello! Dealer-agent " + getAID().getName() + " is ready.");
 		lastOfferList = new Hashtable<>();
 		// starts the DealerGUI
 		new Thread(() -> {
@@ -71,8 +69,7 @@ public class DealerAgent extends Agent {
 
 		// Adding behaviors to the dealer agent
 		addBehaviour(new StartTheNegotiationWithBuyer());
-		nb = new NegotiationWithBuyer();
-		addBehaviour(nb);
+		addBehaviour(new NegotiationWithBuyer());
 		addBehaviour(new EndTheNegotiation());
 		addBehaviour(new GetRefuseMessageFromTheBuyer());
 	}
@@ -115,7 +112,7 @@ public class DealerAgent extends Agent {
 		});
 	}
 
-	// -----------------------------------------------------------------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------------------------------------
 	// Negotiation part
 
 	/**
@@ -140,8 +137,8 @@ public class DealerAgent extends Agent {
 				try {
 					messg = o.readValue(content, MultipleMessage.class);
 					Map<String, Double> buyerList = messg.getBuyerList();
-					maxOffer = buyerList.keySet().size();
-					if (maxOffer > 1) {
+					numberOfBuyers = buyerList.keySet().size(); // number of interested buyers
+					if (numberOfBuyers > 1) {
 						multiple = true;
 					}
 					Car choosenCars = messg.getCar();
@@ -165,14 +162,10 @@ public class DealerAgent extends Agent {
 	private class NegotiationBehaviourWithBuyerFirstOffer extends OneShotBehaviour {
 		private Map<String, Double> buyerList;
 		private Car negotiatedCar;
-		private double offerPrice;
 
 		public NegotiationBehaviourWithBuyerFirstOffer(MultipleMessage brokerMessage) {
 			buyerList = brokerMessage.getBuyerList();
 			negotiatedCar = brokerMessage.getCar();
-
-			// Add agent to negotiation list
-			// agentManager.addSession(negotiatedCar.getCarId(), buyerAgentName, 0);
 		}
 
 		@Override
@@ -180,9 +173,9 @@ public class DealerAgent extends Agent {
 			for (String buyerName : buyerList.keySet()) {
 				ACLMessage mess = new ACLMessage(ACLMessage.PROPOSE);
 				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, buyerName));
-				// This is automate negotiation
+				// This is automated negotiation
 				if (!negotiatedCar.getisNegotiatable()) {
-					offerPrice = negotiatedCar.getMaxprice();
+					double offerPrice = negotiatedCar.getMaxprice();
 					System.out.println(myAgent.getName() + ": First offer to the buyer: " + offerPrice + "\n");
 					String jsonInString;
 					try {
@@ -197,6 +190,7 @@ public class DealerAgent extends Agent {
 					}
 				} else {
 					// manual negotiation
+					double offerPrice = buyerList.get(buyerName);
 					new Thread(() -> {
 						Platform.runLater(() -> {
 							NegotiationBotGUI bot = new NegotiationBotGUI(myAgent, buyerName, negotiatedCar,
@@ -254,25 +248,17 @@ public class DealerAgent extends Agent {
 								// accept the offer from the buyer
 								if (!multiple) {
 									acceptOffer(buyerName, messObject, offerPrice);
-									//step = 1;
 								} else {
 									findTheBestOffer(buyerName, messObject, offerPrice);
 								}	
-								// Remove agent from negotiation list
-								//agentManager.terminateSession(buyerName);
 							} else {
 								// make a counter-offer to the buyer
-
 								makeACounterOffer(buyerName, messObject, nextPrice, stepD);
-								// Update buyer agent steps
-								//agentManager.incrementSteps(buyerName, step);
 							}
 						} else {
 							// when reaching the deadline
 							endTheNegotiationBecauseOfOutOfStep(buyerName);
 							findTheBestOffer(buyerName, messObject, 0.0); // add this buyer to the list
-							// Remove agent from negotiation list
-							//agentManager.terminateSession(buyerName);
 						}
 					}
 				} catch (IOException e1) {
@@ -304,13 +290,12 @@ public class DealerAgent extends Agent {
 					if (!multiple) {
 						System.out.println("\nEnd of the negotiation : ");
 						System.out.println("Sold car: " + negotiatedCar);
-						System.out.println("Sold price: " + offerPrice);
-						
+						System.out.println("Sold price: " + offerPrice);					
 						confirmSell(negotiatedCar, offerPrice); // confirm with the broker
 					} else {
+						// add the buyer to the list for finding the best buyer
 						findTheBestOffer(msg.getSender().getName(), negotiatedCar, offerPrice);
 					}
-
 				} catch (IOException e) {
 					System.err.println("Problem by converting a json-format to an object");
 				}
@@ -443,27 +428,38 @@ public class DealerAgent extends Agent {
 		}
 	}
 
+	/**
+	 * Method to find the buyer (the one who is willing to pay the most)
+	 * @param opponentAgentName : buyer name
+	 * @param negotiatedCar 
+	 * @param price : offer price
+	 */
 	public void findTheBestOffer(String opponentAgentName, Car negotiatedCar, double price) {
-		lastOfferList.put(opponentAgentName, price);
-		if (lastOfferList.size() == maxOffer) {
+		lastOfferList.put(opponentAgentName, price); // add to the list
+		// when all best offers of each buyer are calculated
+		if (lastOfferList.size() == numberOfBuyers) {			 
 			 Map.Entry<String, Double> entry = lastOfferList.entrySet().iterator().next();
 			 String bestBuyer= entry.getKey();
 			 double bestOffer= entry.getValue();
 			 for (Entry<String, Double> element : lastOfferList.entrySet()) {
-				 if (element.getValue() > bestOffer) {
+				// find the best buyer by comparing the last offer price
+				 if (element.getValue() > bestOffer) { 
 					 bestOffer = element.getValue();
 					 bestBuyer = element.getKey();
 				 }
 			 }
-			 System.out.println("Dealer: Best buyer: " + bestBuyer + " with offer: " + bestOffer);
-			 // send accept message to the best buyer
-			 acceptOffer(bestBuyer,negotiatedCar,bestOffer);	
-			 
-			// remove the best buyer from the list
-			 lastOfferList.remove(bestBuyer, bestOffer); 
+			 if (bestOffer != 0) { // when a best buyer is found
+				 System.out.println("Dealer: Best buyer: " + bestBuyer + " with offer: " + bestOffer);
+				 // send accept message to the best buyer
+				 acceptOffer(bestBuyer,negotiatedCar,bestOffer);		 
+				// remove the best buyer from the list
+				 lastOfferList.remove(bestBuyer, bestOffer); 
+			 }		 
 			 // send reject message to remaining buyers
 			 for (Entry<String, Double> element : lastOfferList.entrySet()) {
-				 reachNoAgreement(element.getKey());
+				 if (element.getValue() != 0) {
+					 reachNoAgreement(element.getKey());
+				 }		 
 			 }
 			 lastOfferList.clear();
 		}	

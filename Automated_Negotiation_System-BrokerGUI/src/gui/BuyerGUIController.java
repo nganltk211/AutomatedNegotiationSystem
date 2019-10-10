@@ -3,7 +3,6 @@ package gui;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import model.Car;
-import model.FormValidation;
 import javafx.scene.text.Text;
 import javafx.scene.control.Button;
 
@@ -48,7 +47,7 @@ public class BuyerGUIController implements Initializable {
 
 	private BuyerAgent buyerAgent;
 
-	// empty contructor
+	// empty constructor
 	public BuyerGUIController() {
 	}
 
@@ -139,7 +138,6 @@ public class BuyerGUIController implements Initializable {
 		model_id.setPromptText("No Select");
 	}
 
-	
 	/**
 	 * Sets data for car model combobox on GUI
 	 */

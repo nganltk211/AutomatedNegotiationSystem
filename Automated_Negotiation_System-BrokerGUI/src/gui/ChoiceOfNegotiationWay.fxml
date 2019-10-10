@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="413.0" prefWidth="516.9998779296875" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.NegotiationChoiceGUIController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="413.0" prefWidth="516.9998779296875" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.NegotiationChoiceGUIController">
   <children>
     <Label layoutX="47.0" layoutY="30.0" text="Let start the negotiation">
       <font>
@@ -47,19 +51,17 @@
     <Label font="$x1" layoutX="276.0" layoutY="241.0" text="Price" />
     <Label id="bodytype" fx:id="price" font="$x2" layoutX="397.0" layoutY="241.0" text="No Details" />
     <Label fx:id="priceLable" font="$x1" layoutX="275.0" layoutY="316.0" text="Offer price" visible="true" />
-    <TextField fx:id="PricetoEnter" layoutX="371.0" layoutY="314.0" prefWidth="95.0" visible="true" />
-    <TextField fx:id="BeetaValue" layoutX="325.0" layoutY="359.0" prefHeight="25.0" prefWidth="52.0" />
-    <Label fx:id="Beetalable" font="$x1" layoutX="274.0" layoutY="361.0" text="Beeta" />
+    <TextField id="PricetoEnter" fx:id="pricetoEnter" layoutX="371.0" layoutY="314.0" prefWidth="95.0" visible="true" />
+    <TextField id="BeetaValue" fx:id="beetaValue" layoutX="325.0" layoutY="359.0" prefHeight="25.0" prefWidth="52.0" />
+    <Label id="Beetalable" fx:id="beetalable" font="$x1" layoutX="274.0" layoutY="361.0" text="Beeta" />
     <Label fx:id="stepsLable" font="$x1" layoutX="446.0" layoutY="361.0" text="Steps" />
     <TextField fx:id="negotiationSteps" layoutX="393.0" layoutY="359.0" prefHeight="25.0" prefWidth="52.0" />
     <Label fx:id="pricevalidationLabel" layoutX="371.0" layoutY="339.0" text="Label" textFill="RED">
-         <font>
-            <Font name="System Bold" size="12.0" />
-         </font></Label>
-    <Label fx:id="validationLabel" layoutX="325.0" layoutY="384.0" text="Label" textFill="RED">
-         <font>
-            <Font name="System Bold" size="12.0" />
-         </font></Label>
+      <font>
+        <Font name="System Bold" size="12.0" fx:id="x3" />
+      </font>
+    </Label>
+    <Label fx:id="validationLabel" font="$x3" layoutX="325.0" layoutY="384.0" text="Label" textFill="RED" />
     <Label id="priceLable" fx:id="maxprice_buyer" font="$x1" layoutX="276.0" layoutY="282.0" text="Max price" visible="true" />
     <TextField id="PricetoEnter" fx:id="maxPriceFromBuyer" layoutX="371.0" layoutY="282.0" prefWidth="95.0" visible="true" />
     <AnchorPane layoutX="29.0" layoutY="80.0" opacity="0.25" prefHeight="193.0" prefWidth="466.0" style="-fx-background-color:  #b3b6b7; " />

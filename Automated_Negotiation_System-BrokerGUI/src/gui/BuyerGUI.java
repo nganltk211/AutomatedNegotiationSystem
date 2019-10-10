@@ -3,8 +3,10 @@ package gui;
 import java.io.IOException;
 import agents.BuyerAgent;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /**
@@ -32,6 +34,9 @@ public class BuyerGUI extends Stage{
 			System.err.println("Error by loading fxml-File");
 		}
 		this.setTitle(buyerAgent.getName());
+		Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();		 
+		this.setX(primaryScreenBounds.getMinX() + primaryScreenBounds.getWidth() - 600);
+		this.setY(primaryScreenBounds.getMinY());
 		Scene scene = new Scene(window);
 		this.setScene(scene);
 		this.show(); // shows the window
