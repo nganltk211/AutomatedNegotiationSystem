@@ -21,6 +21,14 @@ public class OfferConfirmationGUIController {
     	acceptedPrice.setText(String.valueOf(price));
     }
     
+    public void setNegotiation(Negotiation session) {
+    	this.session = session;
+    }
+    
+    public Negotiation getNegotiation() {
+    	return this.session;
+    }
+    
     @FXML
     public void viewLineChart(ActionEvent event) {
     	System.out.println("Test Chart ");
