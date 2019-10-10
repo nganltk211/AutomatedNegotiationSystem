@@ -25,6 +25,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import model.Car;
@@ -258,8 +259,9 @@ public class DealerGUIController implements Initializable {
 	 * Event handler for beetaHelp option (to show the meaning of beeta to users)
 	 * @param event
 	 */
-	public void openBeetaHelp(ActionEvent event) {
-
+	@FXML
+	public void openBeetaHelp(MouseEvent event) {
+		BeetaHelpGUI gui = new BeetaHelpGUI();
 	}
 
 	/**
