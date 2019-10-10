@@ -21,8 +21,8 @@ public class LineChartGUI extends Stage{
 		
 		try {
 			window = loader.load();
-			//LineChartGUIController controller = loader.<LineChartGUIController>getController();
-			//controller.setNegotiation(session);
+			LineChartGUIController controller = loader.<LineChartGUIController>getController();
+			controller.setNegotiation(session);
 		} catch (IOException e) {
 			System.err.println("Error by loading fxml-File");
 		}

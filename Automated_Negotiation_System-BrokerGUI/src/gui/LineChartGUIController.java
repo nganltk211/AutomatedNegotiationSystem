@@ -10,7 +10,7 @@ import model.Negotiation;
 public class LineChartGUIController {
 	
 	@FXML
-    private LineChart<?, ?> LineChart;
+    private LineChart<String, Number> LineChart;
 
     @FXML
     private CategoryAxis x;
@@ -30,18 +30,18 @@ public class LineChartGUIController {
     	x.setLabel("T");
     	y.setLabel("Price");
     	
-    	XYChart.Series buyer = new XYChart.Series();
+    	XYChart.Series<String, Number> buyer = new XYChart.Series<String, Number>();
     	buyer.setName(session.getBuyerName());
     	
-    	XYChart.Series dealer = new XYChart.Series();
+    	XYChart.Series<String, Number> dealer = new XYChart.Series<String, Number>();
     	dealer.setName(session.getDealerName());
     	
     	for(Log x : session.getBuyer()) {
-    		buyer.getData().add(new XYChart.Data(x.getStep(), x.getOffer()));
+    		buyer.getData().add(new XYChart.Data<String, Number>(String.valueOf(x.getStep()), x.getOffer()));
     	}
     	
     	for(Log x : session.getDealer()) {
-    		dealer.getData().add(new XYChart.Data(x.getStep(), x.getOffer()));
+    		dealer.getData().add(new XYChart.Data<String, Number>(String.valueOf(x.getStep()), x.getOffer()));
     	}
     			
     	/*XYChart.Series series = new XYChart.Series();
