@@ -43,6 +43,14 @@ public class LineChartGUIController {
     	for(Log x : session.getDealer()) {
     		dealer.getData().add(new XYChart.Data<String, Number>(String.valueOf(x.getStep()), x.getOffer()));
     	}
+    	
+    	y.setAutoRanging(false);
+    	y.setUpperBound(session.getDealer().get(0).getOffer() + 100);
+    	
+    	
+    	y.setAutoRanging(false);
+    	y.setLowerBound(session.getBuyer().get(0).getOffer() - 100);
+    	
     			
     	/*XYChart.Series series = new XYChart.Series();
     	
