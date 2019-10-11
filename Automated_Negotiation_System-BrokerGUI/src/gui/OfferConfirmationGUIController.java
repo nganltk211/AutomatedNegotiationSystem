@@ -5,7 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import model.Negotiation;
+import model.NegotiationLog;
 
 public class OfferConfirmationGUIController {
 
@@ -15,17 +15,17 @@ public class OfferConfirmationGUIController {
     @FXML
     private Label acceptedPrice;
     
-    private Negotiation session;
+    private NegotiationLog session;
     
     public void setOffer(double price) {
     	acceptedPrice.setText(String.valueOf(price));
     }
     
-    public void setNegotiation(Negotiation session) {
+    public void setNegotiation(NegotiationLog session) {
     	this.session = session;
     }
     
-    public Negotiation getNegotiation() {
+    public NegotiationLog getNegotiation() {
     	return this.session;
     }
     

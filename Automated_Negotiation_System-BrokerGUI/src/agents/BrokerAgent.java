@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gui.DealerGUI;
 import gui.OfferConfirmationGUI;
 import io.JsonIO;
 import jade.core.Agent;
@@ -22,9 +21,8 @@ import jade.lang.acl.MessageTemplate;
 import javafx.application.Platform;
 import model.Car;
 import model.CarList;
-import model.Log;
 import model.MultipleMessage;
-import model.Negotiation;
+import model.NegotiationLog;
 
 /**
  * Class as representation of an broker-agent
@@ -104,7 +102,7 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 					System.out.println("Price of the car after eliminating Broker commission: " + offerPrice);
 					
 					negotiationDB.openFileReader();
-					Negotiation session = o.readValue(negotiationDB.readLine(), Negotiation.class);
+					NegotiationLog session = o.readValue(negotiationDB.readLine(), NegotiationLog.class);
 					negotiationDB.closeFileReader();
 										
 					new Thread(() -> {

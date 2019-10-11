@@ -6,7 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import model.Negotiation;
+import model.NegotiationLog;
 
 public class OfferConfirmationGUI extends Stage {
 
@@ -15,7 +15,7 @@ public class OfferConfirmationGUI extends Stage {
 	/**
 	 * Constructor of the class.
 	 */
-	public OfferConfirmationGUI(double price, Negotiation session){
+	public OfferConfirmationGUI(double price, NegotiationLog session){
 		Parent window = null;
 		// loads GUI-Elements from the BrokerGUI.fxml file
 		loader = new FXMLLoader(getClass().getResource("OfferConfirmationGUI.fxml"));

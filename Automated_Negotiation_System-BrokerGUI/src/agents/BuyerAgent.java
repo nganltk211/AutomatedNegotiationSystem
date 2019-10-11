@@ -25,8 +25,8 @@ import jade.lang.acl.MessageTemplate;
 import javafx.application.Platform;
 import model.Car;
 import model.CarList;
-import model.Log;
-import model.Negotiation;
+import model.LogSession;
+import model.NegotiationLog;
 
 /**
  * Class as representation of an buyer agent
@@ -44,8 +44,8 @@ public class BuyerAgent extends Agent {
 
 	private ObjectMapper o = new ObjectMapper();
 	private JsonIO negotiationDB = new JsonIO("./DataBase/NegotiatioDB.txt");
-	private ArrayList<Log> buyerLogs = new ArrayList<Log>();
-	private ArrayList<Log> dealerLogs = new ArrayList<Log>();
+	private ArrayList<LogSession> buyerLogs = new ArrayList<LogSession>();
+	private ArrayList<LogSession> dealerLogs = new ArrayList<LogSession>();
 
 	public double getIntialPrice() {
 		return intialPrice;
@@ -182,7 +182,7 @@ public class BuyerAgent extends Agent {
 	public void sendBackTheChoosenCarsToTheBroker(Car negotiatedCar, double firstOfferPrice) {
 		if (manualNegotiation) {
 			// Adding Buyers logs into list
-			Log blog = new Log(0, beetaValue, firstOfferPrice);
+			LogSession blog = new LogSession(0, beetaValue, firstOfferPrice);
 			buyerLogs.add(blog);
 		}
 		addBehaviour(new OneShotBehaviour() {
@@ -263,7 +263,7 @@ public class BuyerAgent extends Agent {
 					String dealerTimeStep = msg.getInReplyTo();
 					int dealerSteps = Integer.parseInt(dealerTimeStep);
 					// adds to dealer log
-					Log dlog = new Log(dealerSteps, messObject.getBeeta(), offerPrice);
+					LogSession dlog = new LogSession(dealerSteps, messObject.getBeeta(), offerPrice);
 					dealerLogs.add(dlog);
 					if (manualNegotiation) {
 						// for manual negotiation
@@ -339,7 +339,7 @@ public class BuyerAgent extends Agent {
 	 */
 	public void makeACounterOffer(String opponentAgentName, Car negotiatedCar, double price, String dealerTimeStep, int buyerStep) {
 		// Adding Buyers logs into list
-		Log blog = new Log(buyerStep, beetaValue, price);
+		LogSession blog = new LogSession(buyerStep, beetaValue, price);
 		buyerLogs.add(blog);
 		addBehaviour(new OneShotBehaviour() {
 			@Override
@@ -465,14 +465,14 @@ public class BuyerAgent extends Agent {
 	}
 
 	private void saveLogs(String dealerName) {
-		Negotiation session = new Negotiation(this.getName(), dealerName, buyerLogs, dealerLogs);
+		NegotiationLog session = new NegotiationLog(this.getName(), dealerName, buyerLogs, dealerLogs);
 		try {
 			String jsonString = o.writeValueAsString(session);
 			negotiationDB.openFileWriter();
 			negotiationDB.writeLine(jsonString);
 			negotiationDB.closeFileWriter();
-			buyerLogs = new ArrayList<Log>();
-			dealerLogs = new ArrayList<Log>();
+			buyerLogs = new ArrayList<LogSession>();
+			dealerLogs = new ArrayList<LogSession>();
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}

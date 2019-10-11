@@ -2,20 +2,20 @@ package model;
 
 import java.io.Serializable;
 
-public class Log implements Serializable{
+public class LogSession implements Serializable{
 
 	private static final long serialVersionUID = 460127305922452230L;
 	private int step;
 	private double beeta;
 	private double offer;
 	
-	public Log(int step, double beeta, double offer) {
+	public LogSession(int step, double beeta, double offer) {
 		this.step = step;
 		this.beeta = beeta;
 		this.offer = offer;
 	}
 	
-	public Log() {
+	public LogSession() {
 		
 	}
 	

@@ -6,14 +6,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import model.Log;
-import model.Negotiation;
+import model.LogSession;
+import model.NegotiationLog;
 
 public class LineChartGUI extends Stage{
 	
 	private FXMLLoader loader; // uses to load the fxml-file
 	
-	public LineChartGUI(Negotiation session) {
+	public LineChartGUI(NegotiationLog session) {
 		
 		Parent window = null;
 		// loads GUI-Elements from the BrokerGUI.fxml file

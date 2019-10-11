@@ -4,8 +4,8 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import model.Log;
-import model.Negotiation;
+import model.LogSession;
+import model.NegotiationLog;
 
 public class LineChartGUIController {
 	
@@ -18,9 +18,9 @@ public class LineChartGUIController {
     @FXML
     private NumberAxis y;
     
-    private Negotiation session;
+    private NegotiationLog session;
     
-    public void setNegotiation(Negotiation session) {
+    public void setNegotiation(NegotiationLog session) {
     	this.session = session;
     	chart();
     }
@@ -36,18 +36,18 @@ public class LineChartGUIController {
     	XYChart.Series<String, Number> dealer = new XYChart.Series<String, Number>();
     	dealer.setName(session.getDealerName());
     	
-    	for(Log x : session.getBuyer()) {
+    	for(LogSession x : session.getBuyerLog()) {
     		buyer.getData().add(new XYChart.Data<String, Number>(String.valueOf(x.getStep()), x.getOffer()));
     	}
     	
-    	for(Log x : session.getDealer()) {
+    	for(LogSession x : session.getDealerLog()) {
     		dealer.getData().add(new XYChart.Data<String, Number>(String.valueOf(x.getStep()), x.getOffer()));
     	}
     	
     	y.setAutoRanging(false);
-    	y.setUpperBound(session.getDealer().get(0).getOffer() + 100);  	
+    	y.setUpperBound(session.getDealerLog().get(0).getOffer() + 100);  	
     	y.setAutoRanging(false);
-    	y.setLowerBound(session.getBuyer().get(0).getOffer() - 100);
+    	y.setLowerBound(session.getBuyerLog().get(0).getOffer() - 100);
     	
     	LineChart.getData().addAll(buyer, dealer);
     }
