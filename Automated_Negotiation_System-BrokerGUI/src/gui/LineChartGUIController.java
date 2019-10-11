@@ -45,22 +45,9 @@ public class LineChartGUIController {
     	}
     	
     	y.setAutoRanging(false);
-    	y.setUpperBound(session.getDealer().get(0).getOffer() + 100);
-    	
-    	
+    	y.setUpperBound(session.getDealer().get(0).getOffer() + 100);  	
     	y.setAutoRanging(false);
     	y.setLowerBound(session.getBuyer().get(0).getOffer() - 100);
-    	
-    			
-    	/*XYChart.Series series = new XYChart.Series();
-    	
-    	series.setName("Dealer");
-    	
-    	series.getData().add(new XYChart.Data("1", 23));
-    	series.getData().add(new XYChart.Data("2", 33));
-    	series.getData().add(new XYChart.Data("3", 33));
-    	series.getData().add(new XYChart.Data("4", 53));
-    	series.getData().add(new XYChart.Data("5", 63));*/
     	
     	LineChart.getData().addAll(buyer, dealer);
     }

@@ -38,6 +38,7 @@ public class NegotiationBotGUIController {
 	private Agent agent;
 	private String opponentAgentName; // name of opponent agent
 	private Car negotiatedCar;
+	private int step;
 
 	// empty constructor
 	public NegotiationBotGUIController() {
@@ -80,11 +81,11 @@ public class NegotiationBotGUIController {
 	public void buttonSendClick(ActionEvent event) {
 		if (agent instanceof DealerAgent) {
 			DealerAgent dag = (DealerAgent) agent;
-			dag.makeACounterOffer(opponentAgentName, negotiatedCar, Double.valueOf(counteroffer_price.getText()),0);
+			dag.makeACounterOffer(opponentAgentName, negotiatedCar, Double.valueOf(counteroffer_price.getText()), step);
 			((Node) (event.getSource())).getScene().getWindow().hide();			
 		} else {
 			BuyerAgent bag = (BuyerAgent) agent;
-			bag.makeACounterOffer(opponentAgentName, negotiatedCar, Double.valueOf(counteroffer_price.getText()),"0");
+			bag.makeACounterOffer(opponentAgentName, negotiatedCar, Double.valueOf(counteroffer_price.getText()), String.valueOf(step), step);
 			((Node) (event.getSource())).getScene().getWindow().hide();
 		}
 	}
@@ -101,6 +102,10 @@ public class NegotiationBotGUIController {
 		this.negotiatedCar = car;
 	}
 
+	public void setStep(int step) {
+		this.step = step;
+	}
+	
 	public void setPrice(double price) {
 		offer_price.setText(String.valueOf(price));
 		label_offerSender.setText("Offer from " + opponentAgentName);

@@ -24,7 +24,7 @@ public class NegotiationBotGUI extends Stage {
 	 * @param negotiatedCar
 	 * @param offerPrice
 	 */
-	public NegotiationBotGUI(Agent agent, String opponentAgentName, Car negotiatedCar, double offerPrice){
+	public NegotiationBotGUI(Agent agent, String opponentAgentName, Car negotiatedCar, double offerPrice, int step){
 		Parent window = null;
 		loader = new FXMLLoader(getClass().getResource("NegotiationBot.fxml"));
 		try {
@@ -36,6 +36,7 @@ public class NegotiationBotGUI extends Stage {
 			controller.setOpponentAgentName(opponentAgentName);
 			controller.setNegotiatedCar(negotiatedCar);
 			controller.setPrice(offerPrice);
+			controller.setStep(step);
 		} catch (IOException e) {
 			System.err.println("Error by loading fxml-File");
 		}

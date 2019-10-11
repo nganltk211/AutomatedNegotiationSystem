@@ -103,22 +103,10 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 					offerPrice -= COMMISION;
 					System.out.println("Price of the car after eliminating Broker commission: " + offerPrice);
 					
-					System.out.println("Test 1 constent :" + offer);
-					
 					negotiationDB.openFileReader();
 					Negotiation session = o.readValue(negotiationDB.readLine(), Negotiation.class);
 					negotiationDB.closeFileReader();
-					
-//					System.out.println(session.getBuyerName());
-//					for(Log x : session.getBuyerlog()) {
-//						System.out.println(x.getStep() + " " + x.getBeeta() + " " + x.getOffer());
-//					}
-//					
-//					System.out.println(session.setDealerName());
-//					for(Log x : session.getDealerlog()) {
-//						System.out.println(x.getStep() + " " + x.getBeeta() + " " + x.getOffer());
-//					}
-					
+										
 					new Thread(() -> {
 						Platform.runLater(() -> {
 							OfferConfirmationGUI confirm = new OfferConfirmationGUI(offer, session);

@@ -194,7 +194,7 @@ public class DealerAgent extends Agent {
 					new Thread(() -> {
 						Platform.runLater(() -> {
 							NegotiationBotGUI bot = new NegotiationBotGUI(myAgent, buyerName, negotiatedCar,
-									offerPrice);
+									offerPrice, 0);
 						});
 					}).start();
 				}
@@ -226,12 +226,13 @@ public class DealerAgent extends Agent {
 						// the dealer to make a counter-offer
 						String buyerName = msg.getSender().getName();
 						double offerPrice = Double.parseDouble(msg.getReplyWith());
+						int step = Integer.parseInt(msg.getInReplyTo());
 						System.out.println("Dealer: Receive offer from the buyer: " + offerPrice);
 						// start the NegotiationBotGUI
 						new Thread(() -> {
 							Platform.runLater(() -> {
 								NegotiationBotGUI bot = new NegotiationBotGUI(myAgent, buyerName, messObject,
-										offerPrice);
+										offerPrice, step);
 							});
 						}).start();
 					} else {
@@ -313,6 +314,7 @@ public class DealerAgent extends Agent {
 	 * @param negotiatedCar
 	 * @param price:
 	 *            offer-price
+	 * @param step: dealer-step
 	 */
 	public void makeACounterOffer(String opponentAgentName, Car negotiatedCar, double price, int step) {
 		addBehaviour(new OneShotBehaviour() {
@@ -388,44 +390,11 @@ public class DealerAgent extends Agent {
 					mess.setReplyWith(String.valueOf(price));
 					mess.setConversationId("car-negotiation");
 					myAgent.send(mess);
-					confirmSell(negotiatedCar, price);
 				} catch (JsonProcessingException e) {
 					System.err.println("Problem by converting an object o json-format");
 				}
 			}
 		});
-	}
-	
-	private class ReceiveLogsFromBuyer extends CyclicBehaviour {
-
-		@Override
-		public void action() {
-			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
-					MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL));
-			ACLMessage msg = myAgent.receive(mt);
-
-			if (msg != null) {
-				String content = msg.getContent();
-				try {
-					Car negotiatedCar = o.readValue(content, Car.class);
-					double offerPrice = Double.parseDouble(msg.getReplyWith());
-					if (!multiple) {
-						System.out.println("\nEnd of the negotiation : ");
-						System.out.println("Sold car: " + negotiatedCar);
-						System.out.println("Sold price: " + offerPrice);
-						
-						confirmSell(negotiatedCar, offerPrice); // confirm with the broker
-					} else {
-						findTheBestOffer(msg.getSender().getName(), negotiatedCar, offerPrice);
-					}
-
-				} catch (IOException e) {
-					System.err.println("Problem by converting a json-format to an object");
-				}
-			} else {
-				block();
-			}
-		}
 	}
 
 	/**

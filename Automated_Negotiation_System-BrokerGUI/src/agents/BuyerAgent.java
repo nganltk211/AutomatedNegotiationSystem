@@ -35,19 +35,18 @@ public class BuyerAgent extends Agent {
 
 	private static final long serialVersionUID = -8414132078026686821L;
 	private AID brokerAgent;
-	private ObjectMapper o = new ObjectMapper();
 	private boolean manualNegotiation; // true if the negotiation is manual
 	private double intialPrice; // min price
 	private double reservationPrice; // max price
 	private int maxStep; // deadline : max time step
 	private double beetaValue; // beetaValue using time dependent tactics
 	private NegotiationWithDealer nd;
-	
+
+	private ObjectMapper o = new ObjectMapper();
 	private JsonIO negotiationDB = new JsonIO("./DataBase/NegotiatioDB.txt");
-	
-	ArrayList<Log> buyerLogs = new ArrayList<Log>();
-	ArrayList<Log> dealerLogs = new ArrayList<Log>();
-	
+	private ArrayList<Log> buyerLogs = new ArrayList<Log>();
+	private ArrayList<Log> dealerLogs = new ArrayList<Log>();
+
 	public double getIntialPrice() {
 		return intialPrice;
 	}
@@ -79,7 +78,7 @@ public class BuyerAgent extends Agent {
 	public void setBeetavalue(double beetavalue) {
 		this.beetaValue = beetavalue;
 	}
-	
+
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hello! Buyer-agent " + getAID().getName() + " is ready.");
@@ -108,7 +107,7 @@ public class BuyerAgent extends Agent {
 				}
 			}
 		});
-		
+
 		nd = new NegotiationWithDealer();
 		// Adding behaviors to the buyer agent
 		addBehaviour(new OfferFromBroker());
@@ -116,7 +115,7 @@ public class BuyerAgent extends Agent {
 		addBehaviour(new EndTheNegotiation());
 		addBehaviour(new NoAgreementFromDealer());
 	}
-	
+
 	/**
 	 * Method for the Agent clean-up
 	 */
@@ -181,6 +180,11 @@ public class BuyerAgent extends Agent {
 	 * @param listOfChosenCars
 	 */
 	public void sendBackTheChoosenCarsToTheBroker(Car negotiatedCar, double firstOfferPrice) {
+		if (manualNegotiation) {
+			// Adding Buyers logs into list
+			Log blog = new Log(0, beetaValue, firstOfferPrice);
+			buyerLogs.add(blog);
+		}
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
@@ -203,6 +207,7 @@ public class BuyerAgent extends Agent {
 
 	/**
 	 * To request the broker to send a list of possible cars
+	 * 
 	 * @param desiredCar
 	 */
 	public void requestInfoOfDesiredCar(Car desiredCar) {
@@ -230,80 +235,67 @@ public class BuyerAgent extends Agent {
 	// Negotiation part
 
 	/**
-	 * This behavior is for the negotiation with dealer. In case of manual negotiation, 
-	 * a GUI will be shown with the offer price from the dealer and options for buyer to accept or decline the offer.
-	 * In case of automated negotiation, the buyer AI will decide to accept the offer or make a counter-offer 
+	 * This behavior is for the negotiation with dealer. In case of manual
+	 * negotiation, a GUI will be shown with the offer price from the dealer and
+	 * options for buyer to accept or decline the offer. In case of automated
+	 * negotiation, the buyer AI will decide to accept the offer or make a
+	 * counter-offer
 	 */
 	private class NegotiationWithDealer extends CyclicBehaviour {
 		private int step = 0;
-		//Session log
-		
-		
+		// Session log
 
 		public void setStep(int step) {
 			this.step = step;
 		}
-		
+
 		@Override
 		public void action() {
 			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
 					MessageTemplate.MatchPerformative(ACLMessage.PROPOSE));
 			ACLMessage msg = myAgent.receive(mt);
 			if (msg != null) {
-				if (manualNegotiation) {
-					// for manual negotiation
-					String content = msg.getContent();
-					try {
-						Car messObject = o.readValue(content, Car.class);
-						String dealerName = msg.getSender().getName();
-						double offerPrice = Double.parseDouble(msg.getReplyWith());
+				String content = msg.getContent();
+				try {
+					Car messObject = o.readValue(content, Car.class);
+					String dealerName = msg.getSender().getName();
+					double offerPrice = Double.parseDouble(msg.getReplyWith());
+					String dealerTimeStep = msg.getInReplyTo();
+					int dealerSteps = Integer.parseInt(dealerTimeStep);
+					// adds to dealer log
+					Log dlog = new Log(dealerSteps, messObject.getBeeta(), offerPrice);
+					dealerLogs.add(dlog);
+					if (manualNegotiation) {
+						// for manual negotiation
 						System.out.println("Buyer: Receive offer from the dealer: " + offerPrice);
 						// start the NegotiationBotGUI
 						new Thread(() -> {
 							Platform.runLater(() -> {
 								NegotiationBotGUI bot = new NegotiationBotGUI(myAgent, dealerName, messObject,
-										offerPrice);
+										offerPrice, dealerSteps + 1); // for manual, the step is used for both agents
 							});
 						}).start();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				} else {
-					// for automated Negotiation: AI part
-					String dealerName = msg.getSender().getName();
-					String content = msg.getContent();
-					Car messObject = null;
-					try {
-						messObject = o.readValue(content, Car.class);
-						double offerPrice = Double.parseDouble(msg.getReplyWith());
+					} else {
+						// for automated Negotiation: AI part
 						if (step <= maxStep) {
-								String dealerTimeStep = msg.getInReplyTo();
-								System.out.println("Buyer: Receive offer from the dealer: " + offerPrice);
-								
-								int dealerSteps = Integer.parseInt(dealerTimeStep);								
-								Log dlog = new Log(dealerSteps, messObject.getBeeta(), offerPrice);
-								dealerLogs.add(dlog);								
-
-								//calculate the next offer
-								int nextPrice = Algorithms.offer(intialPrice,reservationPrice, step, maxStep, beetaValue);
-								if (nextPrice >= offerPrice) {
-									step = 0;
-									acceptOffer(dealerName, messObject, offerPrice);
-								} else {
-									makeACounterOffer(dealerName, messObject, nextPrice,dealerTimeStep);
-									//Adding Buyers logs into list
-									Log blog = new Log(step, beetaValue, nextPrice);
-									buyerLogs.add(blog);									
-									step++;
-								}
+							System.out.println("Buyer: Receive offer from the dealer: " + offerPrice);
+							// calculate the next offer
+							int nextPrice = Algorithms.offer(intialPrice, reservationPrice, step, maxStep, beetaValue);
+							if (nextPrice >= offerPrice) {
+								step = 0;
+								acceptOffer(dealerName, messObject, offerPrice);
+							} else {
+								makeACounterOffer(dealerName, messObject, nextPrice, dealerTimeStep, step);
+								step++;
+							}
 						} else {
 							step = 0;
 							endTheNegotiationWithoutAgreement();
 							sendRefuseToTheDealer(dealerName, messObject);
 						}
-					} catch (IOException e) {
-						e.printStackTrace();
-					}								
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			} else {
 				block();
@@ -324,14 +316,14 @@ public class BuyerAgent extends Agent {
 			if (msg != null) {
 				String content = msg.getContent();
 				try {
-					
 					Car negotiatedCar = o.readValue(content, Car.class);
 					double offerPrice = Double.parseDouble(msg.getReplyWith());
 					String dealerName = msg.getSender().getName();
-					sendLogs(dealerName);//Send logs to Dealer
-					System.out.println("\nEnd of the negotiation : ");
-					System.out.println("Bought car: " + negotiatedCar);
-					System.out.println("Bought price: " + offerPrice);
+					acceptOffer(dealerName, negotiatedCar, offerPrice);
+//					saveLogs(dealerName);// Send logs to Dealer
+//					System.out.println("\nEnd of the negotiation : ");
+//					System.out.println("Bought car: " + negotiatedCar);
+//					System.out.println("Bought price: " + offerPrice);
 					nd.setStep(0);
 				} catch (IOException e) {
 					System.err.println("Problem by converting a json-format to an object");
@@ -341,7 +333,6 @@ public class BuyerAgent extends Agent {
 			}
 		}
 	}
-	
 
 	/**
 	 * The buyer agent makes a counter-offer to the dealer agent
@@ -352,7 +343,10 @@ public class BuyerAgent extends Agent {
 	 * @param price:
 	 *            offer-price
 	 */
-	public void makeACounterOffer(String opponentAgentName, Car negotiatedCar, double price, String dealerTimeStep) {
+	public void makeACounterOffer(String opponentAgentName, Car negotiatedCar, double price, String dealerTimeStep, int buyerStep) {
+		// Adding Buyers logs into list
+		Log blog = new Log(buyerStep, beetaValue, price);
+		buyerLogs.add(blog);
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
@@ -369,7 +363,8 @@ public class BuyerAgent extends Agent {
 					mess.setInReplyTo(dealerTimeStep);
 					myAgent.send(mess);
 				} catch (JsonProcessingException e) {
-					System.err.println("Problem by converting an object o json-format");				}
+					System.err.println("Problem by converting an object o json-format");
+				}
 			}
 		});
 	}
@@ -377,7 +372,8 @@ public class BuyerAgent extends Agent {
 	/**
 	 * This method will be called, when the buyer accepts the offer from the dealer
 	 * 
-	 * @param opponentAgentName : dealer agent name
+	 * @param opponentAgentName
+	 *            : dealer agent name
 	 * @param negotiatedCar
 	 * @param price
 	 */
@@ -395,7 +391,7 @@ public class BuyerAgent extends Agent {
 					mess.setReplyWith(String.valueOf(price));
 					mess.setConversationId("car-negotiation");
 					myAgent.send(mess);
-					sendLogs(opponentAgentName);
+					saveLogs(opponentAgentName);
 				} catch (JsonProcessingException e) {
 					System.err.println("Problem by converting an object o json-format");
 				}
@@ -404,7 +400,8 @@ public class BuyerAgent extends Agent {
 	}
 
 	/**
-	 * This behavior is for receiving refuse message from the dealer in case of no agreement
+	 * This behavior is for receiving refuse message from the dealer in case of no
+	 * agreement
 	 */
 	private class NoAgreementFromDealer extends CyclicBehaviour {
 
@@ -422,10 +419,11 @@ public class BuyerAgent extends Agent {
 			}
 		}
 	}
-	
+
 	/**
 	 * Method for sending a refuse message to the dealer when no agreement reaches
 	 * (because of out of time)
+	 * 
 	 * @param dealerName
 	 * @param negotiatedCar
 	 * @param price
@@ -444,11 +442,12 @@ public class BuyerAgent extends Agent {
 					mess.setConversationId("car-negotiation-refuse");
 					myAgent.send(mess);
 				} catch (JsonProcessingException e) {
-					System.err.println("Problem by converting an object o json-format");				}
+					System.err.println("Problem by converting an object o json-format");
+				}
 			}
 		});
 	}
-	
+
 	/**
 	 * Method for ending the negotiation because of out of time.
 	 */
@@ -460,31 +459,28 @@ public class BuyerAgent extends Agent {
 			});
 		}).start();
 	}
-	
 
 	/**
 	 * Method to set the buyers negotiation way (manual or automated)
+	 * 
 	 * @param manualNegotiation
 	 */
 	public void setNegotiationManual(boolean manualNegotiation) {
 		this.manualNegotiation = manualNegotiation;
 	}
-	
-	
-	private void sendLogs(String dealerName) {
-		
+
+	private void saveLogs(String dealerName) {
 		Negotiation session = new Negotiation(this.getName(), dealerName, buyerLogs, dealerLogs);
-		
 		try {
 			String jsonString = o.writeValueAsString(session);
 			negotiationDB.openFileWriter();
 			negotiationDB.writeLine(jsonString);
 			negotiationDB.closeFileWriter();
+			buyerLogs = new ArrayList<Log>();
+			dealerLogs = new ArrayList<Log>();
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 }
-
