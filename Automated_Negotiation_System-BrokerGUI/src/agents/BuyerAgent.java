@@ -282,7 +282,6 @@ public class BuyerAgent extends Agent {
 							// calculate the next offer
 							int nextPrice = Algorithms.offer(intialPrice, reservationPrice, step, maxStep, beetaValue);
 							if (nextPrice >= offerPrice) {
-								step = 0;
 								acceptOffer(dealerName, messObject, offerPrice);
 							} else {
 								makeACounterOffer(dealerName, messObject, nextPrice, dealerTimeStep, step);
@@ -320,11 +319,6 @@ public class BuyerAgent extends Agent {
 					double offerPrice = Double.parseDouble(msg.getReplyWith());
 					String dealerName = msg.getSender().getName();
 					acceptOffer(dealerName, negotiatedCar, offerPrice);
-//					saveLogs(dealerName);// Send logs to Dealer
-//					System.out.println("\nEnd of the negotiation : ");
-//					System.out.println("Bought car: " + negotiatedCar);
-//					System.out.println("Bought price: " + offerPrice);
-					nd.setStep(0);
 				} catch (IOException e) {
 					System.err.println("Problem by converting a json-format to an object");
 				}
@@ -378,6 +372,7 @@ public class BuyerAgent extends Agent {
 	 * @param price
 	 */
 	public void acceptOffer(String opponentAgentName, Car negotiatedCar, double price) {
+		saveLogs(opponentAgentName);
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
@@ -391,7 +386,7 @@ public class BuyerAgent extends Agent {
 					mess.setReplyWith(String.valueOf(price));
 					mess.setConversationId("car-negotiation");
 					myAgent.send(mess);
-					saveLogs(opponentAgentName);
+					nd.setStep(0);
 				} catch (JsonProcessingException e) {
 					System.err.println("Problem by converting an object o json-format");
 				}

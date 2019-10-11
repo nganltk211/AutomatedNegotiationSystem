@@ -36,6 +36,7 @@ public class DealerAgent extends Agent {
 	private Map<String, Double> lastOfferList; // list to store the buyer name with his lastOffer
 	private int numberOfBuyers; // number of buyer, who want to buy a same car
 	private boolean multiple = false; // true if more than one buyer want to negotiate a car
+	private boolean bestBuyerFound = false; // true if the beast buyer is found
 	
 	protected void setup() {
 		// Printout a welcome message
@@ -288,10 +289,11 @@ public class DealerAgent extends Agent {
 				try {
 					Car negotiatedCar = o.readValue(content, Car.class);
 					double offerPrice = Double.parseDouble(msg.getReplyWith());
-					if (!multiple) {
+					if (!multiple || bestBuyerFound) {
 						System.out.println("\nEnd of the negotiation : ");
 						System.out.println("Sold car: " + negotiatedCar);
-						System.out.println("Sold price: " + offerPrice);					
+						System.out.println("Sold price: " + offerPrice);		
+						bestBuyerFound = false;
 						confirmSell(negotiatedCar, offerPrice); // confirm with the broker
 					} else {
 						// add the buyer to the list for finding the best buyer
@@ -420,7 +422,8 @@ public class DealerAgent extends Agent {
 			 if (bestOffer != 0) { // when a best buyer is found
 				 System.out.println("Dealer: Best buyer: " + bestBuyer + " with offer: " + bestOffer);
 				 // send accept message to the best buyer
-				 acceptOffer(bestBuyer,negotiatedCar,bestOffer);		 
+				 acceptOffer(bestBuyer,negotiatedCar,bestOffer);	
+				 bestBuyerFound = true;
 				// remove the best buyer from the list
 				 lastOfferList.remove(bestBuyer, bestOffer); 
 			 }		 
