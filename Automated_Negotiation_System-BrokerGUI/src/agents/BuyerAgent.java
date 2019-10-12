@@ -44,8 +44,8 @@ public class BuyerAgent extends Agent {
 
 	private ObjectMapper o = new ObjectMapper();
 	private JsonIO negotiationDB = new JsonIO("./DataBase/NegotiatioDB.txt");
-	private ArrayList<LogSession> buyerLogs = new ArrayList<LogSession>();
-	private ArrayList<LogSession> dealerLogs = new ArrayList<LogSession>();
+	private ArrayList<LogSession> buyerLogs;
+	private ArrayList<LogSession> dealerLogs;
 
 	public double getIntialPrice() {
 		return intialPrice;
@@ -180,6 +180,8 @@ public class BuyerAgent extends Agent {
 	 * @param listOfChosenCars
 	 */
 	public void sendBackTheChoosenCarsToTheBroker(Car negotiatedCar, double firstOfferPrice) {
+		buyerLogs = new ArrayList<LogSession>();
+		dealerLogs = new ArrayList<LogSession>();
 		if (manualNegotiation) {
 			// Adding Buyers logs into list
 			LogSession blog = new LogSession(0, beetaValue, firstOfferPrice);
@@ -295,32 +297,6 @@ public class BuyerAgent extends Agent {
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
-				}
-			} else {
-				block();
-			}
-		}
-	}
-
-	/**
-	 * This behavior will be executed, when the negotiation is at the end, which
-	 * means that the dealer accept the offer from the buyer.
-	 */
-	private class EndTheNegotiation extends CyclicBehaviour {
-		@Override
-		public void action() {
-			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
-					MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL));
-			ACLMessage msg = myAgent.receive(mt);
-			if (msg != null) {
-				String content = msg.getContent();
-				try {
-					Car negotiatedCar = o.readValue(content, Car.class);
-					double offerPrice = Double.parseDouble(msg.getReplyWith());
-					String dealerName = msg.getSender().getName();
-					acceptOffer(dealerName, negotiatedCar, offerPrice);
-				} catch (IOException e) {
-					System.err.println("Problem by converting a json-format to an object");
 				}
 			} else {
 				block();
@@ -454,6 +430,34 @@ public class BuyerAgent extends Agent {
 			});
 		}).start();
 	}
+	
+	/**
+	 * This behavior will be executed, when the negotiation is at the end, which
+	 * means that the dealer accept the offer from the buyer.
+	 */
+	private class EndTheNegotiation extends CyclicBehaviour {
+		@Override
+		public void action() {
+			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
+					MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL));
+			ACLMessage msg = myAgent.receive(mt);
+			if (msg != null) {
+				String content = msg.getContent();
+				try {
+					Car negotiatedCar = o.readValue(content, Car.class);
+					double offerPrice = Double.parseDouble(msg.getReplyWith());
+					String dealerName = msg.getSender().getName();
+					acceptOffer(dealerName, negotiatedCar, offerPrice);
+					buyerLogs = new ArrayList<LogSession>();
+					dealerLogs = new ArrayList<LogSession>();
+				} catch (IOException e) {
+					System.err.println("Problem by converting a json-format to an object");
+				}
+			} else {
+				block();
+			}
+		}
+	}
 
 	/**
 	 * Method to set the buyers negotiation way (manual or automated)
@@ -471,8 +475,6 @@ public class BuyerAgent extends Agent {
 			negotiationDB.openFileWriter();
 			negotiationDB.writeLine(jsonString);
 			negotiationDB.closeFileWriter();
-			buyerLogs = new ArrayList<LogSession>();
-			dealerLogs = new ArrayList<LogSession>();
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
