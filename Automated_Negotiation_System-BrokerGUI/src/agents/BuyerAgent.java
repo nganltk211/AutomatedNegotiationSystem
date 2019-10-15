@@ -284,6 +284,8 @@ public class BuyerAgent extends Agent {
 							// calculate the next offer
 							int nextPrice = Algorithms.offer(intialPrice, reservationPrice, step, maxStep, beetaValue);
 							if (nextPrice >= offerPrice) {
+								LogSession blog = new LogSession(step++, beetaValue, offerPrice);
+								buyerLogs.add(blog);
 								acceptOffer(dealerName, messObject, offerPrice);
 							} else {
 								makeACounterOffer(dealerName, messObject, nextPrice, dealerTimeStep, step);
@@ -348,6 +350,7 @@ public class BuyerAgent extends Agent {
 	 * @param price
 	 */
 	public void acceptOffer(String opponentAgentName, Car negotiatedCar, double price) {
+		
 		saveLogs(opponentAgentName);
 		addBehaviour(new OneShotBehaviour() {
 			@Override
