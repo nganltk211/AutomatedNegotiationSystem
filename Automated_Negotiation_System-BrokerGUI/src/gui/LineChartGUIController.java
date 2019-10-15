@@ -1,8 +1,6 @@
 package gui;
 
 import javafx.beans.binding.ObjectExpression;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.CategoryAxis;
@@ -47,7 +45,7 @@ public class LineChartGUIController {
     	
     	for(LogSession x : session.getBuyerLog()) {
     		Data<String, Number> n = new XYChart.Data<String, Number>(String.valueOf(x.getStep()), x.getOffer());
-    		n.setNode(createDataNode(n.YValueProperty()));
+    		n.setNode(createDataNode(n.YValueProperty(), false));
     		buyer.getData().add(n);
     	}
     	
@@ -55,33 +53,34 @@ public class LineChartGUIController {
     	for(LogSession x : session.getDealerLog()) {
     		counter++;
     		Data<String, Number> n = new XYChart.Data<String, Number>(String.valueOf(x.getStep()), x.getOffer());
-    		
     		if (counter < session.getDealerLog().size()) {
-    			n.setNode(createDataNode(n.YValueProperty()));
-    			dealer.getData().add(n);
-    		} else {
-    			dealer.getData().add(n);
+    			n.setNode(createDataNode(n.YValueProperty(), true));
     		}
+    		dealer.getData().add(n);
     	}
     	
     	y.setAutoRanging(false);
-    	y.setUpperBound(session.getDealerLog().get(0).getOffer() + 100);  	
+    	y.setUpperBound(session.getDealerLog().get(0).getOffer() + 250);  	
     	y.setAutoRanging(false);
-    	y.setLowerBound(session.getBuyerLog().get(0).getOffer() - 100);
+    	y.setLowerBound(session.getBuyerLog().get(0).getOffer() - 250);
     	
     	LineChart.getData().addAll(buyer, dealer);
     }
     
-    private Node createDataNode(ObjectExpression<Number> value) {
+    private Node createDataNode(ObjectExpression<Number> value, boolean aboveTheLine) {
         Label label = new Label();
         label.textProperty().bind(value.asString("%.0f"));
 
         Pane pane = new Pane(label);
         pane.setShape(new Circle(6.0));
         pane.setScaleShape(false);
-
-        label.translateYProperty().bind(label.heightProperty().divide(-1.5));
-
+        if (aboveTheLine) {
+        	 label.translateYProperty().bind(label.heightProperty().divide(-1.5));
+        	
+        } else {
+        	 label.translateYProperty().bind(label.heightProperty().divide(1.1));
+        }
+       
         return pane;
     }
     
