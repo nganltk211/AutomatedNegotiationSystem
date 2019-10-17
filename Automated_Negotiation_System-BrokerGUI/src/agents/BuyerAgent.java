@@ -441,9 +441,9 @@ public class BuyerAgent extends Agent {
 		System.out.println("No Agreement!");
 		saveNoAgreementLogs(dealerName);
 		
-		negotiationDB.openFileReader();
-		NegotiationLog session = o.readValue(negotiationDB.readLine(), NegotiationLog.class);
-		negotiationDB.closeFileReader();
+		noAgreementDB.openFileReader();
+		NegotiationLog session = o.readValue(noAgreementDB.readLine(), NegotiationLog.class);
+		noAgreementDB.closeFileReader();
 		
 		new Thread(() -> {
 			Platform.runLater(() -> {
