@@ -3,7 +3,9 @@ package agents;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gui.BuyerGUI;
@@ -44,6 +46,7 @@ public class BuyerAgent extends Agent {
 
 	private ObjectMapper o = new ObjectMapper();
 	private JsonIO negotiationDB = new JsonIO("./DataBase/NegotiatioDB.txt");
+	private JsonIO noAgreementDB = new JsonIO("./DataBase/NoAgreementDB.txt");
 	private ArrayList<LogSession> buyerLogs;
 	private ArrayList<LogSession> dealerLogs;
 
@@ -293,7 +296,7 @@ public class BuyerAgent extends Agent {
 							}
 						} else {
 							step = 0;
-							endTheNegotiationWithoutAgreement();
+							endTheNegotiationWithoutAgreement(dealerName);
 							sendRefuseToTheDealer(dealerName, messObject);
 						}
 					}
@@ -387,7 +390,13 @@ public class BuyerAgent extends Agent {
 					MessageTemplate.MatchPerformative(ACLMessage.REFUSE));
 			ACLMessage msg = myAgent.receive(mt);
 			if (msg != null) {
-				endTheNegotiationWithoutAgreement();
+				String dealerName = msg.getSender().getName();
+				try {
+					endTheNegotiationWithoutAgreement(dealerName);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			} else {
 				block();
 			}
@@ -424,12 +433,21 @@ public class BuyerAgent extends Agent {
 
 	/**
 	 * Method for ending the negotiation because of out of time.
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonParseException 
 	 */
-	public void endTheNegotiationWithoutAgreement() {
+	public void endTheNegotiationWithoutAgreement(String dealerName) throws JsonParseException, JsonMappingException, IOException {
 		System.out.println("No Agreement!");
+		saveNoAgreementLogs(dealerName);
+		
+		negotiationDB.openFileReader();
+		NegotiationLog session = o.readValue(negotiationDB.readLine(), NegotiationLog.class);
+		negotiationDB.closeFileReader();
+		
 		new Thread(() -> {
 			Platform.runLater(() -> {
-				NoAgreementGUI guiBuyer = new NoAgreementGUI(this);
+				NoAgreementGUI guiBuyer = new NoAgreementGUI(this, session);
 			});
 		}).start();
 	}
@@ -469,6 +487,19 @@ public class BuyerAgent extends Agent {
 	 */
 	public void setNegotiationManual(boolean manualNegotiation) {
 		this.manualNegotiation = manualNegotiation;
+	}
+	
+	private void saveNoAgreementLogs(String dealerName) {
+		NegotiationLog session = new NegotiationLog(this.getName(), dealerName, buyerLogs, dealerLogs);
+		try {
+			String jsonString = o.writeValueAsString(session);
+			noAgreementDB.openFileWriter();
+			noAgreementDB.writeLine(jsonString);
+			noAgreementDB.closeFileWriter();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	private void saveLogs(String dealerName) {
