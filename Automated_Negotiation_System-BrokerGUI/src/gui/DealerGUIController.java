@@ -215,6 +215,7 @@ public class DealerGUIController implements Initializable {
 		manu_year_id.setText(car.getManufactureYear());
 		warrantyid.setValue(car.getWarranty());
 		priceMin.setText(String.valueOf(car.getMinprice()));
+		priceMax.setText(String.valueOf(car.getMaxprice()));
 		km_id.setText(String.valueOf(car.getKm()));
 		picture_path.setText(car.getPicturePath());
 		if (car.getisNegotiatable()) {
