@@ -38,6 +38,9 @@ public class DealerAgent extends Agent {
 	private boolean multiple = false; // true if more than one buyer want to negotiate a car
 	private boolean bestBuyerFound = false; // true if the beast buyer is found
 	
+	/**
+	 * Method for setting up a buyer agent
+	 */
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hello! Dealer-agent " + getAID().getName() + " is ready.");

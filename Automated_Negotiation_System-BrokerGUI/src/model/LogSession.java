@@ -2,6 +2,9 @@ package model;
 
 import java.io.Serializable;
 
+/**
+ *  Class as representation for a negotiation session.
+ */
 public class LogSession implements Serializable{
 
 	private static final long serialVersionUID = 460127305922452230L;
@@ -15,8 +18,7 @@ public class LogSession implements Serializable{
 		this.offer = offer;
 	}
 	
-	public LogSession() {
-		
+	public LogSession() {	
 	}
 	
 	public void setStep(int step) {

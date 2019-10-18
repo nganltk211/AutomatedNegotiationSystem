@@ -82,6 +82,9 @@ public class BuyerAgent extends Agent {
 		this.beetaValue = beetavalue;
 	}
 
+	/**
+	 * Method for setting up a buyer agent
+	 */
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hello! Buyer-agent " + getAID().getName() + " is ready.");
@@ -489,6 +492,11 @@ public class BuyerAgent extends Agent {
 		this.manualNegotiation = manualNegotiation;
 	}
 	
+	/**
+	 * Method to save the log of all negotiation session in case of 
+	 * no agreement reaches in a text file.
+	 * @param dealerName : name of the dealer
+	 */
 	private void saveNoAgreementLogs(String dealerName) {
 		NegotiationLog session = new NegotiationLog(this.getName(), dealerName, buyerLogs, dealerLogs);
 		try {
@@ -502,6 +510,11 @@ public class BuyerAgent extends Agent {
 
 	}
 
+	/**
+	 * Method to save the log of all negotiation session in case of 
+	 * an agreement reaches in a text file.
+	 * @param dealerName : name of the dealer
+	 */
 	private void saveLogs(String dealerName) {
 		NegotiationLog session = new NegotiationLog(this.getName(), dealerName, buyerLogs, dealerLogs);
 		try {

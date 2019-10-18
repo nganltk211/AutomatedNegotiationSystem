@@ -12,9 +12,9 @@ public class Algorithms {
 	 * 
 	 * @param initialPrice
 	 * @param reservPrice
-	 * @param time
-	 * @param deadLine
-	 * @param beeta
+	 * @param time 
+	 * @param deadLine: maximal time step
+	 * @param beeta : concession rate 
 	 * @return next offer
 	 */
 	public static int offer(double initialPrice, double reservPrice, double time, double deadLine, double beeta) {

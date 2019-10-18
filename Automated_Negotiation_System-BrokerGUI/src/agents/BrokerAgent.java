@@ -42,6 +42,9 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 		registerO2AInterface(BrokerAgentInterface.class, this);
 	}
 	
+	/**
+	 * Method for setting up a broker agent
+	 */
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hello! Broker-agent " + getAID().getName() + " is ready.");
@@ -102,16 +105,18 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 					System.out.println("Price of the car after eliminating Broker commission: " + offerPrice);
 					
 					negotiationDB.openFileReader();
+					// reads the negotiation session from the text file
 					NegotiationLog session = o.readValue(negotiationDB.readLine(), NegotiationLog.class);
 					negotiationDB.closeFileReader();
-										
+							
+					// start the confirmation gui
 					new Thread(() -> {
 						Platform.runLater(() -> {
 							OfferConfirmationGUI confirm = new OfferConfirmationGUI(offer, session);
 						});
 					}).start();
 					
-					//Update JsonDB/CarList
+					//Updates JsonDB/CarList
 					for(Car c : catalog) {
 						if(negotiatedCar.getCarId() == c.getCarId()) {
 							c.setcarStatus(true);
