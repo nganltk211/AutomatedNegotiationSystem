@@ -18,6 +18,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.WakerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -49,6 +50,23 @@ public class BuyerAgent extends Agent {
 	private JsonIO noAgreementDB = new JsonIO("./DataBase/NoAgreementDB.txt");
 	private ArrayList<LogSession> buyerLogs;
 	private ArrayList<LogSession> dealerLogs;
+	// variable for concurrent negotiation
+	private long negotiationDuration;
+	private int numberOfSeller = 0;
+	private int numberOfActiveSeller = 0;
+	public boolean firstNegotiationThread;
+	
+	public void newSellerCome() {
+		numberOfSeller ++;
+	}
+	
+	public long getNegotiationDuration() {
+		return negotiationDuration;
+	}
+
+	public void setNegotiationDuration(long negotiationDuration) {
+		this.negotiationDuration = negotiationDuration;
+	}
 
 	public double getIntialPrice() {
 		return intialPrice;
@@ -88,7 +106,8 @@ public class BuyerAgent extends Agent {
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hello! Buyer-agent " + getAID().getName() + " is ready.");
-
+		firstNegotiationThread = true;
+		
 		// starts the BuyerGUI
 		new Thread(() -> {
 			Platform.runLater(() -> {
@@ -193,6 +212,11 @@ public class BuyerAgent extends Agent {
 			LogSession blog = new LogSession(0, beetaValue, firstOfferPrice);
 			buyerLogs.add(blog);
 		}
+		numberOfActiveSeller ++;
+		if (firstNegotiationThread) {
+			firstNegotiationThread = false;
+			addWakerBehaviour();
+		}
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
@@ -213,6 +237,12 @@ public class BuyerAgent extends Agent {
 		});
 	}
 
+	// when deadline reaches
+	private void addWakerBehaviour() {
+		addBehaviour(new WakerBehaviour(this, negotiationDuration) {
+			
+		});
+	}
 	/**
 	 * To request the broker to send a list of possible cars
 	 * 
@@ -251,7 +281,6 @@ public class BuyerAgent extends Agent {
 	 */
 	private class NegotiationWithDealer extends CyclicBehaviour {
 		private int step = 0;
-		// Session log
 
 		public void setStep(int step) {
 			this.step = step;
@@ -312,6 +341,47 @@ public class BuyerAgent extends Agent {
 		}
 	}
 
+	private class NegotiationWithDealerCONANStrategy extends CyclicBehaviour {
+
+		@Override
+		public void action() {
+			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation-concurrent"),
+					MessageTemplate.MatchPerformative(ACLMessage.PROPOSE));
+			ACLMessage msg = myAgent.receive(mt);
+			if (msg != null) {
+				String content = msg.getContent();
+				try {
+					Car messObject = o.readValue(content, Car.class);
+					String dealerName = msg.getSender().getName();
+					double offerPrice = Double.parseDouble(msg.getReplyWith());
+					String dealerTimeStep = msg.getInReplyTo();
+					int dealerSteps = Integer.parseInt(dealerTimeStep);
+					// adds to dealer log
+					LogSession dlog = new LogSession(dealerSteps, messObject.getBeeta(), offerPrice);
+					dealerLogs.add(dlog);
+					if (manualNegotiation) {
+						// for manual negotiation
+						System.out.println("Buyer: Receive offer from the dealer: " + offerPrice);
+						// start the NegotiationBotGUI
+						new Thread(() -> {
+							Platform.runLater(() -> {
+								NegotiationBotGUI bot = new NegotiationBotGUI(myAgent, dealerName, messObject,
+										offerPrice, dealerSteps + 1); // for manual, the step is used for both agents
+							});
+						}).start();
+					} else {
+						// for automated Negotiation: AI part
+						
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				block();
+			}
+		}
+	}
+	
 	/**
 	 * The buyer agent makes a counter-offer to the dealer agent
 	 * 
