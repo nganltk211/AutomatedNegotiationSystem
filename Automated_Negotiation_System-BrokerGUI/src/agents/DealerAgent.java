@@ -175,22 +175,18 @@ public class DealerAgent extends Agent {
 		@Override
 		public void action() {
 			for (String buyerName : buyerList.keySet()) {
+				double offerFromBuyer = buyerList.get(buyerName);
+				System.out.println(myAgent.getName() + ": Receive first offer from the buyer " + buyerName + ": " + offerFromBuyer + "\n");
 				ACLMessage mess = new ACLMessage(ACLMessage.PROPOSE);
 				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, buyerName));
 				// This is automated negotiation
 				if (!negotiatedCar.getisNegotiatable()) {
-					double offerPrice = negotiatedCar.getMaxprice();
-					System.out.println(myAgent.getName() + ": First offer to the buyer: " + offerPrice + "\n");
-					String jsonInString;
-					try {
-						jsonInString = o.writeValueAsString(negotiatedCar);
-						mess.setContent(jsonInString);
-						mess.setReplyWith(String.valueOf(offerPrice));
-						mess.setConversationId("car-negotiation");
-						mess.setInReplyTo("0"); // time-step
-						myAgent.send(mess);
-					} catch (JsonProcessingException e) {
-						System.err.println("Problem by converting an object o json-format");
+					double offerPrice = negotiatedCar.getMaxprice();				
+					if (offerPrice <= offerFromBuyer) {
+						acceptOffer(buyerName, negotiatedCar, offerFromBuyer);
+					} else {
+						// make a counter-offer to the buyer
+						makeACounterOffer(buyerName, negotiatedCar, offerPrice, 0);
 					}
 				} else {
 					// manual negotiation
