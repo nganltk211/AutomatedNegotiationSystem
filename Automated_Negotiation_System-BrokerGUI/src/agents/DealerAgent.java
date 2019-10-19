@@ -188,6 +188,7 @@ public class DealerAgent extends Agent {
 						mess.setReplyWith(String.valueOf(offerPrice));
 						mess.setConversationId("car-negotiation");
 						mess.setInReplyTo("0"); // time-step
+						mess.setPostTimeStamp(System.currentTimeMillis());
 						myAgent.send(mess);
 					} catch (JsonProcessingException e) {
 						System.err.println("Problem by converting an object o json-format");
@@ -301,6 +302,7 @@ public class DealerAgent extends Agent {
 					mess.setReplyWith(String.valueOf(price));
 					mess.setInReplyTo(String.valueOf(step));
 					mess.setConversationId("car-negotiation");
+					mess.setPostTimeStamp(System.currentTimeMillis());
 					myAgent.send(mess);
 				} catch (JsonProcessingException e) {
 					System.err.println("Problem by converting an object o json-format");

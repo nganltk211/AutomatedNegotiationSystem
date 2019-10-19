@@ -127,7 +127,7 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 					jsonDB.clearFile();
 					jsonDB.writeToFile(jsonInString);
 					multiAgentMng.removeCarFromList(negotiatedCar); // remove the car from controlling list
-
+					multiAgentMng.removeBuyerFromList(session.getBuyerName());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}								

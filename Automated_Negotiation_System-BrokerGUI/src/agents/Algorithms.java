@@ -53,8 +53,8 @@ public class Algorithms {
 	}
 
 	// CONAN Strategy ---------------------------------------------------------
-	public static int getNextOffer(int ip, int rp, double concessionRate) {
-		return (int) (ip + (rp - ip) * concessionRate);
+	public static int getNextOffer(double intialPrice, double reservationPrice, double concessionRate) {
+		return (int) (intialPrice + (reservationPrice - intialPrice) * concessionRate);
 	}
 	
 	public static double getConcessionRate(long time, long startTime, long deadline, long timeOneRound, double lastConcessionRate, boolean lastOfferReserved, double ws, double enviromentFactor, double selfFactor) {
@@ -82,28 +82,53 @@ public class Algorithms {
 	}
 	
 	public static double getNegotiationSituation(int numberOfSeller, double opponentFactor) {
-		return (opponentFactor - (2*numberOfSeller))/ (4 * numberOfSeller);
+		//return (opponentFactor - (2*numberOfSeller))/ (4 * numberOfSeller);
+		return ((double)(opponentFactor - 2)) / 4;
 	}
 	
-	public static double getOpponentResponseTimeASeller(long beginTime, long responseTime, long timeDuration) {
-		return (beginTime - responseTime) / timeDuration;
+	public static int getOpponentResponseTimeASellerScore(long beginTime, long responseTime, long timeDuration) {
+		double oppResponseTime = (double) (beginTime - responseTime) / timeDuration;
+		if (oppResponseTime > 0 && oppResponseTime <= 1/3) {
+			return 1;
+		}
+		
+		if (oppResponseTime > 1/3 && oppResponseTime <= 2/3) {
+			return 2;
+		}
+		
+		if (oppResponseTime > 2/3 && oppResponseTime <= 1) {
+			return 3;
+		}
+		return 0;
 	}
 	
-	public static double getOpponentConcessionRateASeller(int currentOffer, int lastOffer, int rp, int ip) {
-		double r = (currentOffer - lastOffer) / (rp - ip);
-		return 1 - r;
+	public static int getOpponentConcessionRateASellerScore(double currentOffer, double lastOffer, double rp, double ip) {
+		double r = (lastOffer - currentOffer) / (rp - ip);
+		double oppConcessionRate = 1 - r;
+		if (oppConcessionRate > 0 && oppConcessionRate <= 1/3) {
+			return 1;
+		}
+		
+		if (oppConcessionRate > 1/3 && oppConcessionRate <= 2/3) {
+			return 2;
+		}
+		
+		if (oppConcessionRate > 2/3 && oppConcessionRate <= 1) {
+			return 3;
+		}
+		return 0;
 	}
 	
 	public static double getEffectOfTime(long currentTime, long startTime, long timeDuration) {
-		return (currentTime - startTime) / timeDuration;
+		return  ((double) (currentTime - startTime)) / timeDuration;
 	}
 	
 	public static double getEnvironmentFactor(int se, int c, int numberOfBuyer, int numberOfSeller) {
-		return ((1/se) + c + (numberOfBuyer/numberOfSeller)) / 3;
+		return ((double)(1/se) + (double) (c/numberOfSeller) + (double)(numberOfBuyer/numberOfSeller)) / 3;
 	}
 	
-	public static double getWeightForSelfFactor(double effectOfTime, int sellerInitialPrice, int rp, double selffactor) {
-		double dm = (sellerInitialPrice/rp) * effectOfTime;
+	public static double getWeightForSelfFactor(double effectOfTime, double d, double reservationPrice, double selffactor) {
+		double dm = (d/reservationPrice) * effectOfTime;
 		if (selffactor > 0 && selffactor <= 1/3) {
 			return dm * 0.75;
 		}
