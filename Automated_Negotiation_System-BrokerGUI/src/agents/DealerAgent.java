@@ -76,6 +76,7 @@ public class DealerAgent extends Agent {
 		addBehaviour(new NegotiationWithBuyer());
 		addBehaviour(new EndTheNegotiation());
 		addBehaviour(new GetRefuseMessageFromTheBuyer());
+		addBehaviour(new ReceiveReservationRequestFromBuyer());
 	}
 
 	/**
@@ -175,23 +176,18 @@ public class DealerAgent extends Agent {
 		@Override
 		public void action() {
 			for (String buyerName : buyerList.keySet()) {
+				double offerFromBuyer = buyerList.get(buyerName);
+				System.out.println(myAgent.getName() + ": Receive first offer from the buyer " + buyerName + ": " + offerFromBuyer + "\n");
 				ACLMessage mess = new ACLMessage(ACLMessage.PROPOSE);
 				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, buyerName));
 				// This is automated negotiation
 				if (!negotiatedCar.getisNegotiatable()) {
-					double offerPrice = negotiatedCar.getMaxprice();
-					System.out.println(myAgent.getName() + ": First offer to the buyer: " + offerPrice + "\n");
-					String jsonInString;
-					try {
-						jsonInString = o.writeValueAsString(negotiatedCar);
-						mess.setContent(jsonInString);
-						mess.setReplyWith(String.valueOf(offerPrice));
-						mess.setConversationId("car-negotiation");
-						mess.setInReplyTo("0"); // time-step
-						mess.setPostTimeStamp(System.currentTimeMillis());
-						myAgent.send(mess);
-					} catch (JsonProcessingException e) {
-						System.err.println("Problem by converting an object o json-format");
+					double offerPrice = negotiatedCar.getMaxprice();				
+					if (offerPrice <= offerFromBuyer) {
+						acceptOffer(buyerName, negotiatedCar, offerFromBuyer);
+					} else {
+						// make a counter-offer to the buyer
+						makeACounterOffer(buyerName, negotiatedCar, offerPrice, 0);
 					}
 				} else {
 					// manual negotiation
@@ -486,6 +482,32 @@ public class DealerAgent extends Agent {
 				} catch (IOException e) {
 					System.err.println("Problem by converting a json-format to an object");
 				}
+			} else {
+				block();
+			}
+		}
+	}
+	
+	private class ReceiveReservationRequestFromBuyer extends CyclicBehaviour {
+
+		@Override
+		public void action() {
+			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
+					MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+			ACLMessage msg = myAgent.receive(mt);
+			
+			if (msg != null) {
+				String content = msg.getContent();
+				String buyerName = msg.getSender().getName();
+				System.out.println( myAgent.getName() + " Receive reservation request from buyer " + buyerName);
+
+				ACLMessage mess = new ACLMessage(ACLMessage.AGREE);
+				System.out.println(myAgent.getName() + ": Accept the reservation from " + buyerName);
+				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, buyerName));
+				mess.setContent(content);
+				mess.setReplyWith(msg.getReplyWith());
+				mess.setConversationId("car-negotiation");
+				myAgent.send(mess);				
 			} else {
 				block();
 			}

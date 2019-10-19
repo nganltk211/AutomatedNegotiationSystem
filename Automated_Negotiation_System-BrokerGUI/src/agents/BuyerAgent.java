@@ -3,10 +3,7 @@ package agents;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -55,6 +52,7 @@ public class BuyerAgent extends Agent {
 	private JsonIO noAgreementDB = new JsonIO("./DataBase/NoAgreementDB.txt");
 	private ArrayList<LogSession> buyerLogs;
 	private ArrayList<LogSession> dealerLogs;
+	
 	// variable for concurrent negotiation
 	private long negotiationDuration;
 	private long startTime;
@@ -66,50 +64,6 @@ public class BuyerAgent extends Agent {
 	private long timeOneRound;
 	private Map<String, PreviousOfferDetails> dealerPreviousOffers;
 
-	public void newSellerCome() {
-		numberOfSeller++;
-	}
-
-	public long getNegotiationDuration() {
-		return negotiationDuration;
-	}
-
-	public void setNegotiationDuration(long negotiationDuration) {
-		this.negotiationDuration = negotiationDuration*1000; // ms
-	}
-
-	public double getIntialPrice() {
-		return intialPrice;
-	}
-
-	public void setIntialPrice(double intialPrice) {
-		this.intialPrice = intialPrice;
-	}
-
-	public double getReservationPrice() {
-		return reservationPrice;
-	}
-
-	public void setReservationPrice(double reservationPrice) {
-		this.reservationPrice = reservationPrice;
-	}
-
-	public int getMaxStep() {
-		return maxStep;
-	}
-
-	public void setMaxStep(int maxStep) {
-		this.maxStep = maxStep;
-	}
-
-	public double getBeetavalue() {
-		return beetaValue;
-	}
-
-	public void setBeetavalue(double beetavalue) {
-		this.beetaValue = beetavalue;
-	}
-
 	/**
 	 * Method for setting up a buyer agent
 	 */
@@ -119,7 +73,7 @@ public class BuyerAgent extends Agent {
 		firstNegotiationThread = true;
 		reserveOfferList = new ArrayList<ReserveOffer>();
 		dealerPreviousOffers = new HashMap<String, PreviousOfferDetails>();
-		
+
 		// starts the BuyerGUI
 		new Thread(() -> {
 			Platform.runLater(() -> {
@@ -148,10 +102,11 @@ public class BuyerAgent extends Agent {
 		nd = new NegotiationWithDealer();
 		// Adding behaviors to the buyer agent
 		addBehaviour(new OfferFromBroker());
-		//addBehaviour(nd);
+		// addBehaviour(nd);
 		addBehaviour(new EndTheNegotiation());
 		addBehaviour(new NoAgreementFromDealer());
 		addBehaviour(new NegotiationWithDealerCONANStrategy());
+		addBehaviour(new ReceiveAgreementToReservationRequestFromDealer());
 	}
 
 	/**
@@ -234,8 +189,9 @@ public class BuyerAgent extends Agent {
 			firstNegotiationThread = false;
 			addWakerBehaviour();
 		}
-		dealerPreviousOffers.put(negotiatedCar.getAgent(), new PreviousOfferDetails(0, negotiatedCar.getMaxprice(), System.currentTimeMillis()));
-		
+		dealerPreviousOffers.put(negotiatedCar.getAgent(),
+				new PreviousOfferDetails(0, negotiatedCar.getMaxprice(), System.currentTimeMillis()));
+
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
@@ -263,7 +219,7 @@ public class BuyerAgent extends Agent {
 				if (reserveOfferList.size() > 0) {
 					String bestSeller = reserveOfferList.get(0).getDealerName();
 					double bestOffer = reserveOfferList.get(0).getOffer();
-					Car negotiatedCar = reserveOfferList.get(0).getCar(); 
+					Car negotiatedCar = reserveOfferList.get(0).getCar();
 					int index = 0;
 					for (int i = 0; i < reserveOfferList.size(); i++) {
 						// find the best buyer by comparing the last offer price
@@ -275,9 +231,10 @@ public class BuyerAgent extends Agent {
 						}
 					}
 					if (bestOffer != 0) { // when a best seller is found
-						System.out.println("Dealer: Best seller: " + bestSeller + " with offer: " + bestOffer);
+						System.out.println(
+								myAgent.getName() + " Best seller: " + bestSeller + " with offer: " + bestOffer);
 						// send accept message to the best seller
-						acceptOffer(bestSeller, negotiatedCar, bestOffer); // need the car
+						acceptOffer(bestSeller, negotiatedCar, bestOffer);
 						// remove the best buyer from the list
 						reserveOfferList.remove(index);
 					}
@@ -391,8 +348,19 @@ public class BuyerAgent extends Agent {
 		}
 	}
 
+	private boolean compareOfferToOffersInReserveList(double offer) {
+		// when offer is smaller than every reserved offer (offer is good to reserve),
+		// return true
+		for (ReserveOffer element : reserveOfferList) {
+			if (element.getOffer() < offer) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	private class NegotiationWithDealerCONANStrategy extends CyclicBehaviour {
-		
+
 		@Override
 		public void action() {
 			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
@@ -428,46 +396,64 @@ public class BuyerAgent extends Agent {
 						// for automated Negotiation: AI part
 						System.out.println("Buyer: Receive offer from the dealer: " + offerPrice);
 						double nextOffer = 0.0;
-						// calculate the next offer
-						long currentTime = System.currentTimeMillis();
-						double effectOfTime = Algorithms.getEffectOfTime(currentTime, startTime, negotiationDuration);
-						System.out.println("Effect of time " + effectOfTime);
-						
-						double enviromentFactor = Algorithms.getEnvironmentFactor(numberOfActiveSeller, 1, 1, numberOfSeller);
-						System.out.println("EnviromentFactor " + enviromentFactor);
-						
-						int oppResponseTimeScore = Algorithms.getOpponentResponseTimeASellerScore(msg.getPostTimeStamp(), dealerPreviousOffers.get(dealerName).getBuyerLastOfferAtTime(), negotiationDuration);
-						System.out.println("oppResponseTime " + oppResponseTimeScore);
-						
-						int oppConcessionRateScore = Algorithms.getOpponentConcessionRateASellerScore(offerPrice, dealerPreviousOffers.get(dealerName).getLastOfferOfSeller() , reservationPrice, intialPrice);
-						System.out.println("oppConcessionRate " + oppConcessionRateScore);
-						
-						double oppFactor = oppResponseTimeScore + oppConcessionRateScore;
-						
-						double negoSituation = Algorithms.getNegotiationSituation(numberOfSeller, oppFactor);
-						System.out.println("negoSituation " + negoSituation);
-						
-						double selffactor = Algorithms.getSelfFactor(reserveOfferList.size(), negoSituation, effectOfTime, 1); 
-						System.out.println("selffactor " + selffactor);
-						
-						double ws = Algorithms.getWeightForSelfFactor(effectOfTime, messObject.getMaxprice(), reservationPrice, selffactor);
-						System.out.println("ws " + ws);
-						double concessionRate = Algorithms.getConcessionRate(System.currentTimeMillis(), startTime, deadline, timeOneRound, dealerPreviousOffers.get(dealerName).getLastConcessionRate(), false, ws, enviromentFactor, selffactor);
-						System.out.println("concessionRate " + concessionRate);
-						nextOffer = Algorithms.getNextOffer(intialPrice, reservationPrice, concessionRate);
-						System.out.println("nextOffer " + nextOffer);
-						
-						//.............
+						/*
+						 * // calculate the next offer long currentTime = System.currentTimeMillis();
+						 * double effectOfTime = Algorithms.getEffectOfTime(currentTime, startTime,
+						 * negotiationDuration); System.out.println("Effect of time " + effectOfTime);
+						 * 
+						 * double enviromentFactor =
+						 * Algorithms.getEnvironmentFactor(numberOfActiveSeller, 1, 1, numberOfSeller);
+						 * System.out.println("EnviromentFactor " + enviromentFactor);
+						 * 
+						 * int oppResponseTimeScore =
+						 * Algorithms.getOpponentResponseTimeASellerScore(msg.getPostTimeStamp(),
+						 * dealerPreviousOffers.get(dealerName).getBuyerLastOfferAtTime(),
+						 * negotiationDuration); System.out.println("oppResponseTime " +
+						 * oppResponseTimeScore);
+						 * 
+						 * int oppConcessionRateScore =
+						 * Algorithms.getOpponentConcessionRateASellerScore(offerPrice,
+						 * dealerPreviousOffers.get(dealerName).getLastOfferOfSeller() ,
+						 * reservationPrice, intialPrice); System.out.println("oppConcessionRate " +
+						 * oppConcessionRateScore);
+						 * 
+						 * double oppFactor = oppResponseTimeScore + oppConcessionRateScore;
+						 * 
+						 * double negoSituation = Algorithms.getNegotiationSituation(numberOfSeller,
+						 * oppFactor); System.out.println("negoSituation " + negoSituation);
+						 * 
+						 * double selffactor = Algorithms.getSelfFactor(reserveOfferList.size(),
+						 * negoSituation, effectOfTime, 1); System.out.println("selffactor " +
+						 * selffactor);
+						 * 
+						 * double ws = Algorithms.getWeightForSelfFactor(effectOfTime,
+						 * messObject.getMaxprice(), reservationPrice, selffactor);
+						 * System.out.println("ws " + ws); double concessionRate =
+						 * Algorithms.getConcessionRate(System.currentTimeMillis(), startTime, deadline,
+						 * timeOneRound, dealerPreviousOffers.get(dealerName).getLastConcessionRate(),
+						 * false, ws, enviromentFactor, selffactor);
+						 * System.out.println("concessionRate " + concessionRate); nextOffer =
+						 * Algorithms.getNextOffer(intialPrice, reservationPrice, concessionRate);
+						 * System.out.println("nextOffer " + nextOffer);
+						 */
+						int buyerStep = Integer.parseInt(dealerTimeStep);
+						nextOffer = Algorithms.offer(intialPrice, reservationPrice, buyerStep,
+								maxStep, beetaValue);
+						// .............
 						if (compareOfferToOffersInReserveList(offerPrice) && nextOffer >= offerPrice) {
 							if (System.currentTimeMillis() >= deadline - timeOneRound) { // near the deadline
+								LogSession blog = new LogSession(buyerStep++, beetaValue, offerPrice);
+								buyerLogs.add(blog);
 								acceptOffer(dealerName, messObject, offerPrice);
 							} else {
-								reserveOfferList.add(new ReserveOffer(offerPrice, dealerName, messObject ));
-								sendReqToReserve(dealerName);
+								sendReqToReserve(dealerName, messObject, offerPrice);
 							}
 						} else {
-							dealerPreviousOffers.replace(dealerName, new PreviousOfferDetails(concessionRate, offerPrice, System.currentTimeMillis()));
-							makeACounterOffer(dealerName, messObject, nextOffer, dealerTimeStep, Integer.parseInt(dealerTimeStep));
+							// dealerPreviousOffers.replace(dealerName, new
+							// PreviousOfferDetails(concessionRate, offerPrice,
+							// System.currentTimeMillis()));
+							makeACounterOffer(dealerName, messObject, nextOffer, dealerTimeStep,
+									Integer.parseInt(dealerTimeStep));
 						}
 					}
 				} catch (IOException e) {
@@ -526,7 +512,7 @@ public class BuyerAgent extends Agent {
 	public void acceptOffer(String opponentAgentName, Car negotiatedCar, double price) {
 
 		saveLogs(opponentAgentName);
-		numberOfActiveSeller --;
+		numberOfActiveSeller--;
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
@@ -575,6 +561,32 @@ public class BuyerAgent extends Agent {
 		}
 	}
 
+	private class ReceiveAgreementToReservationRequestFromDealer extends CyclicBehaviour {
+
+		@Override
+		public void action() {
+			// Define template of the received message, which need to be matched to the sent
+			// message from the dealer
+			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
+					MessageTemplate.MatchPerformative(ACLMessage.AGREE));
+			ACLMessage msg = myAgent.receive(mt);
+			if (msg != null) {
+				String content = msg.getContent();
+				try {
+					Car negotiatedCar = o.readValue(content, Car.class);
+					double offerPrice = Double.parseDouble(msg.getReplyWith());
+					String dealerName = msg.getSender().getName();
+					reserveOfferList.add(new ReserveOffer(offerPrice, dealerName, negotiatedCar));
+				} catch (IOException e) {
+					System.err.println("Problem by converting a json-format to an object");
+				}
+
+			} else {
+				block();
+			}
+		}
+	}
+
 	/**
 	 * Method for sending a refuse message to the dealer when no agreement reaches
 	 * (because of out of time)
@@ -588,7 +600,7 @@ public class BuyerAgent extends Agent {
 			@Override
 			public void action() {
 				ACLMessage mess = new ACLMessage(ACLMessage.REFUSE);
-				System.err.println(myAgent.getName() + ": Refuse Agreement \n");
+				System.err.println(myAgent.getName() + ": Refuse Agreement to: " + dealerName + "\n");
 				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, dealerName));
 				String jsonInString;
 				try {
@@ -626,17 +638,28 @@ public class BuyerAgent extends Agent {
 		}).start();
 	}
 
-	private boolean compareOfferToOffersInReserveList(double offer) {
-		for (ReserveOffer element : reserveOfferList) {
-			if (element.getOffer() > offer) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private void sendReqToReserve(String dealerName) {
+	public void sendReqToReserve(String dealerName, Car negotiatedCar, double price) {
 		// send request to reserve to the dealer
+		addBehaviour(new OneShotBehaviour() {
+			@Override
+			public void action() {
+				ACLMessage mess = new ACLMessage(ACLMessage.REQUEST);
+				System.out
+						.println(myAgent.getName() + ": Send request to reserve to dealer " + dealerName + " " + price);
+				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, dealerName));
+				String jsonInString;
+				try {
+					jsonInString = o.writeValueAsString(negotiatedCar);
+					mess.setContent(jsonInString);
+					mess.setReplyWith(String.valueOf(price));
+					mess.setConversationId("car-negotiation");
+					myAgent.send(mess);
+					nd.setStep(0);
+				} catch (JsonProcessingException e) {
+					System.err.println("Problem by converting an object o json-format");
+				}
+			}
+		});
 	}
 
 	/**
@@ -656,13 +679,12 @@ public class BuyerAgent extends Agent {
 					double offerPrice = Double.parseDouble(msg.getReplyWith());
 					String dealerName = msg.getSender().getName();
 					// adds to reserveOfferList
-					boolean add = compareOfferToOffersInReserveList(offerPrice);
-					if (add) {
+					boolean needToReserve = compareOfferToOffersInReserveList(offerPrice);
+					if (needToReserve) {
 						if (System.currentTimeMillis() >= deadline - timeOneRound) { // near the deadline
 							acceptOffer(dealerName, negotiatedCar, offerPrice);
 						} else {
-							reserveOfferList.add(new ReserveOffer(offerPrice, dealerName, negotiatedCar ));
-							sendReqToReserve(dealerName);
+							sendReqToReserve(dealerName, negotiatedCar, offerPrice);
 						}
 					}
 
@@ -724,6 +746,50 @@ public class BuyerAgent extends Agent {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-
 	}
+
+	public void newSellerCome() {
+		numberOfSeller++;
+	}
+
+	public long getNegotiationDuration() {
+		return negotiationDuration;
+	}
+
+	public void setNegotiationDuration(long negotiationDuration) {
+		this.negotiationDuration = negotiationDuration * 1000; // ms
+	}
+
+	public double getIntialPrice() {
+		return intialPrice;
+	}
+
+	public void setIntialPrice(double intialPrice) {
+		this.intialPrice = intialPrice;
+	}
+
+	public double getReservationPrice() {
+		return reservationPrice;
+	}
+
+	public void setReservationPrice(double reservationPrice) {
+		this.reservationPrice = reservationPrice;
+	}
+
+	public int getMaxStep() {
+		return maxStep;
+	}
+
+	public void setMaxStep(int maxStep) {
+		this.maxStep = maxStep;
+	}
+
+	public double getBeetavalue() {
+		return beetaValue;
+	}
+
+	public void setBeetavalue(double beetavalue) {
+		this.beetaValue = beetavalue;
+	}
+
 }
