@@ -17,4 +17,5 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		primaryStage = new BrokerGUI();
 	}
+	
 }

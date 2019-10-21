@@ -82,6 +82,9 @@ public class BuyerAgent extends Agent {
 		this.beetaValue = beetavalue;
 	}
 
+	/**
+	 * Method for setting up a buyer agent
+	 */
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hello! Buyer-agent " + getAID().getName() + " is ready.");
@@ -179,7 +182,7 @@ public class BuyerAgent extends Agent {
 	/**
 	 * This method will be called after the buyer select the cars he want to
 	 * negotiate. A list of chosen cars will be sent to the broker
-	 * 
+	 *
 	 * @param listOfChosenCars
 	 */
 	public void sendBackTheChoosenCarsToTheBroker(Car negotiatedCar, double firstOfferPrice) {
@@ -212,7 +215,7 @@ public class BuyerAgent extends Agent {
 
 	/**
 	 * To request the broker to send a list of possible cars
-	 * 
+	 *
 	 * @param desiredCar
 	 */
 	public void requestInfoOfDesiredCar(Car desiredCar) {
@@ -311,7 +314,7 @@ public class BuyerAgent extends Agent {
 
 	/**
 	 * The buyer agent makes a counter-offer to the dealer agent
-	 * 
+	 *
 	 * @param opponentAgentName
 	 *            : name of the dealer agent
 	 * @param negotiatedCar
@@ -346,14 +349,14 @@ public class BuyerAgent extends Agent {
 
 	/**
 	 * This method will be called, when the buyer accepts the offer from the dealer
-	 * 
+	 *
 	 * @param opponentAgentName
 	 *            : dealer agent name
 	 * @param negotiatedCar
 	 * @param price
 	 */
 	public void acceptOffer(String opponentAgentName, Car negotiatedCar, double price) {
-		
+
 		saveLogs(opponentAgentName);
 		addBehaviour(new OneShotBehaviour() {
 			@Override
@@ -406,7 +409,7 @@ public class BuyerAgent extends Agent {
 	/**
 	 * Method for sending a refuse message to the dealer when no agreement reaches
 	 * (because of out of time)
-	 * 
+	 *
 	 * @param dealerName
 	 * @param negotiatedCar
 	 * @param price
@@ -433,22 +436,22 @@ public class BuyerAgent extends Agent {
 
 	/**
 	 * Method for ending the negotiation because of out of time.
-	 * @throws IOException 
-	 * @throws JsonMappingException 
-	 * @throws JsonParseException 
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonParseException
 	 */
 	public void endTheNegotiationWithoutAgreement(String dealerName) throws JsonParseException, JsonMappingException, IOException {
 		System.out.println("No Agreement!");
 		NegotiationLog session = new NegotiationLog(this.getName(), dealerName, buyerLogs, dealerLogs);
-		
-		
+
+
 		new Thread(() -> {
 			Platform.runLater(() -> {
 				NoAgreementGUI guiBuyer = new NoAgreementGUI(this, session);
 			});
 		}).start();
 	}
-	
+
 	/**
 	 * This behavior will be executed, when the negotiation is at the end, which
 	 * means that the dealer accept the offer from the buyer.
@@ -479,14 +482,19 @@ public class BuyerAgent extends Agent {
 
 	/**
 	 * Method to set the buyers negotiation way (manual or automated)
-	 * 
+	 *
 	 * @param manualNegotiation
 	 */
 	public void setNegotiationManual(boolean manualNegotiation) {
 		this.manualNegotiation = manualNegotiation;
 	}
-	
 
+
+	/**
+	 * Method to save the log of all negotiation session in case of
+	 * an agreement reaches in a text file.
+	 * @param dealerName : name of the dealer
+	 */
 	private void saveLogs(String dealerName) {
 		NegotiationLog session = new NegotiationLog(this.getName(), dealerName, buyerLogs, dealerLogs);
 		try {

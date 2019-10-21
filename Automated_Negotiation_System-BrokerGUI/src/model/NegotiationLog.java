@@ -3,20 +3,25 @@ package model;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class NegotiationLog implements Serializable{
-	
+/**
+ * Class as representation for a log of a negotiation, which contains all
+ * negotiation sessions of buyer and dealer.
+ */
+public class NegotiationLog implements Serializable {
+
 	private static final long serialVersionUID = -3896235106950619702L;
 	private String buyerName, dealerName;
 	private ArrayList<LogSession> buyerLog = null, dealerLog = null;
-	
-	public NegotiationLog(String buyerName, String dealerName, ArrayList<LogSession> buyer, ArrayList<LogSession> dealer) {
+
+	public NegotiationLog(String buyerName, String dealerName, ArrayList<LogSession> buyer,
+			ArrayList<LogSession> dealer) {
 		this.buyerName = buyerName;
 		this.dealerName = dealerName;
 		this.buyerLog = buyer;
 		this.dealerLog = dealer;
 	}
 
-	public NegotiationLog() {		
+	public NegotiationLog() {
 	}
 
 	public String getBuyerName() {
