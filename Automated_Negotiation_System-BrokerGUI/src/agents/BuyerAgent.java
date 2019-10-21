@@ -439,11 +439,8 @@ public class BuyerAgent extends Agent {
 	 */
 	public void endTheNegotiationWithoutAgreement(String dealerName) throws JsonParseException, JsonMappingException, IOException {
 		System.out.println("No Agreement!");
-		saveNoAgreementLogs(dealerName);
+		NegotiationLog session = new NegotiationLog(this.getName(), dealerName, buyerLogs, dealerLogs);
 		
-		noAgreementDB.openFileReader();
-		NegotiationLog session = o.readValue(noAgreementDB.readLine(), NegotiationLog.class);
-		noAgreementDB.closeFileReader();
 		
 		new Thread(() -> {
 			Platform.runLater(() -> {
@@ -489,18 +486,6 @@ public class BuyerAgent extends Agent {
 		this.manualNegotiation = manualNegotiation;
 	}
 	
-	private void saveNoAgreementLogs(String dealerName) {
-		NegotiationLog session = new NegotiationLog(this.getName(), dealerName, buyerLogs, dealerLogs);
-		try {
-			String jsonString = o.writeValueAsString(session);
-			noAgreementDB.openFileWriter();
-			noAgreementDB.writeLine(jsonString);
-			noAgreementDB.closeFileWriter();
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-
-	}
 
 	private void saveLogs(String dealerName) {
 		NegotiationLog session = new NegotiationLog(this.getName(), dealerName, buyerLogs, dealerLogs);
