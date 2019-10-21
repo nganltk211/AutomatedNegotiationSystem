@@ -52,7 +52,7 @@ public class BuyerAgent extends Agent {
 	private JsonIO noAgreementDB = new JsonIO("./DataBase/NoAgreementDB.txt");
 	private ArrayList<LogSession> buyerLogs;
 	private ArrayList<LogSession> dealerLogs;
-	
+
 	// variable for concurrent negotiation
 	private long negotiationDuration;
 	private long startTime;
@@ -396,49 +396,50 @@ public class BuyerAgent extends Agent {
 						// for automated Negotiation: AI part
 						System.out.println("Buyer: Receive offer from the dealer: " + offerPrice);
 						double nextOffer = 0.0;
-						/*
-						 * // calculate the next offer long currentTime = System.currentTimeMillis();
-						 * double effectOfTime = Algorithms.getEffectOfTime(currentTime, startTime,
-						 * negotiationDuration); System.out.println("Effect of time " + effectOfTime);
-						 * 
-						 * double enviromentFactor =
-						 * Algorithms.getEnvironmentFactor(numberOfActiveSeller, 1, 1, numberOfSeller);
-						 * System.out.println("EnviromentFactor " + enviromentFactor);
-						 * 
-						 * int oppResponseTimeScore =
-						 * Algorithms.getOpponentResponseTimeASellerScore(msg.getPostTimeStamp(),
-						 * dealerPreviousOffers.get(dealerName).getBuyerLastOfferAtTime(),
-						 * negotiationDuration); System.out.println("oppResponseTime " +
-						 * oppResponseTimeScore);
-						 * 
-						 * int oppConcessionRateScore =
-						 * Algorithms.getOpponentConcessionRateASellerScore(offerPrice,
-						 * dealerPreviousOffers.get(dealerName).getLastOfferOfSeller() ,
-						 * reservationPrice, intialPrice); System.out.println("oppConcessionRate " +
-						 * oppConcessionRateScore);
-						 * 
-						 * double oppFactor = oppResponseTimeScore + oppConcessionRateScore;
-						 * 
-						 * double negoSituation = Algorithms.getNegotiationSituation(numberOfSeller,
-						 * oppFactor); System.out.println("negoSituation " + negoSituation);
-						 * 
-						 * double selffactor = Algorithms.getSelfFactor(reserveOfferList.size(),
-						 * negoSituation, effectOfTime, 1); System.out.println("selffactor " +
-						 * selffactor);
-						 * 
-						 * double ws = Algorithms.getWeightForSelfFactor(effectOfTime,
-						 * messObject.getMaxprice(), reservationPrice, selffactor);
-						 * System.out.println("ws " + ws); double concessionRate =
-						 * Algorithms.getConcessionRate(System.currentTimeMillis(), startTime, deadline,
-						 * timeOneRound, dealerPreviousOffers.get(dealerName).getLastConcessionRate(),
-						 * false, ws, enviromentFactor, selffactor);
-						 * System.out.println("concessionRate " + concessionRate); nextOffer =
-						 * Algorithms.getNextOffer(intialPrice, reservationPrice, concessionRate);
-						 * System.out.println("nextOffer " + nextOffer);
-						 */
+
+						// calculate the next offer
+						long currentTime = System.currentTimeMillis();
+						double effectOfTime = Algorithms.getEffectOfTime(currentTime, startTime, negotiationDuration);
+						System.out.println("Effect of time " + effectOfTime);
+
+						double enviromentFactor = Algorithms.getEnvironmentFactor(numberOfActiveSeller, 0, 1,
+								numberOfSeller);
+						System.out.println("Number of active seller: " + numberOfActiveSeller );
+						System.out.println("Number of seller: " + numberOfSeller );
+						System.out.println("EnviromentFactor " + enviromentFactor);
+
+						int oppResponseTimeScore = Algorithms.getOpponentResponseTimeASellerScore(
+								msg.getPostTimeStamp(), dealerPreviousOffers.get(dealerName).getBuyerLastOfferAtTime(),
+								negotiationDuration);
+						System.out.println("oppResponseTime " + oppResponseTimeScore);
+						System.out.println("Dealer last offer " + dealerPreviousOffers.get(dealerName).getLastOfferOfSeller() + " Time :" + dealerPreviousOffers.get(dealerName).getBuyerLastOfferAtTime());
+						int oppConcessionRateScore = Algorithms.getOpponentConcessionRateASellerScore(offerPrice,
+								dealerPreviousOffers.get(dealerName).getLastOfferOfSeller(), reservationPrice,
+								intialPrice);
+						System.out.println("oppConcessionRate " + oppConcessionRateScore);
+
+						double oppFactor = oppResponseTimeScore + oppConcessionRateScore;
+
+						double negoSituation = Algorithms.getNegotiationSituation(numberOfSeller, oppFactor);
+						System.out.println("negoSituation " + negoSituation);
+
+						double selffactor = Algorithms.getSelfFactor(reserveOfferList.size(), negoSituation,
+								effectOfTime, 1);
+						System.out.println("selffactor " + selffactor);
+
+						double ws = Algorithms.getWeightForSelfFactor(effectOfTime, messObject.getMaxprice(),
+								reservationPrice, selffactor);
+						System.out.println("ws " + ws);
+						double concessionRate = Algorithms.getConcessionRate(System.currentTimeMillis(), startTime,
+								deadline, timeOneRound, dealerPreviousOffers.get(dealerName).getLastConcessionRate(),
+								false, ws, enviromentFactor, selffactor);
+						System.out.println("concessionRate " + concessionRate);
+						nextOffer = Algorithms.getNextOffer(intialPrice, reservationPrice, concessionRate);
+						System.out.println("nextOffer " + nextOffer);
+
 						int buyerStep = Integer.parseInt(dealerTimeStep);
-						nextOffer = Algorithms.offer(intialPrice, reservationPrice, buyerStep,
-								maxStep, beetaValue);
+						// nextOffer = Algorithms.offer(intialPrice, reservationPrice, buyerStep,
+						// maxStep, beetaValue);
 						// .............
 						if (compareOfferToOffersInReserveList(offerPrice) && nextOffer >= offerPrice) {
 							if (System.currentTimeMillis() >= deadline - timeOneRound) { // near the deadline
@@ -448,10 +449,10 @@ public class BuyerAgent extends Agent {
 							} else {
 								sendReqToReserve(dealerName, messObject, offerPrice);
 							}
+							numberOfActiveSeller --;
 						} else {
-							// dealerPreviousOffers.replace(dealerName, new
-							// PreviousOfferDetails(concessionRate, offerPrice,
-							// System.currentTimeMillis()));
+							dealerPreviousOffers.replace(dealerName,
+									new PreviousOfferDetails(concessionRate, offerPrice, System.currentTimeMillis()));
 							makeACounterOffer(dealerName, messObject, nextOffer, dealerTimeStep,
 									Integer.parseInt(dealerTimeStep));
 						}
@@ -552,7 +553,6 @@ public class BuyerAgent extends Agent {
 				try {
 					endTheNegotiationWithoutAgreement(dealerName);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			} else {
@@ -687,10 +687,7 @@ public class BuyerAgent extends Agent {
 							sendReqToReserve(dealerName, negotiatedCar, offerPrice);
 						}
 					}
-
-					// acceptOffer(dealerName, negotiatedCar, offerPrice);
-					// buyerLogs = new ArrayList<LogSession>();
-					// dealerLogs = new ArrayList<LogSession>();
+					numberOfActiveSeller --;
 				} catch (IOException e) {
 					System.err.println("Problem by converting a json-format to an object");
 				}
@@ -698,15 +695,6 @@ public class BuyerAgent extends Agent {
 				block();
 			}
 		}
-	}
-
-	/**
-	 * Method to set the buyers negotiation way (manual or automated)
-	 * 
-	 * @param manualNegotiation
-	 */
-	public void setNegotiationManual(boolean manualNegotiation) {
-		this.manualNegotiation = manualNegotiation;
 	}
 
 	/**
@@ -726,7 +714,6 @@ public class BuyerAgent extends Agent {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	/**
@@ -746,6 +733,15 @@ public class BuyerAgent extends Agent {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Method to set the buyers negotiation way (manual or automated)
+	 * 
+	 * @param manualNegotiation
+	 */
+	public void setNegotiationManual(boolean manualNegotiation) {
+		this.manualNegotiation = manualNegotiation;
 	}
 
 	public void newSellerCome() {

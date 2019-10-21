@@ -52,7 +52,7 @@ public class Algorithms {
 		return score;
 	}
 
-	// CONAN Strategy ---------------------------------------------------------
+	// Calculate offer by CONAN Strategy ---------------------------------------------------------
 	public static int getNextOffer(double intialPrice, double reservationPrice, double concessionRate) {
 		return (int) (intialPrice + (reservationPrice - intialPrice) * concessionRate);
 	}
@@ -78,7 +78,7 @@ public class Algorithms {
 	}
 	
 	public static double getSelfFactor(int ro, double ns, double te, double eg) {
-		return (1/(ro + 1) + ns + te + eg) / 4;
+		return ((double) 1/(ro + 1) + ns + te + eg) / 4;
 	}
 	
 	public static double getNegotiationSituation(int numberOfSeller, double opponentFactor) {
@@ -123,8 +123,8 @@ public class Algorithms {
 		return  ((double) (currentTime - startTime)) / timeDuration;
 	}
 	
-	public static double getEnvironmentFactor(int se, int c, int numberOfBuyer, int numberOfSeller) {
-		return ((double)(1/se) + (double) (c/numberOfSeller) + (double)(numberOfBuyer/numberOfSeller)) / 3;
+	public static double getEnvironmentFactor(int se, int numberOfCompetitorAgents, int numberOfBuyer, int numberOfSeller) {
+		return (((double) 1/se) + ( (double) numberOfCompetitorAgents/numberOfSeller) + ((double) numberOfBuyer/numberOfSeller)) / 3;
 	}
 	
 	public static double getWeightForSelfFactor(double effectOfTime, double d, double reservationPrice, double selffactor) {

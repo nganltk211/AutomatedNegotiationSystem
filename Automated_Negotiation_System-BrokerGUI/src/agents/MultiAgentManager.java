@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import model.Car;
+import model.CarList;
 import model.MultipleMessage;
 
 /**
@@ -14,9 +15,11 @@ public class MultiAgentManager {
 
 	// list storing requested cars with his interested buyers
 	private ArrayList<MultipleMessage> negotiationList = null;
+	private BrokerAgent brokerAgent;
 
-	public MultiAgentManager() {
+	public MultiAgentManager(BrokerAgent brokerAgent) {
 		negotiationList = new ArrayList<MultipleMessage>();
+		this.brokerAgent = brokerAgent;
 	}
 
 	/**
@@ -66,10 +69,11 @@ public class MultiAgentManager {
 			if (!message.getBuyerList().isEmpty()) {
 				for (Entry<String, Double> element : message.getBuyerList().entrySet()) {
 					 if (element.getKey().equals(buyerName)) { 
-						 message.getBuyerList().remove(buyerName);
-						 if (message.getBuyerList().size() == 0) {
+						 if (brokerAgent.getCatalog().contains(message.getCar())) {
+							 message.getBuyerList().remove(buyerName);
+						 } else {
 							 iterator.remove();
-						 }
+						 }				
 					 }
 				 }
 			}
