@@ -15,7 +15,7 @@ public class OfferConfirmationGUI extends Stage {
 	/**
 	 * Constructor of the class.
 	 */
-	public OfferConfirmationGUI(double price, NegotiationLog session){
+	public OfferConfirmationGUI(double price, NegotiationLog session, String dealerName, String buyerName){
 		Parent window = null;
 		// loads GUI-Elements from the BrokerGUI.fxml file
 		loader = new FXMLLoader(getClass().getResource("OfferConfirmationGUI.fxml"));
@@ -24,6 +24,8 @@ public class OfferConfirmationGUI extends Stage {
 			OfferConfirmationGUIController controller = loader.<OfferConfirmationGUIController>getController();
 			controller.setOffer(price);
 			controller.setNegotiation(session);
+			controller.setBuyerName(buyerName);
+			controller.setDealerName(dealerName);
 		} catch (IOException e) {
 			System.err.println("Error by loading fxml-File");
 		}

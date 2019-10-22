@@ -11,9 +11,12 @@ public class OfferConfirmationGUIController {
 
     @FXML
     private Button lineChart;
-
     @FXML
-    private Label acceptedPrice;
+    private Label acceptedPrice;   
+    @FXML
+    private Label lb_buyername;
+    @FXML
+    private Label lb_dealername;
     
     private NegotiationLog session;
     
@@ -29,9 +32,16 @@ public class OfferConfirmationGUIController {
     	return this.session;
     }
     
+    public void setBuyerName(String buyerName) {
+    	lb_buyername.setText(buyerName);
+    }
+    
+    public void setDealerName(String dealerName) {
+    	lb_dealername.setText(dealerName);
+    }
+    
     @FXML
     public void viewLineChart(ActionEvent event) {
-    	//System.out.println("Test Chart ");
     	LineChartGUI gui = new LineChartGUI(this.session);
     }
 }

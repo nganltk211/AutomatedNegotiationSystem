@@ -11,17 +11,24 @@
 
 <AnchorPane prefHeight="228.0" prefWidth="473.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.OfferConfirmationGUIController">
   <children>
-    <Button fx:id="lineChart" layoutX="162.0" layoutY="172.0" mnemonicParsing="false" onAction="#viewLineChart" text="View Line Chart">
+    <Button fx:id="lineChart" layoutX="162.0" layoutY="185.0" mnemonicParsing="false" onAction="#viewLineChart" text="View Line Chart">
       <font>
         <Font size="16.0" fx:id="x1" />
       </font>
     </Button>
-    <Label layoutX="84.0" layoutY="40.0" text="Negotiation Successsful">
+    <Label layoutX="84.0" layoutY="23.0" text="Negotiation Successsful">
       <font>
         <Font name="System Bold" size="26.0" />
       </font>
     </Label>
-    <Label font="$x1" layoutX="84.0" layoutY="108.0" text="Accepted Price $: " />
-    <Label fx:id="acceptedPrice" font="$x1" layoutX="249.0" layoutY="108.0" prefHeight="17.0" prefWidth="65.0" />
+    <Label font="$x1" layoutX="99.0" layoutY="144.0" text="Accepted Price $: " />
+    <Label fx:id="acceptedPrice" font="$x1" layoutX="249.0" layoutY="144.0" prefHeight="17.0" prefWidth="65.0" />
+    <Label layoutX="14.0" layoutY="92.0" text="Between">
+      <font>
+        <Font name="System Bold Italic" size="16.0" />
+      </font>
+    </Label>
+    <Label fx:id="lb_buyername" font="$x1" layoutX="99.0" layoutY="77.0" text="Label" />
+    <Label fx:id="lb_dealername" font="$x1" layoutX="99.0" layoutY="108.0" text="Label" />
   </children>
 </AnchorPane>

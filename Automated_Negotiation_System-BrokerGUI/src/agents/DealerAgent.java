@@ -311,7 +311,7 @@ public class DealerAgent extends Agent {
 	 * @param price
 	 *            : accepted price
 	 */
-	private void confirmSell(Car car, double price) {
+	private void confirmSell(Car car, double price, String buyerName) {
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
@@ -323,6 +323,7 @@ public class DealerAgent extends Agent {
 					jsonInString = o.writeValueAsString(car);
 					mess.setContent(jsonInString);
 					mess.setReplyWith(String.valueOf(price));
+					mess.setInReplyTo(buyerName);
 					mess.setConversationId("confirm_sell");
 					myAgent.send(mess);
 				} catch (JsonProcessingException e) {
@@ -470,7 +471,7 @@ public class DealerAgent extends Agent {
 						System.out.println("Sold car: " + negotiatedCar);
 						System.out.println("Sold price: " + offerPrice);		
 						bestBuyerFound = false;
-						confirmSell(negotiatedCar, offerPrice); // confirm with the broker
+						confirmSell(negotiatedCar, offerPrice, msg.getSender().getName()); // confirm with the broker
 					} else {
 						// add the buyer to the list for finding the best buyer
 						findTheBestOffer(msg.getSender().getName(), negotiatedCar, offerPrice);

@@ -98,6 +98,7 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 					Car negotiatedCar = o.readValue(content, Car.class);
 					String agentName = msg0.getSender().getName();
 					double offerPrice = Double.parseDouble(msg0.getReplyWith());
+					String buyerName = msg0.getInReplyTo();
 					receivedCommision += COMMISION;
 					System.out.println("\nBroker confirm !!! " + agentName + " confirm sell at price: " + offerPrice + "\nBroker Commision: " + receivedCommision);
 					final double offer = offerPrice;
@@ -112,7 +113,7 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 					// start the confirmation gui
 					new Thread(() -> {
 						Platform.runLater(() -> {
-							OfferConfirmationGUI confirm = new OfferConfirmationGUI(offer, session);
+							OfferConfirmationGUI confirm = new OfferConfirmationGUI(offer, session, agentName, buyerName);
 						});
 					}).start();
 					

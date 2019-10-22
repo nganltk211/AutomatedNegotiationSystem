@@ -249,7 +249,7 @@ public class BuyerAgent extends Agent {
 							// calculate the next offer
 							int nextPrice = Algorithms.offer(intialPrice, reservationPrice, step, maxStep, beetaValue);
 							if (nextPrice >= offerPrice) {
-								LogSession blog = new LogSession(step++, beetaValue, offerPrice);
+								LogSession blog = new LogSession(step, beetaValue, offerPrice);
 								buyerLogs.add(blog);
 								acceptOffer(dealerName, messObject, offerPrice);
 							} else {
@@ -451,12 +451,6 @@ public class BuyerAgent extends Agent {
 	 * @param dealerName : name of the dealer
 	 */
 	private void saveLogs(String dealerName) {
-//		if (buyerLogs.size() > dealerLogs.size()) {
-//			dealerLogs.add(buyerLogs.get(buyerLogs.size()-1));
-//		}
-//		if (buyerLogs.size() < dealerLogs.size()) {
-//			buyerLogs.add(dealerLogs.get(dealerLogs.size()-1));
-//		}
 		NegotiationLog session = new NegotiationLog(this.getName(), dealerName, buyerLogs, dealerLogs);
 		try {
 			String jsonString = o.writeValueAsString(session);
