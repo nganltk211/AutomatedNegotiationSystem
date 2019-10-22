@@ -52,11 +52,11 @@ public class NegotiationBotGUIController {
 	public void buttonAcceptClick(ActionEvent event) {
 		if (agent instanceof DealerAgent) {
 			DealerAgent dag = (DealerAgent) agent;
-			dag.acceptOffer(opponentAgentName, negotiatedCar, Double.valueOf(offer_price.getText()));
+			dag.acceptOffer(opponentAgentName, negotiatedCar, Double.valueOf(offer_price.getText()), step);
 			((Node) (event.getSource())).getScene().getWindow().hide();			
 		} else {
 			BuyerAgent bag = (BuyerAgent) agent;
-			bag.acceptOffer(opponentAgentName, negotiatedCar, Double.valueOf(offer_price.getText()));
+			bag.acceptOffer(opponentAgentName, negotiatedCar, Double.valueOf(offer_price.getText()), step);
 			((Node) (event.getSource())).getScene().getWindow().hide();
 		}
 	}
@@ -85,7 +85,7 @@ public class NegotiationBotGUIController {
 			((Node) (event.getSource())).getScene().getWindow().hide();			
 		} else {
 			BuyerAgent bag = (BuyerAgent) agent;
-			bag.makeACounterOffer(opponentAgentName, negotiatedCar, Double.valueOf(counteroffer_price.getText()), String.valueOf(step), step);
+			bag.makeACounterOffer(opponentAgentName, negotiatedCar, Double.valueOf(counteroffer_price.getText()), step);
 			((Node) (event.getSource())).getScene().getWindow().hide();
 		}
 	}

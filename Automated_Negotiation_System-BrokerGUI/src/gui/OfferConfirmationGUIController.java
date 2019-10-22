@@ -7,6 +7,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import model.NegotiationLog;
 
+/**
+ * A Controller class of OfferConfirmationGUI. The logic of GUI-Elements will be defined in
+ * this class.
+ */
 public class OfferConfirmationGUIController {
 
     @FXML

@@ -8,6 +8,9 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import model.NegotiationLog;
 
+/**
+ * A class for setting and showing a stage OfferConfirmationGUI.
+ */
 public class OfferConfirmationGUI extends Stage {
 
 	private FXMLLoader loader; // uses to load the fxml-file

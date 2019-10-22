@@ -4,7 +4,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import model.NegotiationLog;
 
-
+/**
+ * A Controller class of NoAgreementGUIController. The logic of GUI-Elements will be defined in
+ * this class.
+ */
 public class NoAgreementGUIController {
 
 	@FXML
