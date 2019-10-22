@@ -40,12 +40,11 @@ public class BuyerAgent extends Agent {
 
 	private static final long serialVersionUID = -8414132078026686821L;
 	private AID brokerAgent;
-	private boolean manualNegotiation; // true if the negotiation is manual
+	private int negotiationTactic; // 0 if the negotiation is manual, 1 if time-dependent, 2 if CONAN
 	private double intialPrice; // min price
 	private double reservationPrice; // max price
 	private int maxStep; // deadline : max time step
 	private double beetaValue; // beetaValue using time dependent tactics
-	private NegotiationWithDealer nd;
 
 	private ObjectMapper o = new ObjectMapper();
 	private JsonIO negotiationDB = new JsonIO("./DataBase/NegotiatioDB.txt");
@@ -99,10 +98,9 @@ public class BuyerAgent extends Agent {
 			}
 		});
 
-		nd = new NegotiationWithDealer();
 		// Adding behaviors to the buyer agent
 		addBehaviour(new OfferFromBroker());
-		// addBehaviour(nd);
+		// addBehaviour(new NegotiationWithDealer());
 		addBehaviour(new EndTheNegotiation());
 		addBehaviour(new NoAgreementFromDealer());
 		addBehaviour(new NegotiationWithDealerCONANStrategy());
@@ -175,20 +173,20 @@ public class BuyerAgent extends Agent {
 	public void sendBackTheChoosenCarsToTheBroker(Car negotiatedCar, double firstOfferPrice) {
 		buyerLogs = new ArrayList<LogSession>();
 		dealerLogs = new ArrayList<LogSession>();
-		if (manualNegotiation) {
-			// Adding Buyers logs into list
-			LogSession blog = new LogSession(0, beetaValue, firstOfferPrice);
-			buyerLogs.add(blog);
-		}
+		// Adding Buyers logs into list
+		LogSession blog = new LogSession(0, beetaValue, firstOfferPrice);
+		buyerLogs.add(blog);
 		numberOfActiveSeller++;
 		numberOfSeller++;
-		if (firstNegotiationThread) {
+		
+		if (firstNegotiationThread && negotiationDuration > 0) {
 			startTime = System.currentTimeMillis();
 			deadline = startTime + negotiationDuration;
 			System.out.println("StartTime " + startTime + " Duration " + negotiationDuration);
 			firstNegotiationThread = false;
 			addWakerBehaviour();
 		}
+		
 		dealerPreviousOffers.put(negotiatedCar.getAgent(),
 				new PreviousOfferDetails(0, negotiatedCar.getMaxprice(), System.currentTimeMillis()));
 
@@ -212,7 +210,9 @@ public class BuyerAgent extends Agent {
 		});
 	}
 
-	// when deadline reaches
+	/**
+	 * This behavior will be execute when the buyer agent reaches his deadline
+	 */
 	private void addWakerBehaviour() {
 		addBehaviour(new WakerBehaviour(this, negotiationDuration) {
 			protected void onWake() {
@@ -285,80 +285,8 @@ public class BuyerAgent extends Agent {
 	 * options for buyer to accept or decline the offer. In case of automated
 	 * negotiation, the buyer AI will decide to accept the offer or make a
 	 * counter-offer
+	 * In this behavior, the counter-offer in case of AI will be calculated through time-dependent-tactics or CONAN strategy
 	 */
-	private class NegotiationWithDealer extends CyclicBehaviour {
-		private int step = 0;
-
-		public void setStep(int step) {
-			this.step = step;
-		}
-
-		@Override
-		public void action() {
-			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
-					MessageTemplate.MatchPerformative(ACLMessage.PROPOSE));
-			ACLMessage msg = myAgent.receive(mt);
-			if (msg != null) {
-				String content = msg.getContent();
-				try {
-					Car messObject = o.readValue(content, Car.class);
-					String dealerName = msg.getSender().getName();
-					double offerPrice = Double.parseDouble(msg.getReplyWith());
-					String dealerTimeStep = msg.getInReplyTo();
-					int dealerSteps = Integer.parseInt(dealerTimeStep);
-					// adds to dealer log
-					LogSession dlog = new LogSession(dealerSteps, messObject.getBeeta(), offerPrice);
-					dealerLogs.add(dlog);
-					if (manualNegotiation) {
-						// for manual negotiation
-						System.out.println("Buyer: Receive offer from the dealer: " + offerPrice);
-						// start the NegotiationBotGUI
-						new Thread(() -> {
-							Platform.runLater(() -> {
-								NegotiationBotGUI bot = new NegotiationBotGUI(myAgent, dealerName, messObject,
-										offerPrice, dealerSteps + 1); // for manual, the step is used for both agents
-							});
-						}).start();
-					} else {
-						// for automated Negotiation: AI part
-						if (step <= maxStep) {
-							System.out.println("Buyer: Receive offer from the dealer: " + offerPrice);
-							// calculate the next offer
-							int nextPrice = Algorithms.offer(intialPrice, reservationPrice, step, maxStep, beetaValue);
-							if (nextPrice >= offerPrice) {
-								LogSession blog = new LogSession(step++, beetaValue, offerPrice);
-								buyerLogs.add(blog);
-								acceptOffer(dealerName, messObject, offerPrice);
-							} else {
-								makeACounterOffer(dealerName, messObject, nextPrice, dealerTimeStep, step);
-								step++;
-							}
-						} else {
-							step = 0;
-							endTheNegotiationWithoutAgreement(dealerName);
-							sendRefuseToTheDealer(dealerName, messObject);
-						}
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			} else {
-				block();
-			}
-		}
-	}
-
-	private boolean compareOfferToOffersInReserveList(double offer) {
-		// when offer is smaller than every reserved offer (offer is good to reserve),
-		// return true
-		for (ReserveOffer element : reserveOfferList) {
-			if (element.getOffer() < offer) {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	private class NegotiationWithDealerCONANStrategy extends CyclicBehaviour {
 
 		@Override
@@ -382,7 +310,8 @@ public class BuyerAgent extends Agent {
 					// adds to dealer log
 					LogSession dlog = new LogSession(dealerSteps, messObject.getBeeta(), offerPrice);
 					dealerLogs.add(dlog);
-					if (manualNegotiation) {
+					switch (negotiationTactic) {
+					case 0:
 						// for manual negotiation
 						System.out.println("Buyer: Receive offer from the dealer: " + offerPrice);
 						// start the NegotiationBotGUI
@@ -392,8 +321,28 @@ public class BuyerAgent extends Agent {
 										offerPrice, dealerSteps + 1); // for manual, the step is used for both agents
 							});
 						}).start();
-					} else {
-						// for automated Negotiation: AI part
+						break;
+					case 1:
+						int step = dealerSteps + 1;
+						// for automated Negotiation: AI part - time-dependent-tactic
+						if (step <= maxStep) {
+							System.out.println("Buyer: Receive offer from the dealer: " + offerPrice);
+							// calculate the next offer
+							int nextPrice = Algorithms.offer(intialPrice, reservationPrice, step, maxStep, beetaValue);
+							if (nextPrice >= offerPrice) {
+								LogSession blog = new LogSession(step++, beetaValue, offerPrice);
+								buyerLogs.add(blog);
+								acceptOffer(dealerName, messObject, offerPrice);
+							} else {
+								makeACounterOffer(dealerName, messObject, nextPrice, dealerTimeStep, step);
+							}
+						} else {
+							endTheNegotiationWithoutAgreement(dealerName);
+							sendRefuseToTheDealer(dealerName, messObject);
+						}
+						break;
+					case 2:
+						// for automated Negotiation: AI part - CONAN strategy
 						System.out.println("Buyer: Receive offer from the dealer: " + offerPrice);
 						double nextOffer = 0.0;
 
@@ -438,9 +387,7 @@ public class BuyerAgent extends Agent {
 						System.out.println("nextOffer " + nextOffer);
 
 						int buyerStep = Integer.parseInt(dealerTimeStep);
-						// nextOffer = Algorithms.offer(intialPrice, reservationPrice, buyerStep,
-						// maxStep, beetaValue);
-						// .............
+
 						if (compareOfferToOffersInReserveList(offerPrice) && nextOffer >= offerPrice) {
 							if (System.currentTimeMillis() >= deadline - timeOneRound) { // near the deadline
 								LogSession blog = new LogSession(buyerStep++, beetaValue, offerPrice);
@@ -466,6 +413,20 @@ public class BuyerAgent extends Agent {
 		}
 	}
 
+	/**
+	 * Method for checking whether an offer need to be reserved
+	 * @param offer
+	 * @return true when offer is smaller than every reserved offer (offer is good to reserve)
+	 */
+	private boolean compareOfferToOffersInReserveList(double offer) {
+		for (ReserveOffer element : reserveOfferList) {
+			if (element.getOffer() < offer) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * The buyer agent makes a counter-offer to the dealer agent
 	 * 
@@ -527,7 +488,6 @@ public class BuyerAgent extends Agent {
 					mess.setReplyWith(String.valueOf(price));
 					mess.setConversationId("car-negotiation");
 					myAgent.send(mess);
-					nd.setStep(0);
 				} catch (JsonProcessingException e) {
 					System.err.println("Problem by converting an object o json-format");
 				}
@@ -638,14 +598,20 @@ public class BuyerAgent extends Agent {
 		}).start();
 	}
 
+	/**
+	 * Method for sending a reservation request to a dealer.
+	 * 
+	 * @param dealerName
+	 * @param negotiatedCar
+	 * @param price
+	 */
 	public void sendReqToReserve(String dealerName, Car negotiatedCar, double price) {
-		// send request to reserve to the dealer
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
+				// send request to reserve to the dealer
 				ACLMessage mess = new ACLMessage(ACLMessage.REQUEST);
-				System.out
-						.println(myAgent.getName() + ": Send request to reserve to dealer " + dealerName + " " + price);
+				System.out.println(myAgent.getName() + ": Send request to reserve to dealer " + dealerName + " " + price);
 				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, dealerName));
 				String jsonInString;
 				try {
@@ -654,7 +620,6 @@ public class BuyerAgent extends Agent {
 					mess.setReplyWith(String.valueOf(price));
 					mess.setConversationId("car-negotiation");
 					myAgent.send(mess);
-					nd.setStep(0);
 				} catch (JsonProcessingException e) {
 					System.err.println("Problem by converting an object o json-format");
 				}
@@ -678,15 +643,20 @@ public class BuyerAgent extends Agent {
 					Car negotiatedCar = o.readValue(content, Car.class);
 					double offerPrice = Double.parseDouble(msg.getReplyWith());
 					String dealerName = msg.getSender().getName();
-					// adds to reserveOfferList
-					boolean needToReserve = compareOfferToOffersInReserveList(offerPrice);
-					if (needToReserve) {
-						if (System.currentTimeMillis() >= deadline - timeOneRound) { // near the deadline
-							acceptOffer(dealerName, negotiatedCar, offerPrice);
-						} else {
-							sendReqToReserve(dealerName, negotiatedCar, offerPrice);
+					
+					if (negotiationDuration > 0) {
+						// adds to reserveOfferList
+						boolean needToReserve = compareOfferToOffersInReserveList(offerPrice);
+						if (needToReserve) {
+							if (System.currentTimeMillis() >= deadline - timeOneRound) { // near the deadline
+								acceptOffer(dealerName, negotiatedCar, offerPrice);
+							} else {
+								sendReqToReserve(dealerName, negotiatedCar, offerPrice);
+							}
 						}
-					}
+					} else {
+						acceptOffer(dealerName, negotiatedCar, offerPrice);
+					}					
 					numberOfActiveSeller --;
 				} catch (IOException e) {
 					System.err.println("Problem by converting a json-format to an object");
@@ -740,8 +710,8 @@ public class BuyerAgent extends Agent {
 	 * 
 	 * @param manualNegotiation
 	 */
-	public void setNegotiationManual(boolean manualNegotiation) {
-		this.manualNegotiation = manualNegotiation;
+	public void setNegotiationTatic(int negotiationTactic) {
+		this.negotiationTactic = negotiationTactic;
 	}
 
 	public void newSellerCome() {

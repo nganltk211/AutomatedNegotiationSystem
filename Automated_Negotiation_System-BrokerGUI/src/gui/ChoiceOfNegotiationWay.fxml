@@ -11,7 +11,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="413.0" prefWidth="516.9998779296875" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.NegotiationChoiceGUIController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="436.0" prefWidth="516.9998779296875" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.NegotiationChoiceGUIController">
   <children>
     <Label layoutX="47.0" layoutY="30.0" text="Let start the negotiation">
       <font>
@@ -20,7 +20,7 @@
     </Label>
     <RadioButton fx:id="rb_manual" layoutX="51.0" layoutY="288.0" mnemonicParsing="false" text="Manual negotiation" />
     <RadioButton fx:id="rb_automated" layoutX="50.0" layoutY="324.0" mnemonicParsing="false" text="Automated Negotiation" />
-    <Button fx:id="btn_start" layoutX="51.0" layoutY="365.0" mnemonicParsing="false" onAction="#startNegotiationButtonClick" prefWidth="73.0" text="Start" />
+    <Button fx:id="btn_start" layoutX="51.0" layoutY="389.0" mnemonicParsing="false" onAction="#startNegotiationButtonClick" prefWidth="73.0" text="Start" />
     <Label layoutX="51.0" layoutY="90.0" text="Negotiated Car">
       <font>
         <Font name="System Bold Italic" size="16.0" />
@@ -65,5 +65,6 @@
     <Label id="priceLable" fx:id="maxprice_buyer" font="$x1" layoutX="276.0" layoutY="282.0" text="Max price" visible="true" />
     <TextField id="PricetoEnter" fx:id="maxPriceFromBuyer" layoutX="371.0" layoutY="282.0" prefWidth="95.0" visible="true" />
     <AnchorPane layoutX="29.0" layoutY="80.0" opacity="0.25" prefHeight="193.0" prefWidth="466.0" style="-fx-background-color:  #b3b6b7; " />
+    <RadioButton id="rb_automated" fx:id="rb_conan" layoutX="51.0" layoutY="359.0" mnemonicParsing="false" text="CONAN Strategy" />
   </children>
 </AnchorPane>

@@ -49,13 +49,9 @@ public class LineChartGUIController {
     		buyer.getData().add(n);
     	}
     	
-    	int counter = 0;
     	for(LogSession x : session.getDealerLog()) {
-    		counter++;
     		Data<String, Number> n = new XYChart.Data<String, Number>(String.valueOf(x.getStep()), x.getOffer());
-    		if (counter < session.getDealerLog().size()) {
-    			n.setNode(createDataNode(n.YValueProperty(), true));
-    		}
+    		n.setNode(createDataNode(n.YValueProperty(), true));
     		dealer.getData().add(n);
     	}
     	
