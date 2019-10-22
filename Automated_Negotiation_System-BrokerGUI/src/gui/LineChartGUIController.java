@@ -59,11 +59,12 @@ public class LineChartGUIController {
     		dealer.getData().add(n);
     	}
     	
-    	y.setAutoRanging(false);
-    	y.setUpperBound(session.getDealerLog().get(0).getOffer() + 250);  	
-    	y.setAutoRanging(false);
-    	y.setLowerBound(session.getBuyerLog().get(0).getOffer() - 250);
-    	
+    	if (session.getDealerLog().size() > 0 && session.getBuyerLog().size() > 0) {
+    		y.setAutoRanging(false);
+        	y.setUpperBound(session.getDealerLog().get(0).getOffer() + 250);  	
+        	y.setAutoRanging(false);
+        	y.setLowerBound(session.getBuyerLog().get(0).getOffer() - 250);
+    	}
     	LineChart.getData().addAll(buyer, dealer);
     }
     
