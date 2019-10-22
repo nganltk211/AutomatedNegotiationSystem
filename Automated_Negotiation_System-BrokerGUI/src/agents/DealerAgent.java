@@ -271,8 +271,6 @@ public class DealerAgent extends Agent {
 		}
 	}
 
-	
-
 	/**
 	 * The dealer agent makes a counter-offer to the buyer agent
 	 *

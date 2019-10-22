@@ -42,45 +42,11 @@ public class BuyerAgent extends Agent {
 	private double reservationPrice; // max price
 	private int maxStep; // deadline : max time step
 	private double beetaValue; // beetaValue using time dependent tactics
-	private NegotiationWithDealer nd;
 
 	private ObjectMapper o = new ObjectMapper();
 	private JsonIO negotiationDB = new JsonIO("./DataBase/NegotiatioDB.txt");
-	private JsonIO noAgreementDB = new JsonIO("./DataBase/NoAgreementDB.txt");
 	private ArrayList<LogSession> buyerLogs;
 	private ArrayList<LogSession> dealerLogs;
-
-	public double getIntialPrice() {
-		return intialPrice;
-	}
-
-	public void setIntialPrice(double intialPrice) {
-		this.intialPrice = intialPrice;
-	}
-
-	public double getReservationPrice() {
-		return reservationPrice;
-	}
-
-	public void setReservationPrice(double reservationPrice) {
-		this.reservationPrice = reservationPrice;
-	}
-
-	public int getMaxStep() {
-		return maxStep;
-	}
-
-	public void setMaxStep(int maxStep) {
-		this.maxStep = maxStep;
-	}
-
-	public double getBeetavalue() {
-		return beetaValue;
-	}
-
-	public void setBeetavalue(double beetavalue) {
-		this.beetaValue = beetavalue;
-	}
 
 	/**
 	 * Method for setting up a buyer agent
@@ -114,10 +80,9 @@ public class BuyerAgent extends Agent {
 			}
 		});
 
-		nd = new NegotiationWithDealer();
 		// Adding behaviors to the buyer agent
 		addBehaviour(new OfferFromBroker());
-		addBehaviour(nd);
+		addBehaviour(new NegotiationWithDealer());
 		addBehaviour(new EndTheNegotiation());
 		addBehaviour(new NoAgreementFromDealer());
 	}
@@ -188,11 +153,10 @@ public class BuyerAgent extends Agent {
 	public void sendBackTheChoosenCarsToTheBroker(Car negotiatedCar, double firstOfferPrice) {
 		buyerLogs = new ArrayList<LogSession>();
 		dealerLogs = new ArrayList<LogSession>();
-		if (manualNegotiation) {
-			// Adding Buyers logs into list
-			LogSession blog = new LogSession(0, beetaValue, firstOfferPrice);
-			buyerLogs.add(blog);
-		}
+		// Adding Buyers logs into list
+		LogSession blog = new LogSession(0, beetaValue, firstOfferPrice);
+		buyerLogs.add(blog);
+		
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
@@ -250,12 +214,6 @@ public class BuyerAgent extends Agent {
 	 * counter-offer
 	 */
 	private class NegotiationWithDealer extends CyclicBehaviour {
-		private int step = 0;
-		// Session log
-
-		public void setStep(int step) {
-			this.step = step;
-		}
 
 		@Override
 		public void action() {
@@ -284,6 +242,7 @@ public class BuyerAgent extends Agent {
 							});
 						}).start();
 					} else {
+						int step = dealerSteps + 1;
 						// for automated Negotiation: AI part
 						if (step <= maxStep) {
 							System.out.println("Buyer: Receive offer from the dealer: " + offerPrice);
@@ -295,10 +254,8 @@ public class BuyerAgent extends Agent {
 								acceptOffer(dealerName, messObject, offerPrice);
 							} else {
 								makeACounterOffer(dealerName, messObject, nextPrice, dealerTimeStep, step);
-								step++;
 							}
 						} else {
-							step = 0;
 							endTheNegotiationWithoutAgreement(dealerName);
 							sendRefuseToTheDealer(dealerName, messObject);
 						}
@@ -371,7 +328,6 @@ public class BuyerAgent extends Agent {
 					mess.setReplyWith(String.valueOf(price));
 					mess.setConversationId("car-negotiation");
 					myAgent.send(mess);
-					nd.setStep(0);
 				} catch (JsonProcessingException e) {
 					System.err.println("Problem by converting an object o json-format");
 				}
@@ -444,7 +400,6 @@ public class BuyerAgent extends Agent {
 		System.out.println("No Agreement!");
 		NegotiationLog session = new NegotiationLog(this.getName(), dealerName, buyerLogs, dealerLogs);
 
-
 		new Thread(() -> {
 			Platform.runLater(() -> {
 				NoAgreementGUI guiBuyer = new NoAgreementGUI(this, session);
@@ -496,6 +451,12 @@ public class BuyerAgent extends Agent {
 	 * @param dealerName : name of the dealer
 	 */
 	private void saveLogs(String dealerName) {
+//		if (buyerLogs.size() > dealerLogs.size()) {
+//			dealerLogs.add(buyerLogs.get(buyerLogs.size()-1));
+//		}
+//		if (buyerLogs.size() < dealerLogs.size()) {
+//			buyerLogs.add(dealerLogs.get(dealerLogs.size()-1));
+//		}
 		NegotiationLog session = new NegotiationLog(this.getName(), dealerName, buyerLogs, dealerLogs);
 		try {
 			String jsonString = o.writeValueAsString(session);
@@ -505,6 +466,37 @@ public class BuyerAgent extends Agent {
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public double getIntialPrice() {
+		return intialPrice;
+	}
 
+	public void setIntialPrice(double intialPrice) {
+		this.intialPrice = intialPrice;
+	}
+
+	public double getReservationPrice() {
+		return reservationPrice;
+	}
+
+	public void setReservationPrice(double reservationPrice) {
+		this.reservationPrice = reservationPrice;
+	}
+
+	public int getMaxStep() {
+		return maxStep;
+	}
+
+	public void setMaxStep(int maxStep) {
+		this.maxStep = maxStep;
+	}
+
+	public double getBeetavalue() {
+		return beetaValue;
+	}
+
+	public void setBeetavalue(double beetavalue) {
+		this.beetaValue = beetavalue;
 	}
 }
