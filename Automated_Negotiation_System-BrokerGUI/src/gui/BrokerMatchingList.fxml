@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
-<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
@@ -12,7 +11,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER_RIGHT" prefWidth="666.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.BrokerMatchingListController">
+<VBox prefWidth="666.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.BrokerMatchingListController">
   <children>
     <TableView fx:id="brokerWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="665.9998779296875">
       <columns>
@@ -22,11 +21,6 @@
         <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="183.0" text="Description" fx:id="descripttion" />
       </columns>
     </TableView>
-    <Button fx:id="btn_sendAllReq" alignment="TOP_CENTER" contentDisplay="TOP" mnemonicParsing="false" onAction="#onButtonSendAllRequestsClick" prefWidth="149.0" text="Send all requests">
-      <VBox.margin>
-        <Insets right="30.0" top="5.0" />
-      </VBox.margin>
-    </Button>
     <HBox prefHeight="35.0" prefWidth="600.0">
       <children>
         <Label text="Broker Comission : ">

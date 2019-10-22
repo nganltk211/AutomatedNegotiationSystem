@@ -44,9 +44,7 @@ public class BuyerGUIController implements Initializable {
 	private TextField max_id;
 	@FXML
 	private Button search_id;
-	@FXML
-	private TextField timeDuration;
-	
+
 	private BuyerAgent buyerAgent;
 
 	// empty constructor
@@ -94,7 +92,6 @@ public class BuyerGUIController implements Initializable {
 				priceValidationLabel.setText("Please Enter Number Value");
 			}
 		}
-		buyerAgent.setNegotiationDuration(Long.parseLong(timeDuration.getText()));
 	}
 
 	/**

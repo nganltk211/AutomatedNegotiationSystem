@@ -40,7 +40,7 @@ public class DealerAgent extends Agent {
 	private int numberOfBuyers; // number of buyer, who want to buy a same car
 	private boolean multiple = false; // true if more than one buyer want to negotiate a car
 	private boolean bestBuyerFound = false; // true if the beast buyer is found
-
+	
 	/**
 	 * Method for setting up a buyer agent
 	 */
@@ -80,7 +80,6 @@ public class DealerAgent extends Agent {
 		addBehaviour(new NegotiationWithBuyer());
 		addBehaviour(new EndTheNegotiation());
 		addBehaviour(new GetRefuseMessageFromTheBuyer());
-		addBehaviour(new ReceiveReservationRequestFromBuyer());
 	}
 
 	/**
@@ -198,8 +197,8 @@ public class DealerAgent extends Agent {
 					double offerPrice = buyerList.get(buyerName);
 					new Thread(() -> {
 						Platform.runLater(() -> {
-							NegotiationBotGUI bot = new NegotiationBotGUI(myAgent, buyerName, negotiatedCar, offerPrice,
-									0);
+							NegotiationBotGUI bot = new NegotiationBotGUI(myAgent, buyerName, negotiatedCar,
+									offerPrice, 0);
 						});
 					}).start();
 				}
@@ -215,7 +214,7 @@ public class DealerAgent extends Agent {
 	 * counter-offer
 	 */
 	private class NegotiationWithBuyer extends CyclicBehaviour {
-
+		
 		@Override
 		public void action() {
 			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
@@ -284,8 +283,7 @@ public class DealerAgent extends Agent {
 	 * @param negotiatedCar
 	 * @param price:
 	 *            offer-price
-	 * @param step:
-	 *            dealer-step
+	 * @param step: dealer-step
 	 */
 	public void makeACounterOffer(String opponentAgentName, Car negotiatedCar, double price, int step) {
 		addBehaviour(new OneShotBehaviour() {
@@ -301,11 +299,41 @@ public class DealerAgent extends Agent {
 					mess.setReplyWith(String.valueOf(price));
 					mess.setInReplyTo(String.valueOf(step));
 					mess.setConversationId("car-negotiation");
-					mess.setPostTimeStamp(System.currentTimeMillis());
 					myAgent.send(mess);
 				} catch (JsonProcessingException e) {
 					System.err.println("Problem by converting an object o json-format");
 				}
+			}
+		});
+	}
+
+	/**
+	 * Send negotiation confirmation message to broker agent
+	 * 
+	 * @param car
+	 *            : negotiated car
+	 * @param price
+	 *            : accepted price
+	 */
+	private void confirmSell(Car car, double price, String buyerName) {
+		addBehaviour(new OneShotBehaviour() {
+			@Override
+			public void action() {
+				ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
+				System.out.println(myAgent.getName() + " : Confirm  car sell with broker: " + price);
+				mess.addReceiver(brokerAgent);
+				String jsonInString;
+				try {
+					jsonInString = o.writeValueAsString(car);
+					mess.setContent(jsonInString);
+					mess.setReplyWith(String.valueOf(price));
+					mess.setInReplyTo(buyerName);
+					mess.setConversationId("confirm_sell");
+					myAgent.send(mess);
+				} catch (JsonProcessingException e) {
+					System.err.println("Problem by converting an object o json-format");
+				}
+
 			}
 		});
 	}
@@ -318,19 +346,19 @@ public class DealerAgent extends Agent {
 	 * @param negotiatedCar
 	 * @param price
 	 */
-	public void acceptOffer(String opponentAgentName, Car negotiatedCar, double price) {
+	public void acceptOffer(String opponentAgentName, Car negotiatedCar, double price, int dealerStep) {
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
 				ACLMessage mess = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
-				System.out.println(myAgent.getName() + ": Accept offer from the buyer: " + opponentAgentName
-						+ " at price: " + price);
+				System.out.println(myAgent.getName() + ": Accept offer from the buyer: " + opponentAgentName + " at price: " + price);
 				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, opponentAgentName));
 				String jsonInString;
 				try {
 					jsonInString = o.writeValueAsString(negotiatedCar);
 					mess.setContent(jsonInString);
 					mess.setReplyWith(String.valueOf(price));
+					mess.setInReplyTo(String.valueOf(dealerStep));
 					mess.setConversationId("car-negotiation");
 					myAgent.send(mess);
 				} catch (JsonProcessingException e) {
@@ -342,75 +370,45 @@ public class DealerAgent extends Agent {
 
 	/**
 	 * Method to find the buyer (the one who is willing to pay the most)
-	 * 
-	 * @param opponentAgentName
-	 *            : buyer name
-	 * @param negotiatedCar
-	 * @param price
-	 *            : offer price
+	 * @param opponentAgentName : buyer name
+	 * @param negotiatedCar 
+	 * @param price : offer price
 	 */
-	public void findTheBestOffer(String opponentAgentName, Car negotiatedCar, double price) {
+	public void findTheBestOffer(String opponentAgentName, Car negotiatedCar, double price, int dealerStep) {
 		lastOfferList.put(opponentAgentName, price); // add to the list
+		lastStepList.put(opponentAgentName, dealerStep);
 		// when all best offers of each buyer are calculated
-		if (lastOfferList.size() == numberOfBuyers) {
-			Map.Entry<String, Double> entry = lastOfferList.entrySet().iterator().next();
-			String bestBuyer = entry.getKey();
-			double bestOffer = entry.getValue();
-			for (Entry<String, Double> element : lastOfferList.entrySet()) {
+		if (lastOfferList.size() == numberOfBuyers) {			 
+			 Map.Entry<String, Double> entry = lastOfferList.entrySet().iterator().next();
+			 String bestBuyer = entry.getKey();
+			 double bestOffer = entry.getValue();
+			 for (Entry<String, Double> element : lastOfferList.entrySet()) {
 				// find the best buyer by comparing the last offer price
-				if (element.getValue() > bestOffer) {
-					bestOffer = element.getValue();
-					bestBuyer = element.getKey();
-				}
-			}
-			if (bestOffer != 0) { // when a best buyer is found
-				System.out.println("Dealer: Best buyer: " + bestBuyer + " with offer: " + bestOffer);
-				// send accept message to the best buyer
-				acceptOffer(bestBuyer, negotiatedCar, bestOffer);
-				bestBuyerFound = true;
+				 if (element.getValue() > bestOffer) { 
+					 bestOffer = element.getValue();
+					 bestBuyer = element.getKey();
+				 }
+			 }
+			 if (bestOffer != 0) { // when a best buyer is found
+				 System.out.println("Dealer: Best buyer: " + bestBuyer + " with offer: " + bestOffer);
+				 // send accept message to the best buyer
+				 acceptOffer(bestBuyer,negotiatedCar,bestOffer, lastStepList.get(bestBuyer));	
+				 bestBuyerFound = true;
 				// remove the best buyer from the list
-				lastOfferList.remove(bestBuyer, bestOffer);
-			}
-			// send reject message to remaining buyers
-			for (Entry<String, Double> element : lastOfferList.entrySet()) {
-				if (element.getValue() != 0) {
-					reachNoAgreement(element.getKey());
-				}
-			}
-			lastOfferList.clear();
-		}
+				 lastOfferList.remove(bestBuyer, bestOffer); 
+				 
+			 }		 
+			 // send reject message to remaining buyers
+			 for (Entry<String, Double> element : lastOfferList.entrySet()) {
+				 if (element.getValue() != 0) {
+					 reachNoAgreement(element.getKey());
+				 }		 
+			 }
+			 lastOfferList.clear();
+			 lastStepList.clear();
+		}	
 	}
-
-	/**
-	 * Send negotiation confirmation message to broker agent
-	 * 
-	 * @param car
-	 *            : negotiated car
-	 * @param price
-	 *            : accepted price
-	 */
-	private void confirmSell(Car car, double price) {
-		addBehaviour(new OneShotBehaviour() {
-			@Override
-			public void action() {
-				ACLMessage mess = new ACLMessage(ACLMessage.INFORM);
-				System.out.println(myAgent.getName() + " : Confirm  car sell with broker: " + price);
-				mess.addReceiver(brokerAgent);
-				String jsonInString;
-				try {
-					jsonInString = o.writeValueAsString(car);
-					mess.setContent(jsonInString);
-					mess.setReplyWith(String.valueOf(price));
-					mess.setConversationId("confirm_sell");
-					myAgent.send(mess);
-				} catch (JsonProcessingException e) {
-					System.err.println("Problem by converting an object o json-format");
-				}
-
-			}
-		});
-	}
-
+	
 	/**
 	 * Behavior to send a refuse request to the buyer in case no agreement is
 	 * reached
@@ -433,8 +431,7 @@ public class DealerAgent extends Agent {
 	}
 
 	/**
-	 * This behavior is for receiving refuse message from the dealer in case of no
-	 * agreement
+	 * This behavior is for receiving refuse message from the dealer in case of no agreement
 	 */
 	private class GetRefuseMessageFromTheBuyer extends CyclicBehaviour {
 
@@ -454,13 +451,13 @@ public class DealerAgent extends Agent {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-
+				
 			} else {
 				block();
 			}
 		}
 	}
-
+	
 	/**
 	 * This behavior will be executed, when the negotiation is at the end, which
 	 * means that the buyer accept the offer from the dealer.
@@ -482,7 +479,7 @@ public class DealerAgent extends Agent {
 					if (!multiple || bestBuyerFound) {
 						System.out.println("\nEnd of the negotiation : ");
 						System.out.println("Sold car: " + negotiatedCar);
-						System.out.println("Sold price: " + offerPrice);
+						System.out.println("Sold price: " + offerPrice);		
 						bestBuyerFound = false;
 						confirmSell(negotiatedCar, offerPrice, msg.getSender().getName()); // confirm with the broker
 					} else {
@@ -497,37 +494,7 @@ public class DealerAgent extends Agent {
 			}
 		}
 	}
-
-	/**
-	 * This behavior is for receiving the reservation request from the dealer and
-	 * sending back an reservation accept to the dealer
-	 */
-	private class ReceiveReservationRequestFromBuyer extends CyclicBehaviour {
-
-		@Override
-		public void action() {
-			MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchConversationId("car-negotiation"),
-					MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
-			ACLMessage msg = myAgent.receive(mt);
-
-			if (msg != null) {
-				String content = msg.getContent();
-				String buyerName = msg.getSender().getName();
-				System.out.println(myAgent.getName() + " Receive reservation request from buyer " + buyerName);
-				// sends back an reservation accept to the dealer 
-				ACLMessage mess = new ACLMessage(ACLMessage.AGREE);
-				System.out.println(myAgent.getName() + ": Accept the reservation from " + buyerName);
-				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, buyerName));
-				mess.setContent(content);
-				mess.setReplyWith(msg.getReplyWith());
-				mess.setConversationId("car-negotiation");
-				myAgent.send(mess);
-			} else {
-				block();
-			}
-		}
-	}
-
+	
 	/**
 	 * Method for ending the negotiation because of out of time.
 	 */

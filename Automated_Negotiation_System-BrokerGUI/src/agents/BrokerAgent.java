@@ -42,10 +42,6 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 		registerO2AInterface(BrokerAgentInterface.class, this);
 	}
 	
-	public CarList getCatalog() {
-		return catalog;
-	}
-	
 	/**
 	 * Method for setting up a broker agent
 	 */
@@ -54,7 +50,7 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 		System.out.println("Hello! Broker-agent " + getAID().getName() + " is ready.");
 		jsonDB.clearFile(); // clear the data in file when restarting.
 		//catalog = jsonDB.readFile();
-		multiAgentMng = new MultiAgentManager(this);
+		multiAgentMng = new MultiAgentManager();
 		
 		// Register the car-broker service in the yellow pages
 		DFAgentDescription dfd = new DFAgentDescription();
@@ -132,7 +128,7 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 					jsonDB.clearFile();
 					jsonDB.writeToFile(jsonInString);
 					multiAgentMng.removeCarFromList(negotiatedCar); // remove the car from controlling list
-					multiAgentMng.removeBuyerFromList(session.getBuyerName());
+
 				} catch (IOException e) {
 					e.printStackTrace();
 				}								
@@ -303,7 +299,7 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 	
 	/**
 	 * Method for sending a list of interested in a same car buyers to a dealer
-	 * (this method will be call when the broker click the menu item "Send request" or on the button "Send all requests")
+	 * (this method will be call when the broker click the menu item "Send request")
 	 */
 	@Override
 	public void sendBuyerListDataToDealer(MultipleMessage message) {

@@ -97,6 +97,6 @@ public class CarInfoGUIController {
 	public void buttonNegotiateClick(ActionEvent action) {
 		// shows the NegotiationChoiceGUI 
 		NegotiationChoiceGUI negotiationChoice = new NegotiationChoiceGUI(buyerAgent, car);
-		//((Node) (action.getSource())).getScene().getWindow().hide(); // close the CarListToBuyerGUI
+		((Node) (action.getSource())).getScene().getWindow().hide(); // close the CarListToBuyerGUI
 	}
 }

@@ -21,7 +21,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 import model.MultipleMessage;
-import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -45,8 +44,6 @@ public class BrokerMatchingListController implements Initializable {
 	private TableColumn<MultipleMessage, String> descripttion;
 	@FXML
 	private Label commision;
-	@FXML 
-	private Button btn_sendAllReq;
 	
 	private MultiAgentManager carListofBuyerInterest;
 	private BrokerAgentInterface o2a; // the interface to interact with the broker agent
@@ -117,18 +114,6 @@ public class BrokerMatchingListController implements Initializable {
 				return row;
 			}
 		});
-	}
-	
-	/**
-	 * Method for sending all requests from buyers to dealers.
-	 */
-	@FXML 
-	public void onButtonSendAllRequestsClick(ActionEvent event) {
-		ArrayList<MultipleMessage> buyerList = carListofBuyerInterest.getNegotiationList();
-		for (MultipleMessage msg : buyerList) {
-			o2a.sendBuyerListDataToDealer(msg); 
-		}
-		commision.getScene().getWindow().hide(); // hide the GUI
 	}
 
 }

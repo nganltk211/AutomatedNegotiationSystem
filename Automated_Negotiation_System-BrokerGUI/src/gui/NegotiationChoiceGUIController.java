@@ -29,8 +29,6 @@ public class NegotiationChoiceGUIController {
 	@FXML
 	private RadioButton rb_automated;
 	@FXML
-	private RadioButton rb_conan;
-	@FXML
 	private Label manufacture;
 	@FXML
 	private Label model;
@@ -85,8 +83,7 @@ public class NegotiationChoiceGUIController {
 		group = new ToggleGroup();
 		rb_manual.setToggleGroup(group);
 		rb_automated.setToggleGroup(group);
-		rb_conan.setToggleGroup(group);
-		
+
 		rb_manual.setSelected(true);
 		radiobuttonChangeValue();
 		stepsLable.setVisible(false);
@@ -123,7 +120,7 @@ public class NegotiationChoiceGUIController {
 					validationLabel.setVisible(false);
 					maxPriceFromBuyer.setVisible(false);
 					maxprice_buyer.setVisible(false);
-				} else if (rb_automated.isSelected()) {
+				} else {
 					priceLable.setVisible(true);
 					pricetoEnter.setVisible(true);
 					priceLable.setText("Min Price");
@@ -133,18 +130,6 @@ public class NegotiationChoiceGUIController {
 
 					negotiationSteps.setVisible(true);
 					validationLabel.setVisible(true);
-					maxPriceFromBuyer.setVisible(true);
-					maxprice_buyer.setVisible(true);
-					maxPriceFromBuyer.setText(String.valueOf(bag.getReservationPrice()));
-				} else {
-					priceLable.setVisible(true);
-					pricetoEnter.setVisible(true);
-					priceLable.setText("Min Price");
-					beetalable.setVisible(false);
-					beetaValue.setVisible(false);
-					stepsLable.setVisible(false);
-					negotiationSteps.setVisible(false);
-					validationLabel.setVisible(false);
 					maxPriceFromBuyer.setVisible(true);
 					maxprice_buyer.setVisible(true);
 					maxPriceFromBuyer.setText(String.valueOf(bag.getReservationPrice()));
@@ -209,16 +194,15 @@ public class NegotiationChoiceGUIController {
 			try {
 				bag.setIntialPrice(Double.parseDouble(pricetoEnter.getText()));
 				if (rb_manual.isSelected()) {
-					bag.setNegotiationTatic(0);
+					bag.setNegotiationManual(true);
 					// sends a negotiation request to the broker agent
 					bag.sendBackTheChoosenCarsToTheBroker(negotiatedCar, Double.parseDouble(pricetoEnter.getText()));
 					((Node) (event.getSource())).getScene().getWindow().hide();
-				} else if (rb_automated.isSelected()){
-					bag.setNegotiationTatic(1);
+				} else {
+					bag.setNegotiationManual(false);
 					try {
 						bag.setBeetavalue(Double.parseDouble(beetaValue.getText()));
 						bag.setMaxStep(Integer.parseInt(negotiationSteps.getText()));
-						bag.setReservationPrice(Double.parseDouble(maxPriceFromBuyer.getText()));
 						// sends a negotiation request to the broker agent
 						bag.sendBackTheChoosenCarsToTheBroker(negotiatedCar,
 								Double.parseDouble(pricetoEnter.getText()));
@@ -226,12 +210,6 @@ public class NegotiationChoiceGUIController {
 					} catch (NumberFormatException e) {
 						validationLabel.setText("Please enter a number");
 					}
-				} else {
-					bag.setNegotiationTatic(2);
-					bag.setReservationPrice(Double.parseDouble(maxPriceFromBuyer.getText()));
-					bag.sendBackTheChoosenCarsToTheBroker(negotiatedCar,
-							Double.parseDouble(pricetoEnter.getText()));
-					((Node) (event.getSource())).getScene().getWindow().hide();
 				}
 			} catch (NumberFormatException e) {
 				pricevalidationLabel.setText("Please enter a number");
