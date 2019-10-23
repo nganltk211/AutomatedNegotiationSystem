@@ -172,6 +172,10 @@ public class BuyerAgent extends Agent {
 	 * @param listOfChosenCars
 	 */
 	public void sendBackTheChoosenCarsToTheBroker(CarList negotiatedCarList, double firstOfferPrice) {
+		// Adding Buyers logs into list
+		NegotiationLog buyerLog = new NegotiationLog(this.getName(), new ArrayList<LogSession>());
+		buyerLog.addOffer(0, firstOfferPrice);
+		agentLogs.add(buyerLog);
 		
 		for (Car car : negotiatedCarList) {
 			dealerPreviousOffers.put(car.getAgent(), new PreviousOfferDetails(0, car.getMaxprice(), System.currentTimeMillis()));
@@ -187,10 +191,6 @@ public class BuyerAgent extends Agent {
 			deadline = startTime + negotiationDuration;
 			System.out.println("StartTime " + startTime + " Duration " + negotiationDuration);
 			firstNegotiationThread = false;
-			// Adding Buyers logs into list
-			NegotiationLog buyerLog = new NegotiationLog(this.getName(), new ArrayList<LogSession>());
-			buyerLog.addOffer(0, firstOfferPrice);
-			agentLogs.add(buyerLog);
 			addWakerBehaviour();
 		}
 	
