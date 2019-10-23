@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -41,6 +42,8 @@ public class CarInfoGUIController {
 	private Button btn_negotiate;
 	@FXML
 	private ImageView imageView;
+	@FXML
+	private CheckBox checkbox;
 	
 	private Car car;
 	private BuyerAgent buyerAgent;
@@ -89,14 +92,7 @@ public class CarInfoGUIController {
 		this.buyerAgent = buyerAgent;
 	}
 	
-	/**
-	 * Sets event for the "Negotiate" button.
-	 * @param action
-	 */
-	@FXML
-	public void buttonNegotiateClick(ActionEvent action) {
-		// shows the NegotiationChoiceGUI 
-		NegotiationChoiceGUI negotiationChoice = new NegotiationChoiceGUI(buyerAgent, car);
-		//((Node) (action.getSource())).getScene().getWindow().hide(); // close the CarListToBuyerGUI
+	public boolean getValueChoosenCB() {
+		return checkbox.isSelected();
 	}
 }

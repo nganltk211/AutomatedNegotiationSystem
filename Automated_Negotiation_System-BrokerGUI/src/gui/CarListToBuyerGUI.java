@@ -4,9 +4,11 @@ import java.io.IOException;
 
 import agents.BuyerAgent;
 import jade.core.Agent;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -21,14 +23,19 @@ public class CarListToBuyerGUI extends Stage {
 	private FXMLLoader loader;
 	private CarInfoGUIController[] carController;
 	private BuyerAgent buyerAgent;
-	
+	private CarList choosenOffers;
+
 	/**
 	 * Constructor of the class.
-	 * @param offerCarlist : list of possible cars to show the buyer
-	 * @param myAgent : a buyer agent
+	 * 
+	 * @param offerCarlist
+	 *            : list of possible cars to show the buyer
+	 * @param myAgent
+	 *            : a buyer agent
 	 */
-	public CarListToBuyerGUI(CarList offerCarlist, Agent myAgent){
+	public CarListToBuyerGUI(CarList offerCarlist, Agent myAgent) {
 		double blockHeight = 0;
+		choosenOffers = new CarList();
 		carController = new CarInfoGUIController[offerCarlist.size()];
 		buyerAgent = (BuyerAgent) myAgent;
 		ScrollPane sp = new ScrollPane(); // a scroll pane for showing list of cars
@@ -42,29 +49,50 @@ public class CarListToBuyerGUI extends Stage {
 			try {
 				carBlock = loader.load();
 				carController[i] = loader.getController();
-		        // Set data in the controller
-				carController[i].setCar(offerCarlist.get(i));			
+				// Set data in the controller
+				carController[i].setCar(offerCarlist.get(i));
 				carController[i].setBuyerAgent(buyerAgent);
 				carBlock.setStyle("-fx-background-color: #ffffff");
 				root.getChildren().add(carBlock); // adds carBlock to the scroll pane
 				blockHeight = carBlock.getPrefHeight();
 			} catch (IOException e) {
 				System.err.println("Error by loading fxml-File");
-			}	
-		}	
-		
+			}
+		}
+		Button sendbtn = new Button("Send");
+		setActionForSendButton(sendbtn);
+		sendbtn.setPrefWidth(100);
 		this.setTitle("List of possible cars");
 		sp.setContent(root);
-        sp.setPannable(true); 
-        Scene scene;
-        // sets the size of the window depending on the size of car list
-        if (offerCarlist.size()<=2) {
-        	scene = new Scene(sp,700,blockHeight*offerCarlist.size()+30);
-        } else {
-        	scene = new Scene(sp,710,blockHeight*2+30);
-        }	
+		sp.setPannable(true);
+
+		VBox vBox = new VBox();
+		vBox.setSpacing(10);
+		vBox.getChildren().addAll(sp, sendbtn);
+		vBox.setPadding(new Insets(5));
+		Scene scene;
+		// sets the size of the window depending on the size of car list
+		if (offerCarlist.size() <= 2) {
+			scene = new Scene(vBox, 700, blockHeight * offerCarlist.size() + 80 + sendbtn.getPrefHeight());
+		} else {
+			scene = new Scene(vBox, 710, blockHeight * 2 + 80 + sendbtn.getPrefHeight());
+		}
 		this.setScene(scene);
 		this.setResizable(false);
 		this.show();
+	}
+
+	private void setActionForSendButton(Button btn) {
+		btn.setOnAction((ActionEvent me) -> {
+			for (CarInfoGUIController controller : carController) {
+				if (controller.getValueChoosenCB()) {
+					choosenOffers.add(controller.getCar());
+				}
+			}
+			if (choosenOffers.size() > 0) {
+				NegotiationChoiceGUI negotiationChoice = new NegotiationChoiceGUI(buyerAgent, choosenOffers);
+			}
+		});
+
 	}
 }

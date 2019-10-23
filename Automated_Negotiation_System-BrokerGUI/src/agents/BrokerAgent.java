@@ -23,6 +23,7 @@ import model.Car;
 import model.CarList;
 import model.MultipleMessage;
 import model.NegotiationLog;
+import model.NegotiationLogList;
 
 /**
  * Class as representation of an broker-agent
@@ -102,6 +103,8 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 					Car negotiatedCar = o.readValue(content, Car.class);
 					String agentName = msg0.getSender().getName();
 					double offerPrice = Double.parseDouble(msg0.getReplyWith());
+					String buyerName = msg0.getInReplyTo();
+					System.out.println(buyerName);
 					receivedCommision += COMMISION;
 					System.out.println("\nBroker confirm !!! " + agentName + " confirm sell at price: " + offerPrice + "\nBroker Commision: " + receivedCommision);
 					final double offer = offerPrice;
@@ -110,13 +113,13 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 					
 					negotiationDB.openFileReader();
 					// reads the negotiation session from the text file
-					NegotiationLog session = o.readValue(negotiationDB.readLine(), NegotiationLog.class);
+					NegotiationLogList session = o.readValue(negotiationDB.readLine(), NegotiationLogList.class);
 					negotiationDB.closeFileReader();
 							
 					// start the confirmation gui
 					new Thread(() -> {
 						Platform.runLater(() -> {
-							OfferConfirmationGUI confirm = new OfferConfirmationGUI(offer, session);
+							OfferConfirmationGUI confirm = new OfferConfirmationGUI(offer, session, agentName, buyerName);
 						});
 					}).start();
 					
@@ -131,7 +134,7 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 					jsonDB.clearFile();
 					jsonDB.writeToFile(jsonInString);
 					multiAgentMng.removeCarFromList(negotiatedCar); // remove the car from controlling list
-					multiAgentMng.removeBuyerFromList(session.getBuyerName());
+					multiAgentMng.removeBuyerFromList(buyerName);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}								
@@ -239,13 +242,13 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 			if (msg != null) {
 				String buyerName = msg.getSender().getName();
 				System.out.println("Broker: Receive a choosen car from buyer " + msg.getSender().getName());
-				String choosenCarJson = msg.getContent();
+				String choosenCarListJson = msg.getContent();
 				String firstOfferPrice = msg.getReplyWith();
 				try {
-					Car choosenCar = o.readValue(choosenCarJson, Car.class);
-					System.out.println(choosenCar + "\n");
+					CarList choosenCarList = o.readValue(choosenCarListJson, CarList.class);
+					System.out.println(choosenCarList + "\n");
 					// adds a car with interested buyer to the controlling list
-					multiAgentMng.addBuyer(choosenCar,buyerName, Double.parseDouble(firstOfferPrice));
+					multiAgentMng.addBuyer(choosenCarList,buyerName, Double.parseDouble(firstOfferPrice));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

@@ -30,7 +30,7 @@ public class MultiAgentManager {
 	 * @param buyer
 	 * @param firstOffer
 	 */
-	public void addBuyer(Car car, String buyer, double firstOffer) {
+	private void addBuyerWithCar(Car car, String buyer, double firstOffer) {
 		boolean isCarinList = false;
 		for (MultipleMessage m : negotiationList) {
 			if (car.getCarId() == m.getCar().getCarId()) {
@@ -45,7 +45,20 @@ public class MultiAgentManager {
 			buyerList.addToBuyerList(buyer, firstOffer);
 			negotiationList.add(buyerList);
 		}
-
+	}
+	
+	/**
+	 * Method to add a list of cars or a buyer with his offer (if the car is
+	 * in the list) to the list
+	 * 
+	 * @param car
+	 * @param buyer
+	 * @param firstOffer
+	 */
+	public void addBuyer(CarList carlist, String buyer, double firstOffer) {
+		for (Car car : carlist) {
+			addBuyerWithCar(car, buyer, firstOffer);
+		}
 	}
 
 	/**

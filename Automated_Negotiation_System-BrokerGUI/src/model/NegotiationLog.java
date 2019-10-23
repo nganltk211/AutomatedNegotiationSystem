@@ -10,49 +10,34 @@ import java.util.ArrayList;
 public class NegotiationLog implements Serializable {
 
 	private static final long serialVersionUID = -3896235106950619702L;
-	private String buyerName, dealerName;
-	private ArrayList<LogSession> buyerLog = null, dealerLog = null;
+	private String agentName;
+	private ArrayList<LogSession> agentLog;
 
-	public NegotiationLog(String buyerName, String dealerName, ArrayList<LogSession> buyer,
-			ArrayList<LogSession> dealer) {
-		this.buyerName = buyerName;
-		this.dealerName = dealerName;
-		this.buyerLog = buyer;
-		this.dealerLog = dealer;
+	public NegotiationLog(String agentName, ArrayList<LogSession> agentLog) {
+		this.agentName = agentName;
+		this.agentLog = new ArrayList<LogSession>(agentLog);
 	}
 
 	public NegotiationLog() {
 	}
 
-	public String getBuyerName() {
-		return buyerName;
+	public String getAgentName() {
+		return agentName;
 	}
 
-	public void setBuyerName(String buyerName) {
-		this.buyerName = buyerName;
+	public void setAgentName(String agentName) {
+		this.agentName = agentName;
 	}
 
-	public String getDealerName() {
-		return dealerName;
+	public ArrayList<LogSession> getAgentLog() {
+		return agentLog;
 	}
 
-	public void setDealerName(String dealerName) {
-		this.dealerName = dealerName;
+	public void setAgentLog(ArrayList<LogSession> agentLog) {
+		this.agentLog = agentLog;
 	}
-
-	public ArrayList<LogSession> getBuyerLog() {
-		return buyerLog;
-	}
-
-	public void setBuyerLog(ArrayList<LogSession> buyerLog) {
-		this.buyerLog = buyerLog;
-	}
-
-	public ArrayList<LogSession> getDealerLog() {
-		return dealerLog;
-	}
-
-	public void setDealerLog(ArrayList<LogSession> dealerLog) {
-		this.dealerLog = dealerLog;
+	
+	public void addOffer(int step, double offer) {
+		agentLog.add(new LogSession(step,offer));
 	}
 }

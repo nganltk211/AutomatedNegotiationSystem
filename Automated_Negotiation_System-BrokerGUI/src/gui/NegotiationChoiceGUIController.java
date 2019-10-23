@@ -14,7 +14,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import model.Car;
+import model.CarList;
 
 /**
  * A Controller class of NegotiationChoiceGUI. The logic of GUI-Elements will be
@@ -30,20 +30,6 @@ public class NegotiationChoiceGUIController {
 	private RadioButton rb_automated;
 	@FXML
 	private RadioButton rb_conan;
-	@FXML
-	private Label manufacture;
-	@FXML
-	private Label model;
-	@FXML
-	private Label transmission;
-	@FXML
-	private Label fuelType;
-	@FXML
-	private Label bodyType;
-	@FXML
-	private Label color;
-	@FXML
-	private Label km;
 	@FXML
 	private Label price;
 	@FXML
@@ -66,10 +52,15 @@ public class NegotiationChoiceGUIController {
 	private Label maxprice_buyer;
 	@FXML
 	private TextField maxPriceFromBuyer;
+	@FXML
+	private Label lb_duration;
+	@FXML
+	private TextField nego_duration;
+
 
 	private boolean isValidate = false;
 	private BuyerAgent bag;
-	private Car negotiatedCar;
+	private CarList negotiatedCarList;
 	private ToggleGroup group;
 
 	public NegotiationChoiceGUIController() {
@@ -89,6 +80,8 @@ public class NegotiationChoiceGUIController {
 		
 		rb_manual.setSelected(true);
 		radiobuttonChangeValue();
+		nego_duration.setVisible(false);
+		lb_duration.setVisible(false);
 		stepsLable.setVisible(false);
 		negotiationSteps.setVisible(false);
 		priceLable.setVisible(true);
@@ -123,6 +116,8 @@ public class NegotiationChoiceGUIController {
 					validationLabel.setVisible(false);
 					maxPriceFromBuyer.setVisible(false);
 					maxprice_buyer.setVisible(false);
+					nego_duration.setVisible(false);
+					lb_duration.setVisible(false);
 				} else if (rb_automated.isSelected()) {
 					priceLable.setVisible(true);
 					pricetoEnter.setVisible(true);
@@ -135,6 +130,8 @@ public class NegotiationChoiceGUIController {
 					validationLabel.setVisible(true);
 					maxPriceFromBuyer.setVisible(true);
 					maxprice_buyer.setVisible(true);
+					nego_duration.setVisible(true);
+					lb_duration.setVisible(true);
 					maxPriceFromBuyer.setText(String.valueOf(bag.getReservationPrice()));
 				} else {
 					priceLable.setVisible(true);
@@ -147,6 +144,8 @@ public class NegotiationChoiceGUIController {
 					validationLabel.setVisible(false);
 					maxPriceFromBuyer.setVisible(true);
 					maxprice_buyer.setVisible(true);
+					nego_duration.setVisible(true);
+					lb_duration.setVisible(true);
 					maxPriceFromBuyer.setText(String.valueOf(bag.getReservationPrice()));
 				}
 			}
@@ -211,7 +210,7 @@ public class NegotiationChoiceGUIController {
 				if (rb_manual.isSelected()) {
 					bag.setNegotiationTatic(0);
 					// sends a negotiation request to the broker agent
-					bag.sendBackTheChoosenCarsToTheBroker(negotiatedCar, Double.parseDouble(pricetoEnter.getText()));
+					bag.sendBackTheChoosenCarsToTheBroker(negotiatedCarList, Double.parseDouble(pricetoEnter.getText()));
 					((Node) (event.getSource())).getScene().getWindow().hide();
 				} else if (rb_automated.isSelected()){
 					bag.setNegotiationTatic(1);
@@ -219,8 +218,9 @@ public class NegotiationChoiceGUIController {
 						bag.setBeetavalue(Double.parseDouble(beetaValue.getText()));
 						bag.setMaxStep(Integer.parseInt(negotiationSteps.getText()));
 						bag.setReservationPrice(Double.parseDouble(maxPriceFromBuyer.getText()));
+						bag.setNegotiationDuration(Long.parseLong(nego_duration.getText()));
 						// sends a negotiation request to the broker agent
-						bag.sendBackTheChoosenCarsToTheBroker(negotiatedCar,
+						bag.sendBackTheChoosenCarsToTheBroker(negotiatedCarList,
 								Double.parseDouble(pricetoEnter.getText()));
 						((Node) (event.getSource())).getScene().getWindow().hide();
 					} catch (NumberFormatException e) {
@@ -229,7 +229,8 @@ public class NegotiationChoiceGUIController {
 				} else {
 					bag.setNegotiationTatic(2);
 					bag.setReservationPrice(Double.parseDouble(maxPriceFromBuyer.getText()));
-					bag.sendBackTheChoosenCarsToTheBroker(negotiatedCar,
+					bag.setNegotiationDuration(Long.parseLong(nego_duration.getText()));
+					bag.sendBackTheChoosenCarsToTheBroker(negotiatedCarList,
 							Double.parseDouble(pricetoEnter.getText()));
 					((Node) (event.getSource())).getScene().getWindow().hide();
 				}
@@ -244,22 +245,7 @@ public class NegotiationChoiceGUIController {
 		bag = agent;
 	}
 
-	public void setNegotiatedCar(Car car) {
-		this.negotiatedCar = car;
-		setCarDetails();
-	}
-
-	/**
-	 * sets details of the car on GUI
-	 */
-	private void setCarDetails() {
-		manufacture.setText(negotiatedCar.getManufacture());
-		model.setText(negotiatedCar.getModel());
-		transmission.setText(negotiatedCar.getTransmission());
-		fuelType.setText(negotiatedCar.getFuelType());
-		bodyType.setText(negotiatedCar.getBodyType());
-		color.setText(negotiatedCar.getColor());
-		km.setText(String.valueOf(negotiatedCar.getKm()));
-		price.setText(String.valueOf(negotiatedCar.getMaxprice()));
+	public void setNegotiatedCarList(CarList carList) {
+		this.negotiatedCarList = carList;
 	}
 }

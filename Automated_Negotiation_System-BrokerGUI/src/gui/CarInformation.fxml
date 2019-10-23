@@ -79,7 +79,7 @@
         </Label>
         <Label font="$x2" text="Warranty (Year):" GridPane.columnIndex="0" GridPane.rowIndex="1" />
         <Label fx:id="warranty" font="$x3" text="No details" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
-        <Button fx:id="btn_negotiate" font="$x3" mnemonicParsing="false" onAction="#buttonNegotiateClick" prefWidth="127.0" text="Negotiate" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <CheckBox fx:id="checkbox" font="$x3" mnemonicParsing="false" text="Choose" GridPane.columnIndex="0" GridPane.rowIndex="2" />
       </children>
       <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="204.0" minWidth="10.0" prefWidth="155.0" />

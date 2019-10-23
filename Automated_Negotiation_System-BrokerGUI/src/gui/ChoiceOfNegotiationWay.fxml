@@ -11,60 +11,40 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="436.0" prefWidth="516.9998779296875" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.NegotiationChoiceGUIController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="275.0000999999975" prefWidth="565.9998779296875" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.NegotiationChoiceGUIController">
   <children>
     <Label layoutX="47.0" layoutY="30.0" text="Let start the negotiation">
       <font>
         <Font name="System Bold Italic" size="26.0" />
       </font>
     </Label>
-    <RadioButton fx:id="rb_manual" layoutX="51.0" layoutY="288.0" mnemonicParsing="false" text="Manual negotiation" />
-    <RadioButton fx:id="rb_automated" layoutX="50.0" layoutY="324.0" mnemonicParsing="false" text="Automated Negotiation" />
-    <Button fx:id="btn_start" layoutX="51.0" layoutY="389.0" mnemonicParsing="false" onAction="#startNegotiationButtonClick" prefWidth="73.0" text="Start" />
-    <Label layoutX="51.0" layoutY="90.0" text="Negotiated Car">
-      <font>
-        <Font name="System Bold Italic" size="16.0" />
-      </font>
-    </Label>
-    <Label layoutX="51.0" layoutY="133.0" text="Manufacture:">
+    <RadioButton fx:id="rb_manual" layoutX="42.0" layoutY="106.0" mnemonicParsing="false" text="Manual negotiation" />
+    <RadioButton fx:id="rb_automated" layoutX="41.0" layoutY="142.0" mnemonicParsing="false" text="Automated Negotiation" />
+    <Button fx:id="btn_start" layoutX="42.0" layoutY="232.0" mnemonicParsing="false" onAction="#startNegotiationButtonClick" prefWidth="73.0" text="Start" />
+    <Label fx:id="priceLable" layoutX="266.0" layoutY="134.0" text="Offer price" visible="true">
       <font>
         <Font name="System Bold" size="15.0" fx:id="x1" />
       </font>
     </Label>
-    <Label fx:id="manufacture" layoutX="166.0" layoutY="133.0" text="No Details">
-      <font>
-        <Font size="15.0" fx:id="x2" />
-      </font>
-    </Label>
-    <Label font="$x1" layoutX="51.0" layoutY="170.0" text="Model:" />
-    <Label id="model" fx:id="transmission" font="$x2" layoutX="398.0" layoutY="133.0" text="No Details" />
-    <Label font="$x1" layoutX="277.0" layoutY="133.0" text="Transmission:" />
-    <Label id="transmission" fx:id="color" font="$x2" layoutX="396.0" layoutY="207.0" text="No Details" />
-    <Label font="$x1" layoutX="51.0" layoutY="207.0" text="Fuel Type:" />
-    <Label id="fuelType" fx:id="model" font="$x2" layoutX="166.0" layoutY="170.0" text="No Details" />
-    <Label font="$x1" layoutX="51.0" layoutY="241.0" text="Mileage (km):" />
-    <Label id="km" fx:id="fuelType" font="$x2" layoutX="166.0" layoutY="207.0" text="No Details" />
-    <Label font="$x1" layoutX="275.0" layoutY="174.0" text="Body type:" />
-    <Label id="bodytype" fx:id="km" font="$x2" layoutX="166.0" layoutY="241.0" text="No Details" />
-    <Label font="$x1" layoutX="275.0" layoutY="207.0" text="Colour:" />
-    <Label id="color" fx:id="bodyType" font="$x2" layoutX="396.0" layoutY="174.0" text="No Details" />
-    <Label font="$x1" layoutX="276.0" layoutY="241.0" text="Price" />
-    <Label id="bodytype" fx:id="price" font="$x2" layoutX="397.0" layoutY="241.0" text="No Details" />
-    <Label fx:id="priceLable" font="$x1" layoutX="275.0" layoutY="316.0" text="Offer price" visible="true" />
-    <TextField id="PricetoEnter" fx:id="pricetoEnter" layoutX="371.0" layoutY="314.0" prefWidth="95.0" text="18000" visible="true" />
-    <TextField id="BeetaValue" fx:id="beetaValue" layoutX="325.0" layoutY="359.0" prefHeight="25.0" prefWidth="52.0" text="1.5" />
-    <Label id="Beetalable" fx:id="beetalable" font="$x1" layoutX="274.0" layoutY="361.0" text="Beeta" />
-    <Label fx:id="stepsLable" font="$x1" layoutX="446.0" layoutY="361.0" text="Steps" />
-    <TextField fx:id="negotiationSteps" layoutX="393.0" layoutY="359.0" prefHeight="25.0" prefWidth="52.0" text="20" />
-    <Label fx:id="pricevalidationLabel" layoutX="371.0" layoutY="339.0" text="Label" textFill="RED">
+    <TextField id="PricetoEnter" fx:id="pricetoEnter" layoutX="362.0" layoutY="132.0" prefWidth="95.0" text="18000" visible="true" />
+    <TextField id="BeetaValue" fx:id="beetaValue" layoutX="316.0" layoutY="177.0" prefHeight="25.0" prefWidth="52.0" text="1.5" />
+    <Label id="Beetalable" fx:id="beetalable" font="$x1" layoutX="265.0" layoutY="179.0" text="Beeta" />
+    <Label fx:id="stepsLable" font="$x1" layoutX="437.0" layoutY="179.0" text="Steps" />
+    <TextField fx:id="negotiationSteps" layoutX="384.0" layoutY="177.0" prefHeight="25.0" prefWidth="52.0" text="20" />
+    <Label fx:id="pricevalidationLabel" layoutX="362.0" layoutY="157.0" text="Label" textFill="RED">
       <font>
         <Font name="System Bold" size="12.0" fx:id="x3" />
       </font>
     </Label>
-    <Label fx:id="validationLabel" font="$x3" layoutX="325.0" layoutY="384.0" text="Label" textFill="RED" />
-    <Label id="priceLable" fx:id="maxprice_buyer" font="$x1" layoutX="276.0" layoutY="282.0" text="Max price" visible="true" />
-    <TextField id="PricetoEnter" fx:id="maxPriceFromBuyer" layoutX="371.0" layoutY="282.0" prefWidth="95.0" visible="true" />
-    <AnchorPane layoutX="29.0" layoutY="80.0" opacity="0.25" prefHeight="193.0" prefWidth="466.0" style="-fx-background-color:  #b3b6b7; " />
-    <RadioButton id="rb_automated" fx:id="rb_conan" layoutX="51.0" layoutY="359.0" mnemonicParsing="false" text="CONAN Strategy" />
+    <Label fx:id="validationLabel" font="$x3" layoutX="316.0" layoutY="202.0" text="Label" textFill="RED" />
+    <Label id="priceLable" fx:id="maxprice_buyer" font="$x1" layoutX="267.0" layoutY="100.0" text="Max price" visible="true" />
+    <TextField id="PricetoEnter" fx:id="maxPriceFromBuyer" layoutX="362.0" layoutY="100.0" prefWidth="95.0" visible="true" />
+    <RadioButton id="rb_automated" fx:id="rb_conan" layoutX="42.0" layoutY="177.0" mnemonicParsing="false" text="CONAN Strategy" />
+    <TextField id="max_id" fx:id="nego_duration" layoutX="428.0" layoutY="224.0" prefWidth="106.0" text="0" />
+    <Label fx:id="lb_duration" layoutX="265.0" layoutY="230.0" prefWidth="167.0" text="Negotiation duration (s)">
+      <font>
+        <Font name="System Bold Italic" size="13.0" />
+      </font>
+    </Label>
   </children>
 </AnchorPane>

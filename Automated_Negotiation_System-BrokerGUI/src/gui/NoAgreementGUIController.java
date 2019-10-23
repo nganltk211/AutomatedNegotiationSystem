@@ -22,6 +22,6 @@ public class NoAgreementGUIController {
 	
 	 @FXML
     void viewLineChart(ActionEvent event) {
-		 LineChartGUI gui = new LineChartGUI(this.session);
+		 //LineChartGUI gui = new LineChartGUI(this.session);
     }
 }

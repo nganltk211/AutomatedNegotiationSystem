@@ -82,8 +82,8 @@ public class Algorithms {
 	}
 	
 	public static double getNegotiationSituation(int numberOfSeller, double opponentFactor) {
-		//return (opponentFactor - (2*numberOfSeller))/ (4 * numberOfSeller);
-		return ((double)(opponentFactor - 2)) / 4;
+		return (opponentFactor - (2*numberOfSeller))/ (4 * numberOfSeller);
+		//return ((double)(opponentFactor - 2)) / 4;
 	}
 	
 	public static int getOpponentResponseTimeASellerScore(long beginTime, long responseTime, long timeDuration) {

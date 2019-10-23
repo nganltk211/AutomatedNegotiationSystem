@@ -75,6 +75,3 @@ local.properties
 /WebContent/WEB-INF/lib
 /.project
 
-# text file
-Database/
-/DataBase

@@ -7,7 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import model.Car;
+import model.CarList;
 
 /**
  * A class for setting and showing a stage NegotiationChoiceGUI.
@@ -22,7 +22,7 @@ public class NegotiationChoiceGUI extends Stage {
 	 * @param agent : buyer agent
 	 * @param negotiatedCar
 	 */
-	public NegotiationChoiceGUI(BuyerAgent agent, Car negotiatedCar){
+	public NegotiationChoiceGUI(BuyerAgent agent, CarList negotiatedCar){
 		Parent window = null;
 		loader = new FXMLLoader(getClass().getResource("ChoiceOfNegotiationWay.fxml"));
 		try {
@@ -31,7 +31,7 @@ public class NegotiationChoiceGUI extends Stage {
 			NegotiationChoiceGUIController controller = loader.<NegotiationChoiceGUIController>getController();
 			// set necessary informations using for the interaction between GUI and Agent
 			controller.setAgent(agent);
-			controller.setNegotiatedCar(negotiatedCar);
+			controller.setNegotiatedCarList(negotiatedCar);
 		} catch (IOException e) {
 			System.err.println("Error by loading fxml-File");
 		}

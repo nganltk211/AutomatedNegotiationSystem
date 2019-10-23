@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -12,7 +14,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gui.BuyerGUI;
 import gui.CarListToBuyerGUI;
 import gui.NegotiationBotGUI;
-import gui.NoAgreementGUI;
 import gui.NoOffersGUI;
 import io.JsonIO;
 import jade.core.AID;
@@ -31,6 +32,7 @@ import model.Car;
 import model.CarList;
 import model.LogSession;
 import model.NegotiationLog;
+import model.NegotiationLogList;
 import model.ReserveOffer;
 
 /**
@@ -48,9 +50,7 @@ public class BuyerAgent extends Agent {
 
 	private ObjectMapper o = new ObjectMapper();
 	private JsonIO negotiationDB = new JsonIO("./DataBase/NegotiatioDB.txt");
-	private JsonIO noAgreementDB = new JsonIO("./DataBase/NoAgreementDB.txt");
-	private ArrayList<LogSession> buyerLogs;
-	private ArrayList<LogSession> dealerLogs;
+	private NegotiationLogList agentLogs;
 
 	// variable for concurrent negotiation
 	private long negotiationDuration;
@@ -72,7 +72,8 @@ public class BuyerAgent extends Agent {
 		firstNegotiationThread = true;
 		reserveOfferList = new ArrayList<ReserveOffer>();
 		dealerPreviousOffers = new HashMap<String, PreviousOfferDetails>();
-
+		agentLogs = new NegotiationLogList();
+		
 		// starts the BuyerGUI
 		new Thread(() -> {
 			Platform.runLater(() -> {
@@ -170,26 +171,29 @@ public class BuyerAgent extends Agent {
 	 * 
 	 * @param listOfChosenCars
 	 */
-	public void sendBackTheChoosenCarsToTheBroker(Car negotiatedCar, double firstOfferPrice) {
-		buyerLogs = new ArrayList<LogSession>();
-		dealerLogs = new ArrayList<LogSession>();
-		// Adding Buyers logs into list
-		LogSession blog = new LogSession(0, beetaValue, firstOfferPrice);
-		buyerLogs.add(blog);
-		numberOfActiveSeller++;
-		numberOfSeller++;
+	public void sendBackTheChoosenCarsToTheBroker(CarList negotiatedCarList, double firstOfferPrice) {
+		
+		for (Car car : negotiatedCarList) {
+			dealerPreviousOffers.put(car.getAgent(), new PreviousOfferDetails(0, car.getMaxprice(), System.currentTimeMillis()));
+			NegotiationLog dealerLog = new NegotiationLog(car.getAgent(), new ArrayList<LogSession>());
+			agentLogs.add(dealerLog);
+		}
+		
+		numberOfActiveSeller += negotiatedCarList.size();
+		numberOfSeller += negotiatedCarList.size();
 		
 		if (firstNegotiationThread && negotiationDuration > 0) {
 			startTime = System.currentTimeMillis();
 			deadline = startTime + negotiationDuration;
 			System.out.println("StartTime " + startTime + " Duration " + negotiationDuration);
 			firstNegotiationThread = false;
+			// Adding Buyers logs into list
+			NegotiationLog buyerLog = new NegotiationLog(this.getName(), new ArrayList<LogSession>());
+			buyerLog.addOffer(0, firstOfferPrice);
+			agentLogs.add(buyerLog);
 			addWakerBehaviour();
 		}
-		
-		dealerPreviousOffers.put(negotiatedCar.getAgent(),
-				new PreviousOfferDetails(0, negotiatedCar.getMaxprice(), System.currentTimeMillis()));
-
+	
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
@@ -198,7 +202,7 @@ public class BuyerAgent extends Agent {
 				mess.addReceiver(brokerAgent);
 				String jsonInString;
 				try {
-					jsonInString = o.writeValueAsString(negotiatedCar);
+					jsonInString = o.writeValueAsString(negotiatedCarList);
 					mess.setContent(jsonInString);
 					mess.setConversationId("car-trade-broker-buyer");
 					mess.setReplyWith(String.valueOf(firstOfferPrice));
@@ -308,8 +312,8 @@ public class BuyerAgent extends Agent {
 					}
 
 					// adds to dealer log
-					LogSession dlog = new LogSession(dealerSteps, messObject.getBeeta(), offerPrice);
-					dealerLogs.add(dlog);
+					agentLogs.addToLog(dealerName, dealerSteps, offerPrice);
+					
 					switch (negotiationTactic) {
 					case 0:
 						// for manual negotiation
@@ -330,8 +334,8 @@ public class BuyerAgent extends Agent {
 							// calculate the next offer
 							int nextPrice = Algorithms.offer(intialPrice, reservationPrice, step, maxStep, beetaValue);
 							if (nextPrice >= offerPrice) {
-								LogSession blog = new LogSession(step++, beetaValue, offerPrice);
-								buyerLogs.add(blog);
+								agentLogs.addToLog(myAgent.getName(), step, offerPrice);
+								agentLogs.addToLog(dealerName, step, offerPrice);
 								acceptOffer(dealerName, messObject, offerPrice);
 							} else {
 								makeACounterOffer(dealerName, messObject, nextPrice, dealerTimeStep, step);
@@ -357,17 +361,22 @@ public class BuyerAgent extends Agent {
 						System.out.println("Number of seller: " + numberOfSeller );
 						System.out.println("EnviromentFactor " + enviromentFactor);
 
-						int oppResponseTimeScore = Algorithms.getOpponentResponseTimeASellerScore(
-								msg.getPostTimeStamp(), dealerPreviousOffers.get(dealerName).getBuyerLastOfferAtTime(),
-								negotiationDuration);
+						int oppResponseTimeScore = 0;
+						int oppConcessionRateScore = 0;
+						for (Entry<String, PreviousOfferDetails> element : dealerPreviousOffers.entrySet()) {
+							oppResponseTimeScore += Algorithms.getOpponentResponseTimeASellerScore(
+									msg.getPostTimeStamp(), element.getValue().getBuyerLastOfferAtTime(),
+									negotiationDuration);
+							oppConcessionRateScore += Algorithms.getOpponentConcessionRateASellerScore(offerPrice,
+									element.getValue().getLastOfferOfSeller(), reservationPrice,
+									intialPrice);
+						}
+						
 						System.out.println("oppResponseTime " + oppResponseTimeScore);
-						System.out.println("Dealer last offer " + dealerPreviousOffers.get(dealerName).getLastOfferOfSeller() + " Time :" + dealerPreviousOffers.get(dealerName).getBuyerLastOfferAtTime());
-						int oppConcessionRateScore = Algorithms.getOpponentConcessionRateASellerScore(offerPrice,
-								dealerPreviousOffers.get(dealerName).getLastOfferOfSeller(), reservationPrice,
-								intialPrice);
+						System.out.println("Dealer last offer " + dealerPreviousOffers.get(dealerName).getLastOfferOfSeller() + " Time :" + dealerPreviousOffers.get(dealerName).getBuyerLastOfferAtTime());					
 						System.out.println("oppConcessionRate " + oppConcessionRateScore);
 
-						double oppFactor = oppResponseTimeScore + oppConcessionRateScore;
+						int oppFactor = oppResponseTimeScore + oppConcessionRateScore;
 
 						double negoSituation = Algorithms.getNegotiationSituation(numberOfSeller, oppFactor);
 						System.out.println("negoSituation " + negoSituation);
@@ -386,22 +395,20 @@ public class BuyerAgent extends Agent {
 						nextOffer = Algorithms.getNextOffer(intialPrice, reservationPrice, concessionRate);
 						System.out.println("nextOffer " + nextOffer);
 
-						int buyerStep = Integer.parseInt(dealerTimeStep);
+						int buyerStep = Integer.parseInt(dealerTimeStep) + 1;
 
 						if (compareOfferToOffersInReserveList(offerPrice) && nextOffer >= offerPrice) {
 							if (System.currentTimeMillis() >= deadline - timeOneRound) { // near the deadline
-								LogSession blog = new LogSession(buyerStep++, beetaValue, offerPrice);
-								buyerLogs.add(blog);
+								agentLogs.addToLog(myAgent.getName(), buyerStep, offerPrice);
+								agentLogs.addToLog(dealerName, buyerStep, offerPrice);
 								acceptOffer(dealerName, messObject, offerPrice);
 							} else {
 								sendReqToReserve(dealerName, messObject, offerPrice);
 							}
-							numberOfActiveSeller --;
 						} else {
 							dealerPreviousOffers.replace(dealerName,
 									new PreviousOfferDetails(concessionRate, offerPrice, System.currentTimeMillis()));
-							makeACounterOffer(dealerName, messObject, nextOffer, dealerTimeStep,
-									Integer.parseInt(dealerTimeStep));
+							makeACounterOffer(dealerName, messObject, nextOffer, dealerTimeStep, buyerStep);
 						}
 					}
 				} catch (IOException e) {
@@ -436,11 +443,9 @@ public class BuyerAgent extends Agent {
 	 * @param price:
 	 *            offer-price
 	 */
-	public void makeACounterOffer(String opponentAgentName, Car negotiatedCar, double price, String dealerTimeStep,
-			int buyerStep) {
+	public void makeACounterOffer(String opponentAgentName, Car negotiatedCar, double price, String dealerTimeStep, int buyerStep) {
 		// Adding Buyers logs into list
-		LogSession blog = new LogSession(buyerStep, beetaValue, price);
-		buyerLogs.add(blog);
+		agentLogs.addToLog(this.getName(), buyerStep, price);
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
@@ -472,9 +477,10 @@ public class BuyerAgent extends Agent {
 	 * @param price
 	 */
 	public void acceptOffer(String opponentAgentName, Car negotiatedCar, double price) {
-
-		saveLogs(opponentAgentName);
-		numberOfActiveSeller--;
+		saveLogs();
+		System.out.println(agentLogs);
+		numberOfActiveSeller --;
+		dealerPreviousOffers.remove(opponentAgentName);
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
@@ -510,11 +516,7 @@ public class BuyerAgent extends Agent {
 			ACLMessage msg = myAgent.receive(mt);
 			if (msg != null) {
 				String dealerName = msg.getSender().getName();
-				try {
-					endTheNegotiationWithoutAgreement(dealerName);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				endTheNegotiationWithoutAgreement(dealerName);
 			} else {
 				block();
 			}
@@ -537,6 +539,7 @@ public class BuyerAgent extends Agent {
 					double offerPrice = Double.parseDouble(msg.getReplyWith());
 					String dealerName = msg.getSender().getName();
 					reserveOfferList.add(new ReserveOffer(offerPrice, dealerName, negotiatedCar));
+					dealerPreviousOffers.remove(dealerName);
 				} catch (IOException e) {
 					System.err.println("Problem by converting a json-format to an object");
 				}
@@ -582,20 +585,8 @@ public class BuyerAgent extends Agent {
 	 * @throws JsonMappingException
 	 * @throws JsonParseException
 	 */
-	public void endTheNegotiationWithoutAgreement(String dealerName)
-			throws JsonParseException, JsonMappingException, IOException {
+	public void endTheNegotiationWithoutAgreement(String dealerName) {
 		System.out.println("No Agreement!");
-		saveNoAgreementLogs(dealerName);
-
-		noAgreementDB.openFileReader();
-		NegotiationLog session = o.readValue(noAgreementDB.readLine(), NegotiationLog.class);
-		noAgreementDB.closeFileReader();
-
-		new Thread(() -> {
-			Platform.runLater(() -> {
-				NoAgreementGUI guiBuyer = new NoAgreementGUI(this, session);
-			});
-		}).start();
 	}
 
 	/**
@@ -606,6 +597,7 @@ public class BuyerAgent extends Agent {
 	 * @param price
 	 */
 	public void sendReqToReserve(String dealerName, Car negotiatedCar, double price) {
+		numberOfActiveSeller --;
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
@@ -657,7 +649,6 @@ public class BuyerAgent extends Agent {
 					} else {
 						acceptOffer(dealerName, negotiatedCar, offerPrice);
 					}					
-					numberOfActiveSeller --;
 				} catch (IOException e) {
 					System.err.println("Problem by converting a json-format to an object");
 				}
@@ -668,35 +659,15 @@ public class BuyerAgent extends Agent {
 	}
 
 	/**
-	 * Method to save the log of all negotiation session in case of no agreement
-	 * reaches in a text file.
-	 * 
-	 * @param dealerName
-	 *            : name of the dealer
-	 */
-	private void saveNoAgreementLogs(String dealerName) {
-		NegotiationLog session = new NegotiationLog(this.getName(), dealerName, buyerLogs, dealerLogs);
-		try {
-			String jsonString = o.writeValueAsString(session);
-			noAgreementDB.openFileWriter();
-			noAgreementDB.writeLine(jsonString);
-			noAgreementDB.closeFileWriter();
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
 	 * Method to save the log of all negotiation session in case of an agreement
 	 * reaches in a text file.
 	 * 
 	 * @param dealerName
 	 *            : name of the dealer
 	 */
-	private void saveLogs(String dealerName) {
-		NegotiationLog session = new NegotiationLog(this.getName(), dealerName, buyerLogs, dealerLogs);
+	private void saveLogs() {
 		try {
-			String jsonString = o.writeValueAsString(session);
+			String jsonString = o.writeValueAsString(agentLogs);
 			negotiationDB.openFileWriter();
 			negotiationDB.writeLine(jsonString);
 			negotiationDB.closeFileWriter();

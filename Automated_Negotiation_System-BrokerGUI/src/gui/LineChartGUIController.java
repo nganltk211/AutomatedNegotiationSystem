@@ -1,5 +1,7 @@
 package gui;
 
+import java.util.ArrayList;
+
 import javafx.beans.binding.ObjectExpression;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -13,6 +15,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import model.LogSession;
 import model.NegotiationLog;
+import model.NegotiationLogList;
 
 public class LineChartGUIController {
 	
@@ -25,9 +28,9 @@ public class LineChartGUIController {
     @FXML
     private NumberAxis y;
     
-    private NegotiationLog session;
+    private NegotiationLogList session;
     
-    public void setNegotiation(NegotiationLog session) {
+    public void setNegotiation(NegotiationLogList session) {
     	this.session = session;
     	drawChart();
     }
@@ -37,30 +40,36 @@ public class LineChartGUIController {
     	x.setLabel("T");
     	y.setLabel("Price");
     	
-    	XYChart.Series<String, Number> buyer = new XYChart.Series<String, Number>();
-    	buyer.setName(session.getBuyerName());
-    	
-    	XYChart.Series<String, Number> dealer = new XYChart.Series<String, Number>();
-    	dealer.setName(session.getDealerName());
-    	
-    	for(LogSession x : session.getBuyerLog()) {
-    		Data<String, Number> n = new XYChart.Data<String, Number>(String.valueOf(x.getStep()), x.getOffer());
-    		n.setNode(createDataNode(n.YValueProperty(), false));
-    		buyer.getData().add(n);
-    	}
-    	
-    	for(LogSession x : session.getDealerLog()) {
-    		Data<String, Number> n = new XYChart.Data<String, Number>(String.valueOf(x.getStep()), x.getOffer());
-    		n.setNode(createDataNode(n.YValueProperty(), true));
-    		dealer.getData().add(n);
+    	double max = 0.0;
+    	double min = 100000;
+    	for (NegotiationLog log : session) {
+    		XYChart.Series<String, Number> agent = new XYChart.Series<String, Number>();
+    		agent.setName(log.getAgentName());
+    		boolean aboveTheLine = true;
+    		if (log.getAgentName().startsWith("D")) {
+    			aboveTheLine = true;
+    		} else {
+    			aboveTheLine = false;
+    		}
+    		for(LogSession x : log.getAgentLog()) {
+        		Data<String, Number> n = new XYChart.Data<String, Number>(String.valueOf(x.getStep()), x.getOffer());
+        		n.setNode(createDataNode(n.YValueProperty(), aboveTheLine));
+        		
+        		agent.getData().add(n);
+        		if (x.getOffer() > max) {
+        			max = x.getOffer();
+        		}
+        		if (x.getOffer() < min) {
+        			min = x.getOffer();
+        		}
+        	}
+    		LineChart.getData().add(agent);
     	}
     	
     	y.setAutoRanging(false);
-    	y.setUpperBound(session.getDealerLog().get(0).getOffer() + 250);  	
+    	y.setUpperBound(max + 250);  	
     	y.setAutoRanging(false);
-    	y.setLowerBound(session.getBuyerLog().get(0).getOffer() - 250);
-    	
-    	LineChart.getData().addAll(buyer, dealer);
+    	y.setLowerBound(min - 250);	
     }
     
     private Node createDataNode(ObjectExpression<Number> value, boolean aboveTheLine) {
@@ -71,12 +80,10 @@ public class LineChartGUIController {
         pane.setShape(new Circle(6.0));
         pane.setScaleShape(false);
         if (aboveTheLine) {
-        	 label.translateYProperty().bind(label.heightProperty().divide(-1.5));
-        	
+        	label.translateYProperty().bind(label.heightProperty().divide(-1.5));
         } else {
-        	 label.translateYProperty().bind(label.heightProperty().divide(1.1));
-        }
-       
+        	label.translateYProperty().bind(label.heightProperty().divide(1.1));
+        }      
         return pane;
     }
     
