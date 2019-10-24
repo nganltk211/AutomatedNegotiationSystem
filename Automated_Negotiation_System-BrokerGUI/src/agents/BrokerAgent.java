@@ -34,7 +34,7 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 	private ObjectMapper o = new ObjectMapper(); // object supporting converting object to json-form
 	private CarList catalog = new CarList(); // broker's catalog
 	private JsonIO jsonDB = new JsonIO("./DataBase/JsonDB.txt");
-	private JsonIO negotiationDB = new JsonIO("./DataBase/NegotiatioDB.txt");
+	private JsonIO negotiationDB = new JsonIO("./DataBase/NegotiationDB.txt");
 	private static final double COMMISION = 100; // fix-commission for each successful negotiation
 	private double receivedCommision; // broker's commission from successful negotiations 
 	private MultiAgentManager multiAgentMng; // deals with request from many buyers for a same car

@@ -51,7 +51,7 @@ public class BuyerAgent extends Agent {
 	private double beetaValue; // beetaValue using time dependent tactics
 
 	private ObjectMapper o = new ObjectMapper();
-	private JsonIO negotiationDB = new JsonIO("./DataBase/NegotiatioDB.txt");
+	private JsonIO negotiationDB = new JsonIO("./DataBase/NegotiationDB.txt");
 	private NegotiationLogList agentLogs;
 
 	// variable for concurrent negotiation
