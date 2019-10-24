@@ -14,8 +14,8 @@ import javafx.scene.image.ImageView;
 import model.Car;
 
 /**
- * A Controller class of CarInfoGUIController. The logic of GUI-Elements will be defined in
- * this class.
+ * A Controller class of CarInfoGUIController. The logic of GUI-Elements will be
+ * defined in this class.
  */
 public class CarInfoGUIController {
 	@FXML
@@ -44,25 +44,26 @@ public class CarInfoGUIController {
 	private ImageView imageView;
 	@FXML
 	private CheckBox checkbox;
-	
+
+	private CarInfoGUIController[] carController;
 	private Car car;
-	private BuyerAgent buyerAgent;
-	
 	public CarInfoGUIController() {
 		super();
 	}
-	
+
 	/**
 	 * Sets the value for GUI-Elements with the information from Object car
-	 * @param car: the car showed on the interface
+	 * 
+	 * @param car:
+	 *            the car showed on the interface
 	 */
 	public void setCar(Car car) {
 		this.car = car;
 		if (car.getPicturePath() != null) {
 			// path to car's picture
 			File file = new File(car.getPicturePath());
-	        Image image = new Image(file.toURI().toString());
-	        imageView.setImage(image);
+			Image image = new Image(file.toURI().toString());
+			imageView.setImage(image);
 		}
 		manufacture.setText(car.getManufacture());
 		model.setText(car.getModel());
@@ -75,24 +76,49 @@ public class CarInfoGUIController {
 		price.setText(String.valueOf(car.getMaxprice()));
 		agent_name.setText(car.getAgent());
 	}
-	
+
 	/**
 	 * get-Method for the car showed on this GUI-block
-	 * @return an Car-object 
+	 * 
+	 * @return an Car-object
 	 */
 	public Car getCar() {
 		return car;
 	}
-	
-	/**
-	 * set-Method for the buyer agent, who is looking for cars
-	 * @return an Car-object 
-	 */
-	public void setBuyerAgent(BuyerAgent buyerAgent) {
-		this.buyerAgent = buyerAgent;
+
+	public void setCarControllerList(CarInfoGUIController[] carController) {
+		this.carController = carController;
 	}
-	
+
 	public boolean getValueChoosenCB() {
 		return checkbox.isSelected();
+	}
+
+	public void setCheckBoxEnable(boolean enable) {
+		checkbox.setDisable(!enable);
+	}
+
+	/**
+	 * sets event to the check box in order to make sure that the buyer can only
+	 * choose exactly one car from one dealer
+	 * 
+	 * @param action
+	 */
+	@FXML
+	public void changeValueOfCheckBox(ActionEvent action) {
+		if (checkbox.isSelected()) {
+			for (CarInfoGUIController c : carController) {
+				// takes all of cars from the same dealer exceeds the car in this controller
+				if ((c.getCar().getCarId() != car.getCarId()) && c.getCar().getAgent().equals(car.getAgent())) {
+					c.setCheckBoxEnable(false);
+				}
+			}
+		} else {
+			for (CarInfoGUIController c : carController) {
+				if (c.getCar().getAgent().equals(car.getAgent())) {
+					c.setCheckBoxEnable(true);
+				}
+			}
+		}
 	}
 }

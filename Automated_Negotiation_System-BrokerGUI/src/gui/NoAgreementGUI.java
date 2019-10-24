@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import model.NegotiationLog;
+import model.NegotiationLogList;
 
 /**
  * A class for setting and showing a stage NoOffersGUI.
@@ -21,13 +22,13 @@ public class NoAgreementGUI extends Stage {
 	 * Constructor of the class
 	 * @param agent : buyer agent
 	 */
-	public NoAgreementGUI(Agent agent, NegotiationLog session){
+	public NoAgreementGUI(Agent agent, NegotiationLogList session){
 		Parent window = null;
 		loader = new FXMLLoader(getClass().getResource("NoAgreementGUI.fxml"));
 		try {
 			window = loader.load();
 			NoAgreementGUIController controller = loader.<NoAgreementGUIController>getController();
-			controller.setNegotiation(session);
+			controller.setNegotiationList(session);
 		} catch (IOException e) {
 			System.err.println("Error by loading fxml-File");
 		}

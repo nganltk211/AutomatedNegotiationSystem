@@ -34,6 +34,7 @@ public class DealerAgent extends Agent {
 	private AID brokerAgent;
 	private ObjectMapper o = new ObjectMapper(); // for converting in json-format
 	private Map<String, Double> lastOfferList; // list to store the buyer name with his lastOffer
+	private Map<String, Integer> lastStepList; // list to store the last step of each buyer
 	private int numberOfBuyers; // number of buyer, who want to buy a same car
 	private boolean multiple = false; // true if more than one buyer want to negotiate a car
 	private boolean bestBuyerFound = false; // true if the beast buyer is found
@@ -45,6 +46,7 @@ public class DealerAgent extends Agent {
 		// Printout a welcome message
 		System.out.println("Hello! Dealer-agent " + getAID().getName() + " is ready.");
 		lastOfferList = new Hashtable<>();
+		lastStepList = new Hashtable<>();
 		// starts the DealerGUI
 		new Thread(() -> {
 			Platform.runLater(() -> {
@@ -185,7 +187,7 @@ public class DealerAgent extends Agent {
 				if (!negotiatedCar.getisNegotiatable()) {
 					double offerPrice = negotiatedCar.getMaxprice();
 					if (offerPrice <= offerFromBuyer) {
-						acceptOffer(buyerName, negotiatedCar, offerFromBuyer);
+						acceptOffer(buyerName, negotiatedCar, offerFromBuyer, 0);
 					} else {
 						// make a counter-offer to the buyer
 						makeACounterOffer(buyerName, negotiatedCar, offerPrice, 0);
@@ -222,25 +224,25 @@ public class DealerAgent extends Agent {
 				String content = msg.getContent();
 				Car messObject;
 				try {
+					int stepD = Integer.parseInt(msg.getInReplyTo());
 					messObject = o.readValue(content, Car.class);
 					if (messObject.getisNegotiatable()) {
 						// for manual negotiation: receive offer from the buyer and start the GUI for
 						// the dealer to make a counter-offer
 						String buyerName = msg.getSender().getName();
 						double offerPrice = Double.parseDouble(msg.getReplyWith());
-						int step = Integer.parseInt(msg.getInReplyTo());
+						
 						System.out.println("Dealer: Receive offer from the buyer: " + offerPrice);
 						// start the NegotiationBotGUI
 						new Thread(() -> {
 							Platform.runLater(() -> {
 								NegotiationBotGUI bot = new NegotiationBotGUI(myAgent, buyerName, messObject,
-										offerPrice, step);
+										offerPrice, stepD);
 							});
 						}).start();
 					} else {
 						// for automated Negotiation: receive offer from the buyer and decide to accept
 						// or make a counter-offer
-						int stepD = Integer.parseInt(msg.getInReplyTo()) + 1;
 						String buyerName = msg.getSender().getName();
 						if (stepD <= messObject.getSteps()) {
 							double offerPrice = Double.parseDouble(msg.getReplyWith());
@@ -250,9 +252,9 @@ public class DealerAgent extends Agent {
 							if (nextPrice <= offerPrice) {
 								// accept the offer from the buyer
 								if (!multiple) {
-									acceptOffer(buyerName, messObject, offerPrice);
+									acceptOffer(buyerName, messObject, offerPrice, stepD);
 								} else {
-									findTheBestOffer(buyerName, messObject, offerPrice);
+									findTheBestOffer(buyerName, messObject, offerPrice, stepD);
 								}
 							} else {
 								// make a counter-offer to the buyer
@@ -261,7 +263,7 @@ public class DealerAgent extends Agent {
 						} else {
 							// when reaching the deadline
 							endTheNegotiationBecauseOfOutOfStep(buyerName);
-							findTheBestOffer(buyerName, messObject, 0.0); // add this buyer to the list
+							findTheBestOffer(buyerName, messObject, 0.0, stepD); // add this buyer to the list
 						}
 					}
 				} catch (IOException e1) {
@@ -315,7 +317,7 @@ public class DealerAgent extends Agent {
 	 * @param negotiatedCar
 	 * @param price
 	 */
-	public void acceptOffer(String opponentAgentName, Car negotiatedCar, double price) {
+	public void acceptOffer(String opponentAgentName, Car negotiatedCar, double price, int dealerStep) {
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
@@ -328,6 +330,7 @@ public class DealerAgent extends Agent {
 					jsonInString = o.writeValueAsString(negotiatedCar);
 					mess.setContent(jsonInString);
 					mess.setReplyWith(String.valueOf(price));
+					mess.setInReplyTo(String.valueOf(dealerStep));
 					mess.setConversationId("car-negotiation");
 					myAgent.send(mess);
 				} catch (JsonProcessingException e) {
@@ -346,8 +349,9 @@ public class DealerAgent extends Agent {
 	 * @param price
 	 *            : offer price
 	 */
-	public void findTheBestOffer(String opponentAgentName, Car negotiatedCar, double price) {
+	public void findTheBestOffer(String opponentAgentName, Car negotiatedCar, double price, int dealerStep) {
 		lastOfferList.put(opponentAgentName, price); // add to the list
+		lastStepList.put(opponentAgentName, dealerStep);
 		// when all best offers of each buyer are calculated
 		if (lastOfferList.size() == numberOfBuyers) {
 			Map.Entry<String, Double> entry = lastOfferList.entrySet().iterator().next();
@@ -363,7 +367,7 @@ public class DealerAgent extends Agent {
 			if (bestOffer != 0) { // when a best buyer is found
 				System.out.println("Dealer: Best buyer: " + bestBuyer + " with offer: " + bestOffer);
 				// send accept message to the best buyer
-				acceptOffer(bestBuyer, negotiatedCar, bestOffer);
+				acceptOffer(bestBuyer, negotiatedCar, bestOffer, lastStepList.get(bestBuyer));
 				bestBuyerFound = true;
 				// remove the best buyer from the list
 				lastOfferList.remove(bestBuyer, bestOffer);
@@ -375,6 +379,7 @@ public class DealerAgent extends Agent {
 				}
 			}
 			lastOfferList.clear();
+			lastStepList.clear();
 		}
 	}
 
@@ -447,7 +452,8 @@ public class DealerAgent extends Agent {
 				String content = msg.getContent();
 				try {
 					Car negotiatedCar = o.readValue(content, Car.class);
-					findTheBestOffer(msg.getSender().getName(), negotiatedCar, 0.0);
+					int buyerStep = Integer.valueOf(msg.getReplyWith());
+					findTheBestOffer(msg.getSender().getName(), negotiatedCar, 0.0, buyerStep);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -475,6 +481,7 @@ public class DealerAgent extends Agent {
 				try {
 					Car negotiatedCar = o.readValue(content, Car.class);
 					double offerPrice = Double.parseDouble(msg.getReplyWith());
+					int dealerStep = Integer.parseInt(msg.getInReplyTo());
 					if (!multiple || bestBuyerFound) {
 						System.out.println("\nEnd of the negotiation : ");
 						System.out.println("Sold car: " + negotiatedCar);
@@ -483,7 +490,7 @@ public class DealerAgent extends Agent {
 						confirmSell(negotiatedCar, offerPrice, msg.getSender().getName()); // confirm with the broker
 					} else {
 						// add the buyer to the list for finding the best buyer
-						findTheBestOffer(msg.getSender().getName(), negotiatedCar, offerPrice);
+						findTheBestOffer(msg.getSender().getName(), negotiatedCar, offerPrice, dealerStep);
 					}
 				} catch (IOException e) {
 					System.err.println("Problem by converting a json-format to an object");

@@ -51,7 +51,7 @@ public class CarListToBuyerGUI extends Stage {
 				carController[i] = loader.getController();
 				// Set data in the controller
 				carController[i].setCar(offerCarlist.get(i));
-				carController[i].setBuyerAgent(buyerAgent);
+				carController[i].setCarControllerList(carController);
 				carBlock.setStyle("-fx-background-color: #ffffff");
 				root.getChildren().add(carBlock); // adds carBlock to the scroll pane
 				blockHeight = carBlock.getPrefHeight();
@@ -62,7 +62,7 @@ public class CarListToBuyerGUI extends Stage {
 		Button sendbtn = new Button("Send");
 		setActionForSendButton(sendbtn);
 		sendbtn.setPrefWidth(100);
-		this.setTitle("List of possible cars");
+		this.setTitle("List of possible cars to: " + buyerAgent.getName());
 		sp.setContent(root);
 		sp.setPannable(true);
 
@@ -82,6 +82,10 @@ public class CarListToBuyerGUI extends Stage {
 		this.show();
 	}
 
+	/**
+	 * sets Event-handler for the "Send" button.
+	 * @param btn
+	 */
 	private void setActionForSendButton(Button btn) {
 		btn.setOnAction((ActionEvent me) -> {
 			for (CarInfoGUIController controller : carController) {
@@ -92,6 +96,7 @@ public class CarListToBuyerGUI extends Stage {
 			if (choosenOffers.size() > 0) {
 				NegotiationChoiceGUI negotiationChoice = new NegotiationChoiceGUI(buyerAgent, choosenOffers);
 			}
+			this.close();
 		});
 
 	}

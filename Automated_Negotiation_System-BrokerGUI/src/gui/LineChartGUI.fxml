@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.Pane?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="566.0" prefWidth="823.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.LineChartGUIController">
-   <children>
-      <LineChart fx:id="LineChart" layoutX="28.0" layoutY="15.0" prefHeight="535.0" prefWidth="773.0" title="Negotiation">
-        <xAxis>
-          <CategoryAxis side="BOTTOM" fx:id="x" />
-        </xAxis>
-        <yAxis>
-          <NumberAxis fx:id="y" side="LEFT" />
-        </yAxis>
-      </LineChart>
-   </children>
+  <children>
+    <LineChart fx:id="LineChart" layoutX="28.0" layoutY="15.0" prefHeight="535.0" prefWidth="773.0" title="Negotiation Sessions">
+      <xAxis>
+        <CategoryAxis fx:id="x" side="BOTTOM" />
+      </xAxis>
+      <yAxis>
+        <NumberAxis fx:id="y" side="LEFT" />
+      </yAxis>
+    </LineChart>
+  </children>
 </Pane>

@@ -1,7 +1,5 @@
 package gui;
 
-import java.util.ArrayList;
-
 import javafx.beans.binding.ObjectExpression;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -75,9 +73,8 @@ public class LineChartGUIController {
     private Node createDataNode(ObjectExpression<Number> value, boolean aboveTheLine) {
         Label label = new Label();
         label.textProperty().bind(value.asString("%.0f"));
-
         Pane pane = new Pane(label);
-        pane.setShape(new Circle(6.0));
+        pane.setShape(new Circle(5.0));
         pane.setScaleShape(false);
         if (aboveTheLine) {
         	label.translateYProperty().bind(label.heightProperty().divide(-1.5));

@@ -106,6 +106,7 @@ public class NegotiationChoiceGUIController {
 			@Override
 			public void changed(ObservableValue<? extends Toggle> ov, Toggle oldToggle, Toggle newToggle) {
 				if (rb_manual.isSelected()) {
+					// when buyer chooses manual
 					priceLable.setVisible(true);
 					pricetoEnter.setVisible(true);
 					priceLable.setText("OfferPrice");
@@ -119,21 +120,22 @@ public class NegotiationChoiceGUIController {
 					nego_duration.setVisible(false);
 					lb_duration.setVisible(false);
 				} else if (rb_automated.isSelected()) {
+					// when buyer choose time dependent tactics
 					priceLable.setVisible(true);
 					pricetoEnter.setVisible(true);
 					priceLable.setText("Min Price");
 					beetalable.setVisible(true);
 					beetaValue.setVisible(true);
 					stepsLable.setVisible(true);
-
 					negotiationSteps.setVisible(true);
 					validationLabel.setVisible(true);
 					maxPriceFromBuyer.setVisible(true);
 					maxprice_buyer.setVisible(true);
-					nego_duration.setVisible(true);
-					lb_duration.setVisible(true);
+					nego_duration.setVisible(false);
+					lb_duration.setVisible(false);
 					maxPriceFromBuyer.setText(String.valueOf(bag.getReservationPrice()));
 				} else {
+					// when buyer choose concurrent negotiation
 					priceLable.setVisible(true);
 					pricetoEnter.setVisible(true);
 					priceLable.setText("Min Price");

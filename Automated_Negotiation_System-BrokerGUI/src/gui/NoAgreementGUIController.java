@@ -3,6 +3,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import model.NegotiationLog;
+import model.NegotiationLogList;
 
 
 public class NoAgreementGUIController {
@@ -10,18 +11,18 @@ public class NoAgreementGUIController {
 	@FXML
     private Button viewLineChart;
 	
-	private NegotiationLog session;
+	private NegotiationLogList session;
 	
-	public void setNegotiation(NegotiationLog session) {
+	public void setNegotiationList(NegotiationLogList session) {
     	this.session = session;
     }
 	
-	public NegotiationLog getNegotiation() {
+	public NegotiationLogList getNegotiation() {
     	return this.session;
     }
 	
 	 @FXML
     void viewLineChart(ActionEvent event) {
-		 //LineChartGUI gui = new LineChartGUI(this.session);
+		 LineChartGUI gui = new LineChartGUI(this.session);
     }
 }
