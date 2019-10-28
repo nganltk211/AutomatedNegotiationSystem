@@ -24,7 +24,8 @@ public class CarListToBuyerGUI extends Stage {
 	private CarInfoGUIController[] carController;
 	private BuyerAgent buyerAgent;
 	private CarList choosenOffers;
-
+	private boolean firstNegotiationThread;
+	
 	/**
 	 * Constructor of the class.
 	 * 
@@ -33,11 +34,12 @@ public class CarListToBuyerGUI extends Stage {
 	 * @param myAgent
 	 *            : a buyer agent
 	 */
-	public CarListToBuyerGUI(CarList offerCarlist, Agent myAgent) {
+	public CarListToBuyerGUI(CarList offerCarlist, Agent myAgent, boolean firstNegotiationThread) {
 		double blockHeight = 0;
 		choosenOffers = new CarList();
 		carController = new CarInfoGUIController[offerCarlist.size()];
 		buyerAgent = (BuyerAgent) myAgent;
+		this.firstNegotiationThread = firstNegotiationThread; 
 		ScrollPane sp = new ScrollPane(); // a scroll pane for showing list of cars
 		VBox root = new VBox();
 		root.setSpacing(10);
@@ -94,7 +96,7 @@ public class CarListToBuyerGUI extends Stage {
 				}
 			}
 			if (choosenOffers.size() > 0) {
-				NegotiationChoiceGUI negotiationChoice = new NegotiationChoiceGUI(buyerAgent, choosenOffers);
+				NegotiationChoiceGUI negotiationChoice = new NegotiationChoiceGUI(buyerAgent, choosenOffers, firstNegotiationThread);
 			}
 			this.close();
 		});

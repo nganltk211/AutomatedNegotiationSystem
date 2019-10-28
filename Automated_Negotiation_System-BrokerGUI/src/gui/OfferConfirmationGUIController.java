@@ -1,6 +1,9 @@
 package gui;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -45,4 +48,5 @@ public class OfferConfirmationGUIController {
     public void viewLineChart(ActionEvent event) {
     	LineChartGUI gui = new LineChartGUI(this.session);
     }
+    
 }

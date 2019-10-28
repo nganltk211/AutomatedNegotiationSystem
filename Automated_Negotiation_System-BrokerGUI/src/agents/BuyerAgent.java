@@ -65,6 +65,8 @@ public class BuyerAgent extends Agent {
 	private long timeOneRound;
 	private Map<String, PreviousOfferDetails> dealerPreviousOffers;
 	private Map<String, Integer> lastStepList; // list to store the last step of each dealer
+	private boolean lastOfferReserved = false;
+	private double reservedOfferconcessionRate;
 
 	/**
 	 * Method for setting up a buyer agent
@@ -77,7 +79,7 @@ public class BuyerAgent extends Agent {
 		dealerPreviousOffers = new HashMap<String, PreviousOfferDetails>();
 		lastStepList = new Hashtable<>();
 		agentLogs = new NegotiationLogList();
-		
+
 		// starts the BuyerGUI
 		new Thread(() -> {
 			Platform.runLater(() -> {
@@ -105,7 +107,6 @@ public class BuyerAgent extends Agent {
 
 		// Adding behaviors to the buyer agent
 		addBehaviour(new OfferFromBroker());
-		// addBehaviour(new NegotiationWithDealer());
 		addBehaviour(new EndTheNegotiation());
 		addBehaviour(new NoAgreementFromDealer());
 		addBehaviour(new NegotiationWithDealerCONANStrategy());
@@ -147,7 +148,7 @@ public class BuyerAgent extends Agent {
 						// Start the GUI to show the list of possible cars to the buyer
 						new Thread(() -> {
 							Platform.runLater(() -> {
-								CarListToBuyerGUI listCarGUI = new CarListToBuyerGUI(offerCarlist, myAgent);
+								CarListToBuyerGUI listCarGUI = new CarListToBuyerGUI(offerCarlist, myAgent, firstNegotiationThread);
 							});
 						}).start();
 					} catch (IOException e1) {
@@ -176,28 +177,31 @@ public class BuyerAgent extends Agent {
 	 * @param listOfChosenCars
 	 */
 	public void sendBackTheChoosenCarsToTheBroker(CarList negotiatedCarList, double firstOfferPrice) {
-		// Adding Buyers logs into list
-		NegotiationLog buyerLog = new NegotiationLog(this.getName(), new ArrayList<LogSession>());
-		buyerLog.addOffer(0, firstOfferPrice);
-		agentLogs.add(buyerLog);
-		
+
 		for (Car car : negotiatedCarList) {
-			dealerPreviousOffers.put(car.getAgent(), new PreviousOfferDetails(0, car.getMaxprice(), System.currentTimeMillis()));
+			dealerPreviousOffers.put(car.getAgent(),
+					new PreviousOfferDetails(0, car.getMaxprice(), System.currentTimeMillis()));
 			NegotiationLog dealerLog = new NegotiationLog(car.getAgent(), new ArrayList<LogSession>());
 			agentLogs.add(dealerLog);
+			NegotiationLog buyerLog = new NegotiationLog(this.getName() + "_" + car.getAgent(), new ArrayList<LogSession>());
+			buyerLog.addOffer(0, firstOfferPrice);
+			agentLogs.add(buyerLog);
 		}
-		
+
 		numberOfActiveSeller += negotiatedCarList.size();
 		numberOfSeller += negotiatedCarList.size();
-		
-		if (firstNegotiationThread && negotiationDuration > 0) {
-			startTime = System.currentTimeMillis();
-			deadline = startTime + negotiationDuration;
-			System.out.println("StartTime " + startTime + " Duration " + negotiationDuration);
-			firstNegotiationThread = false;
-			addWakerBehaviour();
+
+		if (firstNegotiationThread) {
+			// Adding Buyers logs into list
+			if (negotiationDuration > 0) {
+				startTime = System.currentTimeMillis();
+				deadline = startTime + negotiationDuration;
+				System.out.println("StartTime " + startTime + " Duration " + negotiationDuration);
+				firstNegotiationThread = false;
+				addWakerBehaviour();
+			}
 		}
-	
+
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
@@ -295,8 +299,8 @@ public class BuyerAgent extends Agent {
 	 * negotiation, a GUI will be shown with the offer price from the dealer and
 	 * options for buyer to accept or decline the offer. In case of automated
 	 * negotiation, the buyer AI will decide to accept the offer or make a
-	 * counter-offer
-	 * In this behavior, the counter-offer in case of AI will be calculated through time-dependent-tactics or CONAN strategy
+	 * counter-offer In this behavior, the counter-offer in case of AI will be
+	 * calculated through time-dependent-tactics or CONAN strategy
 	 */
 	private class NegotiationWithDealerCONANStrategy extends CyclicBehaviour {
 
@@ -321,7 +325,7 @@ public class BuyerAgent extends Agent {
 
 					// adds to dealer log
 					agentLogs.addToLog(dealerName, dealerSteps, offerPrice);
-					
+
 					switch (negotiationTactic) {
 					case 0:
 						// for manual negotiation
@@ -339,8 +343,11 @@ public class BuyerAgent extends Agent {
 						if (buyerSteps <= maxStep) {
 							System.out.println("Buyer: Receive offer from the dealer: " + offerPrice);
 							// calculate the next offer
-							int nextPrice = Algorithms.offer(intialPrice, reservationPrice, buyerSteps, maxStep, beetaValue);
+							int nextPrice = Algorithms.offer(intialPrice, reservationPrice, buyerSteps, maxStep,
+									beetaValue);
 							if (nextPrice >= offerPrice) {
+								agentLogs.addToLog(myAgent.getName(), buyerSteps, offerPrice);
+								agentLogs.addToLog(dealerName, buyerSteps, offerPrice);
 								acceptOffer(dealerName, messObject, offerPrice, buyerSteps);
 							} else {
 								makeACounterOffer(dealerName, messObject, nextPrice, buyerSteps);
@@ -358,13 +365,9 @@ public class BuyerAgent extends Agent {
 						// calculate the next offer
 						long currentTime = System.currentTimeMillis();
 						double effectOfTime = Algorithms.getEffectOfTime(currentTime, startTime, negotiationDuration);
-						System.out.println("Effect of time " + effectOfTime);
 
 						double enviromentFactor = Algorithms.getEnvironmentFactor(numberOfActiveSeller, 0, 1,
 								numberOfSeller);
-						System.out.println("Number of active seller: " + numberOfActiveSeller );
-						System.out.println("Number of seller: " + numberOfSeller );
-						System.out.println("EnviromentFactor " + enviromentFactor);
 
 						int oppResponseTimeScore = 0;
 						int oppConcessionRateScore = 0;
@@ -373,36 +376,33 @@ public class BuyerAgent extends Agent {
 									msg.getPostTimeStamp(), element.getValue().getBuyerLastOfferAtTime(),
 									negotiationDuration);
 							oppConcessionRateScore += Algorithms.getOpponentConcessionRateASellerScore(offerPrice,
-									element.getValue().getLastOfferOfSeller(), reservationPrice,
-									intialPrice);
+									element.getValue().getLastOfferOfSeller(), reservationPrice, intialPrice);
 						}
-						
-						System.out.println("oppResponseTime " + oppResponseTimeScore);
-						System.out.println("Dealer last offer " + dealerPreviousOffers.get(dealerName).getLastOfferOfSeller() + " Time :" + dealerPreviousOffers.get(dealerName).getBuyerLastOfferAtTime());					
-						System.out.println("oppConcessionRate " + oppConcessionRateScore);
 
 						int oppFactor = oppResponseTimeScore + oppConcessionRateScore;
 
 						double negoSituation = Algorithms.getNegotiationSituation(numberOfSeller, oppFactor);
-						System.out.println("negoSituation " + negoSituation);
 
 						double selffactor = Algorithms.getSelfFactor(reserveOfferList.size(), negoSituation,
 								effectOfTime, 1);
-						System.out.println("selffactor " + selffactor);
 
 						double ws = Algorithms.getWeightForSelfFactor(effectOfTime, messObject.getMaxprice(),
 								reservationPrice, selffactor);
-						System.out.println("ws " + ws);
+
+						double lastConcessionRate = (lastOfferReserved) ? reservedOfferconcessionRate
+								: dealerPreviousOffers.get(dealerName).getLastConcessionRate();
 						double concessionRate = Algorithms.getConcessionRate(System.currentTimeMillis(), startTime,
-								deadline, timeOneRound, dealerPreviousOffers.get(dealerName).getLastConcessionRate(),
-								false, ws, enviromentFactor, selffactor);
-						System.out.println("concessionRate " + concessionRate);
+								deadline, timeOneRound, lastConcessionRate, lastOfferReserved, ws, enviromentFactor,
+								selffactor);
+
+						System.out.println("Concession rate " + concessionRate);
+
 						nextOffer = Algorithms.getNextOffer(intialPrice, reservationPrice, concessionRate);
-						System.out.println("nextOffer " + nextOffer);
+						System.out.println("Next Offer " + nextOffer);
 
 						if (compareOfferToOffersInReserveList(offerPrice) && nextOffer >= offerPrice) {
 							if (System.currentTimeMillis() >= deadline - timeOneRound) { // near the deadline
-								agentLogs.addToLog(myAgent.getName(), buyerSteps, offerPrice);
+								agentLogs.addToLog(myAgent.getName() + "_" + dealerName, buyerSteps, offerPrice);
 								agentLogs.addToLog(dealerName, buyerSteps, offerPrice);
 								acceptOffer(dealerName, messObject, offerPrice, buyerSteps);
 							} else {
@@ -425,8 +425,10 @@ public class BuyerAgent extends Agent {
 
 	/**
 	 * Method for checking whether an offer need to be reserved
+	 * 
 	 * @param offer
-	 * @return true when offer is smaller than every reserved offer (offer is good to reserve)
+	 * @return true when offer is smaller than every reserved offer (offer is good
+	 *         to reserve)
 	 */
 	private boolean compareOfferToOffersInReserveList(double offer) {
 		for (ReserveOffer element : reserveOfferList) {
@@ -436,7 +438,7 @@ public class BuyerAgent extends Agent {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * The buyer agent makes a counter-offer to the dealer agent
 	 * 
@@ -448,12 +450,13 @@ public class BuyerAgent extends Agent {
 	 */
 	public void makeACounterOffer(String opponentAgentName, Car negotiatedCar, double price, int buyerStep) {
 		// Adding Buyers logs into list
-		agentLogs.addToLog(this.getName(), buyerStep, price);
+		agentLogs.addToLog(this.getName() + "_" + opponentAgentName, buyerStep, price);
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
 				ACLMessage mess = new ACLMessage(ACLMessage.PROPOSE);
-				System.out.println(myAgent.getName() + ": Counter offer to the dealer " + opponentAgentName + ": " + price + "\n");
+				System.out.println(
+						myAgent.getName() + ": Counter offer to the dealer " + opponentAgentName + ": " + price + "\n");
 				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, opponentAgentName));
 
 				String jsonInString;
@@ -482,7 +485,7 @@ public class BuyerAgent extends Agent {
 	public void acceptOffer(String opponentAgentName, Car negotiatedCar, double price, int buyerStep) {
 		saveLogs();
 		System.out.println(agentLogs);
-		numberOfActiveSeller --;
+		numberOfActiveSeller--;
 		dealerPreviousOffers.remove(opponentAgentName);
 		addBehaviour(new OneShotBehaviour() {
 			@Override
@@ -607,14 +610,17 @@ public class BuyerAgent extends Agent {
 	 * @param price
 	 */
 	public void sendReqToReserve(String dealerName, Car negotiatedCar, double price, int buyerStep) {
-		numberOfActiveSeller --;
+		numberOfActiveSeller--;
 		lastStepList.put(dealerName, buyerStep);
+		lastOfferReserved = true;
+		reservedOfferconcessionRate = dealerPreviousOffers.get(dealerName).getLastConcessionRate();
 		addBehaviour(new OneShotBehaviour() {
 			@Override
 			public void action() {
 				// send request to reserve to the dealer
 				ACLMessage mess = new ACLMessage(ACLMessage.REQUEST);
-				System.out.println(myAgent.getName() + ": Send request to reserve to dealer " + dealerName + " " + price);
+				System.out
+						.println(myAgent.getName() + ": Send request to reserve to dealer " + dealerName + " " + price);
 				mess.addReceiver(AgentSupport.findAgentWithName(myAgent, dealerName));
 				String jsonInString;
 				try {
@@ -664,7 +670,7 @@ public class BuyerAgent extends Agent {
 					} else {
 						agentLogs.addToLog(dealerName, dealerStep, offerPrice);
 						acceptOffer(dealerName, negotiatedCar, offerPrice, dealerStep);
-					}					
+					}
 				} catch (IOException e) {
 					System.err.println("Problem by converting a json-format to an object");
 				}

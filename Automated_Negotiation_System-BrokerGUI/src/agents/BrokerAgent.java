@@ -133,8 +133,7 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 					String jsonInString = o.writeValueAsString(catalog);
 					jsonDB.clearFile();
 					jsonDB.writeToFile(jsonInString);
-					multiAgentMng.removeCarFromList(negotiatedCar); // remove the car from controlling list
-					multiAgentMng.removeBuyerFromList(buyerName);
+					//multiAgentMng.removeBuyerFromList(buyerName);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}								
@@ -318,6 +317,7 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 					mess.addReceiver(AgentSupport.findAgentWithName(myAgent, message.getCar().getAgent()));
 					mess.setContent(o.writeValueAsString(message));
 					mess.setConversationId("car-trade-broker-seller");
+					multiAgentMng.removeCarFromList(message.getCar()); // remove the car from controlling list
 					myAgent.send(mess);
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();

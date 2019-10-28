@@ -22,7 +22,7 @@ public class NegotiationChoiceGUI extends Stage {
 	 * @param agent : buyer agent
 	 * @param negotiatedCar
 	 */
-	public NegotiationChoiceGUI(BuyerAgent agent, CarList negotiatedCar){
+	public NegotiationChoiceGUI(BuyerAgent agent, CarList negotiatedCar, boolean firstNegotiationThread){
 		Parent window = null;
 		loader = new FXMLLoader(getClass().getResource("ChoiceOfNegotiationWay.fxml"));
 		try {
@@ -32,6 +32,7 @@ public class NegotiationChoiceGUI extends Stage {
 			// set necessary informations using for the interaction between GUI and Agent
 			controller.setAgent(agent);
 			controller.setNegotiatedCarList(negotiatedCar);
+			controller.setFirstNegotiationThread(firstNegotiationThread);
 		} catch (IOException e) {
 			System.err.println("Error by loading fxml-File");
 		}

@@ -62,7 +62,8 @@ public class NegotiationChoiceGUIController {
 	private BuyerAgent bag;
 	private CarList negotiatedCarList;
 	private ToggleGroup group;
-
+	private boolean firstNegotiationThread;
+	
 	public NegotiationChoiceGUIController() {
 	}
 
@@ -149,6 +150,12 @@ public class NegotiationChoiceGUIController {
 					nego_duration.setVisible(true);
 					lb_duration.setVisible(true);
 					maxPriceFromBuyer.setText(String.valueOf(bag.getReservationPrice()));
+					if (!firstNegotiationThread) {
+						nego_duration.setText(String.valueOf(bag.getNegotiationDuration()/1000));
+						nego_duration.setEditable(false);
+					} else {
+						nego_duration.setEditable(true);
+					}
 				}
 			}
 		});
@@ -249,5 +256,9 @@ public class NegotiationChoiceGUIController {
 
 	public void setNegotiatedCarList(CarList carList) {
 		this.negotiatedCarList = carList;
+	}
+	
+	public void setFirstNegotiationThread(boolean firstNegotiationThread) {
+		this.firstNegotiationThread = firstNegotiationThread;
 	}
 }

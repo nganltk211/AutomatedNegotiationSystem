@@ -2,10 +2,8 @@ package gui;
 
 import java.io.File;
 
-import agents.BuyerAgent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -47,6 +45,7 @@ public class CarInfoGUIController {
 
 	private CarInfoGUIController[] carController;
 	private Car car;
+	
 	public CarInfoGUIController() {
 		super();
 	}
@@ -89,7 +88,7 @@ public class CarInfoGUIController {
 	public void setCarControllerList(CarInfoGUIController[] carController) {
 		this.carController = carController;
 	}
-
+	
 	public boolean getValueChoosenCB() {
 		return checkbox.isSelected();
 	}
