@@ -203,9 +203,6 @@ public class NegotiationChoiceGUIController {
 			}
 
 		}
-		if (rb_conan.isSelected()) {
-			
-		}
 
 		return isValidate;
 	}

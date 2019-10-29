@@ -21,7 +21,7 @@ public class NoAgreementGUI extends Stage {
 	 * Constructor of the class
 	 * @param agent : buyer agent
 	 */
-	public NoAgreementGUI(Agent agent, NegotiationLogList session){
+	public NoAgreementGUI(String dealerName, Agent agent, NegotiationLogList session){
 		Parent window = null;
 		loader = new FXMLLoader(getClass().getResource("NoAgreementGUI.fxml"));
 		try {
@@ -31,7 +31,7 @@ public class NoAgreementGUI extends Stage {
 		} catch (IOException e) {
 			System.err.println("Error by loading fxml-File");
 		}
-		this.setTitle("To : " + agent.getName());
+		this.setTitle("From " + dealerName + "To : " + agent.getName());
 		Scene scene = new Scene(window);
 		this.setScene(scene);
 		this.setResizable(false);

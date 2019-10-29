@@ -527,7 +527,7 @@ public class BuyerAgent extends Agent {
 				endTheNegotiationWithoutAgreement(dealerName);
 				new Thread(() -> {
 					Platform.runLater(() -> {
-						NoAgreementGUI gui = new NoAgreementGUI(myAgent, agentLogs);
+						NoAgreementGUI gui = new NoAgreementGUI(dealerName, myAgent, agentLogs);
 					});
 				}).start();
 			} else {
