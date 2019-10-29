@@ -6,9 +6,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import model.NegotiationLog;
 import model.NegotiationLogList;
 
+/**
+ *  A class for setting and showing a stage OfferConfirmationGUI.
+ *  This GUI will be shown when an agreement is reached
+ */
 public class OfferConfirmationGUI extends Stage {
 
 	private FXMLLoader loader; // uses to load the fxml-file

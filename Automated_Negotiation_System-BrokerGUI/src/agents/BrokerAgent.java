@@ -22,7 +22,6 @@ import javafx.application.Platform;
 import model.Car;
 import model.CarList;
 import model.MultipleMessage;
-import model.NegotiationLog;
 import model.NegotiationLogList;
 
 /**

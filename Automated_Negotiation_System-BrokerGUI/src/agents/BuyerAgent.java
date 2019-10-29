@@ -362,7 +362,7 @@ public class BuyerAgent extends Agent {
 						System.out.println("Buyer: Receive offer from the dealer: " + offerPrice);
 						double nextOffer = 0.0;
 
-						// calculate the next offer
+						// calculate the next offer basing on CONAN strategy
 						long currentTime = System.currentTimeMillis();
 						double effectOfTime = Algorithms.getEffectOfTime(currentTime, startTime, negotiationDuration);
 
@@ -406,6 +406,7 @@ public class BuyerAgent extends Agent {
 								agentLogs.addToLog(dealerName, buyerSteps, offerPrice);
 								acceptOffer(dealerName, messObject, offerPrice, buyerSteps);
 							} else {
+								// good offer to reserve and not near the deadline
 								sendReqToReserve(dealerName, messObject, offerPrice, buyerSteps);
 							}
 						} else {
@@ -535,6 +536,9 @@ public class BuyerAgent extends Agent {
 		}
 	}
 
+	/**
+	 * This behavior is for receiving an agreement on buyer's reservation request from the dealer.
+	 */
 	private class ReceiveAgreementToReservationRequestFromDealer extends CyclicBehaviour {
 
 		@Override
@@ -550,6 +554,7 @@ public class BuyerAgent extends Agent {
 					Car negotiatedCar = o.readValue(content, Car.class);
 					double offerPrice = Double.parseDouble(msg.getReplyWith());
 					String dealerName = msg.getSender().getName();
+					// adds to reservation list
 					reserveOfferList.add(new ReserveOffer(offerPrice, dealerName, negotiatedCar));
 					dealerPreviousOffers.remove(dealerName);
 				} catch (IOException e) {
@@ -613,6 +618,7 @@ public class BuyerAgent extends Agent {
 		numberOfActiveSeller--;
 		lastStepList.put(dealerName, buyerStep);
 		lastOfferReserved = true;
+		// gets the concession rate of this offer to use in further offer calculation.
 		reservedOfferconcessionRate = dealerPreviousOffers.get(dealerName).getLastConcessionRate();
 		addBehaviour(new OneShotBehaviour() {
 			@Override
@@ -654,20 +660,23 @@ public class BuyerAgent extends Agent {
 					String dealerName = msg.getSender().getName();
 					int dealerStep = Integer.parseInt(msg.getInReplyTo());
 					if (negotiationDuration > 0) {
-						// adds to reserveOfferList
 						boolean needToReserve = compareOfferToOffersInReserveList(offerPrice);
 						if (needToReserve) {
-							if (System.currentTimeMillis() >= deadline - timeOneRound) { // near the deadline
+							if (System.currentTimeMillis() >= deadline - timeOneRound) { 
+								// it is a good offer and near the deadline
 								agentLogs.addToLog(dealerName, dealerStep, offerPrice);
 								acceptOffer(dealerName, negotiatedCar, offerPrice, dealerStep);
 							} else {
+								// send request for reservation to the dealer
 								sendReqToReserve(dealerName, negotiatedCar, offerPrice, dealerStep);
 							}
 						} else {
+							// the offer is not good in compare to other reserved offers
 							agentLogs.addToLog(dealerName, dealerStep, offerPrice);
 							sendRefuseToTheDealer(dealerName, negotiatedCar, dealerStep);
 						}
 					} else {
+						// in case of one-to-one negotiation and the buyer use time-dependent-tactics
 						agentLogs.addToLog(dealerName, dealerStep, offerPrice);
 						acceptOffer(dealerName, negotiatedCar, offerPrice, dealerStep);
 					}

@@ -15,6 +15,10 @@ import model.LogSession;
 import model.NegotiationLog;
 import model.NegotiationLogList;
 
+/**
+ * A Controller class of LineChartGUI. The logic of GUI-Elements will be defined in
+ * this class.
+ */
 public class LineChartGUIController {
 	
 	@FXML
@@ -33,6 +37,9 @@ public class LineChartGUIController {
     	drawChart();
     }
     
+    /**
+     * Method for drawing the line chart using the data provided by the broker
+     */
     public void drawChart() {
     	
     	x.setLabel("T");
@@ -70,6 +77,12 @@ public class LineChartGUIController {
     	y.setLowerBound(min - 250);	
     }
     
+    /**
+     * Method for creating the label to show the value of each Node on the line chart
+     * @param value : number to be shown
+     * @param aboveTheLine : true if the label should be shown above the line
+     * @return a node with label
+     */
     private Node createDataNode(ObjectExpression<Number> value, boolean aboveTheLine) {
         Label label = new Label();
         label.textProperty().bind(value.asString("%.0f"));

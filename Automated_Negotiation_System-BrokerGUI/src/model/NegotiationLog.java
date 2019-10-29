@@ -37,6 +37,11 @@ public class NegotiationLog implements Serializable {
 		this.agentLog = agentLog;
 	}
 	
+	/**
+	 * Method to add step and offer to the agent's log
+	 * @param step
+	 * @param offer
+	 */
 	public void addOffer(int step, double offer) {
 		agentLog.add(new LogSession(step,offer));
 	}

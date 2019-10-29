@@ -11,7 +11,7 @@ public class MultipleMessage {
 
 	private Car car;
 	private Map<String, Double> buyerList; // a map containing buyer name with his last offer	
-	private String buyerListString;
+	private String buyerListString; // for showing name of the buyer interested in a same car 
 	
 	public MultipleMessage() {		
 	}

@@ -1,16 +1,16 @@
 package gui;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import model.NegotiationLog;
 import model.NegotiationLogList;
 
+/**
+ * A Controller class of  OfferConfirmationGUI. The logic of GUI-Elements will be
+ * defined in this class.
+ */
 public class OfferConfirmationGUIController {
 
     @FXML
@@ -44,8 +44,13 @@ public class OfferConfirmationGUIController {
 	   lb_dealerName.setText(dealerName);
    }
     
+   /**
+	 * This method will be executed when the user click the button "View line chart"
+	 * @param event
+	 */
     @FXML
     public void viewLineChart(ActionEvent event) {
+    	// shows the line chart 
     	LineChartGUI gui = new LineChartGUI(this.session);
     }
     

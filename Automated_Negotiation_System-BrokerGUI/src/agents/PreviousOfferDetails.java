@@ -1,9 +1,12 @@
 package agents;
 
+/**
+ * Class for storing the details of previous offer
+ */
 public class PreviousOfferDetails {
 	private double lastConcessionRate;
 	private double lastOfferOfSeller;
-	private long buyerLastOfferAtTime;
+	private long buyerLastOfferAtTime; // time point when buyer give the last offer
 
 	public PreviousOfferDetails(double lastConcessionRate, double lastOfferOfSeller, long buyerLastOfferAtTime) {
 		super();

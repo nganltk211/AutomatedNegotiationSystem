@@ -1,5 +1,8 @@
 package model;
 
+/**
+ * Class to store the information about a buyer's reserved offer
+ */
 public class ReserveOffer {
 	
 	private double offer;

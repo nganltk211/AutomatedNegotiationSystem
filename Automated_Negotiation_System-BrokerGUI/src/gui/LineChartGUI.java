@@ -7,6 +7,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import model.NegotiationLogList;
 
+/**
+ * A class for setting and showing a stage LineChartGUI.
+ * This GUI shows the line chart of all negotiation sessions
+ */
 public class LineChartGUI extends Stage{
 	
 	private FXMLLoader loader; // uses to load the fxml-file
