@@ -11,7 +11,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="275.0000999999975" prefWidth="565.9998779296875" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.NegotiationChoiceGUIController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="296.0000999999975" prefWidth="565.9998779296875" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.NegotiationChoiceGUIController">
   <children>
     <Label layoutX="47.0" layoutY="30.0" text="Let start the negotiation">
       <font>
@@ -46,5 +46,6 @@
         <Font name="System Bold Italic" size="13.0" />
       </font>
     </Label>
+    <Label id="validationLabel" fx:id="lb_validDuration" font="$x3" layoutX="428.0" layoutY="266.0" text="lb_validDuration" textFill="RED" />
   </children>
 </AnchorPane>

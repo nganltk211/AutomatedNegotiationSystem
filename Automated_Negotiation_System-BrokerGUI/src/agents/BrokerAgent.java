@@ -1,6 +1,7 @@
 package agents;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -247,6 +248,10 @@ public class BrokerAgent extends Agent implements BrokerAgentInterface{
 					System.out.println(choosenCarList + "\n");
 					// adds a car with interested buyer to the controlling list
 					multiAgentMng.addBuyer(choosenCarList,buyerName, Double.parseDouble(firstOfferPrice));
+					ArrayList<MultipleMessage> buyerList = multiAgentMng.getNegotiationList();
+					for (MultipleMessage request : buyerList) {
+						sendBuyerListDataToDealer(request);
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

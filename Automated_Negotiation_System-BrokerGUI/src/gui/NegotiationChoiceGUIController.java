@@ -56,7 +56,8 @@ public class NegotiationChoiceGUIController {
 	private Label lb_duration;
 	@FXML
 	private TextField nego_duration;
-
+	@FXML
+	private Label lb_validDuration;
 
 	private boolean isValidate = false;
 	private BuyerAgent bag;
@@ -95,6 +96,7 @@ public class NegotiationChoiceGUIController {
 		validationLabel.setVisible(false);
 		maxPriceFromBuyer.setVisible(false);
 		maxprice_buyer.setVisible(false);
+		lb_validDuration.setVisible(false);
 		pricevalidationLabel.setText("");
 		validationLabel.setText("");
 	}
@@ -200,6 +202,9 @@ public class NegotiationChoiceGUIController {
 				isValidate = true;
 			}
 
+		}
+		if (rb_conan.isSelected()) {
+			
 		}
 
 		return isValidate;
