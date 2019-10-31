@@ -167,7 +167,7 @@ public class DealerAgent extends Agent {
 	 * This behavior is for making the buyer an first offer
 	 */
 	private class NegotiationBehaviourWithBuyerFirstOffer extends OneShotBehaviour {
-		private Map<String, Double> buyerList;
+		private Map<String, Double> buyerList; // list of buyer with his first offer.
 		private Car negotiatedCar;
 
 		public NegotiationBehaviourWithBuyerFirstOffer(MultipleMessage brokerMessage) {
@@ -250,10 +250,11 @@ public class DealerAgent extends Agent {
 							int nextPrice = Algorithms.offer(messObject.getMaxprice(), messObject.getMinprice(), stepD,
 									messObject.getSteps(), messObject.getBeeta());
 							if (nextPrice <= offerPrice) {
-								// accept the offer from the buyer
 								if (!multiple) {
+									// accept directly the offer from the buyer (one-to-one negotiation) 
 									acceptOffer(buyerName, messObject, offerPrice, stepD);
 								} else {
+									// in one-to-many case
 									findTheBestOffer(buyerName, messObject, offerPrice, stepD);
 								}
 							} else {
@@ -415,8 +416,7 @@ public class DealerAgent extends Agent {
 	}
 
 	/**
-	 * Behavior to send a refuse request to the buyer in case no agreement is
-	 * reached
+	 * Behavior to send a refuse request to the buyer in case of no agreement reaches
 	 * 
 	 * @param opponentAgentName:
 	 *            buyer agent name

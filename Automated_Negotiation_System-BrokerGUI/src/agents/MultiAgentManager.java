@@ -76,6 +76,10 @@ public class MultiAgentManager {
 		}
 	}
 	
+	/**
+	 * Method to remove all requests of a buyer from the controlling list.
+	 * @param buyerName : name of the buyer agent
+	 */
 	public void removeBuyerFromList(String buyerName) {
 		for (Iterator<MultipleMessage> iterator = negotiationList.iterator(); iterator.hasNext();) {
 			MultipleMessage message = iterator.next();

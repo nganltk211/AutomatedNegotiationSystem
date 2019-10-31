@@ -8,6 +8,7 @@ public class ReserveOffer {
 	private double offer;
 	private String dealerName;
 	private Car car;
+	
 	public ReserveOffer(double offer, String dealerName, Car car) {
 		super();
 		this.offer = offer;
